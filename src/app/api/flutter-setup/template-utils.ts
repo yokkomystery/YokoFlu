@@ -56,8 +56,6 @@ export function copyTemplateFile(
   // ファイルを書き込み
   fs.writeFileSync(targetPath, content);
   console.log(`✅ テンプレートファイルをコピーしました: ${targetPath}`);
-  console.log(`📄 書き込まれた内容（最初の200文字）:`);
-  console.log(content.substring(0, 200) + '...');
 }
 
 // テンプレートディレクトリをコピーする関数
@@ -102,12 +100,4 @@ export function copyTemplateDirectory(
 // テンプレートファイルのパスを取得する関数
 export function getTemplatePath(templateName: string): string {
   return path.join(process.cwd(), 'src', 'templates', 'flutter', templateName);
-}
-
-// Firebase使用状況に応じてpubspec.yamlテンプレートのパスを取得する関数
-export function getPubspecTemplatePath(useFirebase: boolean): string {
-  const templateName = useFirebase
-    ? 'pubspec.yaml'
-    : 'pubspec_no_firebase.yaml';
-  return getTemplatePath(templateName);
 }

@@ -756,7 +756,7 @@ export default function FlutterSetupForm() {
             </div>
             {selectedTemplate === 'chat' && (
               <div className="mb-4 bg-yellow-900/40 border border-yellow-700 text-yellow-200 px-4 py-3 rounded text-sm">
-                ⚠️ {t.form.firebase.required}
+                注意: {t.form.firebase.required}
               </div>
             )}
             <label className="flex items-center space-x-3">
@@ -776,10 +776,193 @@ export default function FlutterSetupForm() {
             </label>
             {!useFirebase && (
               <div className="mt-4 bg-blue-900/30 border border-blue-700 text-blue-200 px-4 py-3 rounded text-sm">
-                ℹ️{' '}
                 {locale === 'ja'
                   ? 'Firebaseなしでも、カウンター、TODO、ストップウォッチのテンプレートは完全に動作します'
                   : 'Counter, TODO, and Stopwatch templates work fully without Firebase'}
+              </div>
+            )}
+
+            {/* Firebase環境選択（Firebase有効時のみ表示） */}
+            {useFirebase && (
+              <div className="mt-6 pt-6 border-t border-gray-700">
+                <h3 className="text-lg font-semibold mb-3">環境構成の選択</h3>
+                <p className="text-sm text-gray-400 mb-4">
+                  開発用（Staging）と本番用（Production）でFirebaseプロジェクトを分けることを推奨します。
+                </p>
+
+                {/* 重要な注意事項 */}
+                <div className="bg-yellow-900/30 border border-yellow-700 rounded-lg p-4 mb-4">
+                  <p className="text-sm text-yellow-300 font-semibold mb-1">
+                    注意: 事前にFirebaseプロジェクトを作成してください
+                  </p>
+                  <p className="text-xs text-yellow-200">
+                    <a
+                      href="https://console.firebase.google.com/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline hover:text-yellow-100 font-semibold"
+                    >
+                      Firebase Console
+                    </a>
+                    でプロジェクトを作成後、下のボタンから選択してください。
+                    <br />
+                    このツールはFirebaseプロジェクトを自動作成しません。
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="flex items-center space-x-3 bg-gray-900/50 border border-gray-700 rounded-lg p-3 cursor-pointer hover:bg-gray-900/70 transition-colors">
+                      <input
+                        type="checkbox"
+                        {...register('separateEnvironments')}
+                        className="h-5 w-5 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500"
+                      />
+                      <div className="flex-1">
+                        <div className="font-medium">
+                          ステージングとプロダクション環境を分離する（推奨）
+                        </div>
+                        <div className="text-xs text-gray-400 mt-1">
+                          2つのFirebaseプロジェクトを使用して、開発環境と本番環境を完全に分離
+                        </div>
+                      </div>
+                    </label>
+                  </div>
+
+                  <div className="bg-gray-900/50 border border-gray-700 px-4 py-3 rounded text-xs text-gray-400">
+                    <p className="mb-2 font-medium">環境分離のメリット:</p>
+                    <ul className="list-disc list-inside space-y-1 ml-2">
+                      <li>開発中のテストデータが本番環境に影響しない</li>
+                      <li>安全にデバッグや実験ができる</li>
+                      <li>本番データを保護できる</li>
+                    </ul>
+                  </div>
+
+                  {separateEnvironments ? (
+                    <div className="space-y-4 mt-4">
+                      <div className="bg-blue-900/20 border border-blue-700 rounded-lg p-4">
+                        <h4 className="text-sm font-semibold mb-3 text-blue-300">
+                          ステージング環境（開発・テスト用）
+                        </h4>
+                        <div>
+                          <label className="block text-sm font-medium mb-2">
+                            Firebaseプロジェクトを選択
+                          </label>
+                          <div className="space-y-2">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedProjectType('staging');
+                                setShowProjectSelector(true);
+                                fetchFirebaseProjects();
+                              }}
+                              className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-medium transition-colors"
+                            >
+                              {watch('existingStagingProjectId')
+                                ? `選択済み: ${watch(
+                                    'existingStagingProjectId'
+                                  )}`
+                                : 'プロジェクトを選択'}
+                            </button>
+                            <input
+                              type="hidden"
+                              {...register('existingStagingProjectId')}
+                            />
+                            {errors.existingStagingProjectId && (
+                              <p className="text-red-400 text-sm">
+                                ステージング環境のプロジェクトを選択してください
+                              </p>
+                            )}
+                            <p className="text-xs text-gray-400">
+                              Firebase
+                              Consoleで事前にプロジェクトを作成してから、上のボタンで選択してください
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-orange-900/20 border border-orange-700 rounded-lg p-4">
+                        <h4 className="text-sm font-semibold mb-3 text-orange-300">
+                          プロダクション環境（本番用）
+                        </h4>
+                        <div>
+                          <label className="block text-sm font-medium mb-2">
+                            Firebaseプロジェクトを選択
+                          </label>
+                          <div className="space-y-2">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedProjectType('production');
+                                setShowProjectSelector(true);
+                                fetchFirebaseProjects();
+                              }}
+                              className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-lg font-medium transition-colors"
+                            >
+                              {watch('existingProductionProjectId')
+                                ? `選択済み: ${watch(
+                                    'existingProductionProjectId'
+                                  )}`
+                                : 'プロジェクトを選択'}
+                            </button>
+                            <input
+                              type="hidden"
+                              {...register('existingProductionProjectId')}
+                            />
+                            {errors.existingProductionProjectId && (
+                              <p className="text-red-400 text-sm">
+                                プロダクション環境のプロジェクトを選択してください
+                              </p>
+                            )}
+                            <p className="text-xs text-gray-400">
+                              Firebase
+                              Consoleで事前にプロジェクトを作成してから、上のボタンで選択してください
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mt-4 bg-gray-900/50 border border-gray-700 rounded-lg p-4">
+                      <h4 className="text-sm font-semibold mb-3">
+                        単一環境（シンプル構成）
+                      </h4>
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          Firebaseプロジェクトを選択
+                        </label>
+                        <div className="space-y-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedProjectType('single');
+                              setShowProjectSelector(true);
+                              fetchFirebaseProjects();
+                            }}
+                            className="w-full bg-gray-600 hover:bg-gray-700 text-white px-4 py-3 rounded-lg font-medium transition-colors"
+                          >
+                            {watch('singleProjectId')
+                              ? `選択済み: ${watch('singleProjectId')}`
+                              : 'プロジェクトを選択'}
+                          </button>
+                          <input
+                            type="hidden"
+                            {...register('singleProjectId')}
+                          />
+                          {errors.singleProjectId && (
+                            <p className="text-red-400 text-sm">
+                              Firebaseプロジェクトを選択してください
+                            </p>
+                          )}
+                          <p className="text-xs text-gray-400">
+                            Firebase
+                            Consoleで事前にプロジェクトを作成してから、上のボタンで選択してください
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -791,12 +974,7 @@ export default function FlutterSetupForm() {
               <div>
                 <div className="bg-gray-900/50 border border-gray-700 rounded px-3 py-2 mb-3">
                   <p className="text-xs text-gray-400">
-                    <strong>
-                      📱{' '}
-                      {locale === 'ja'
-                        ? t.features.settingsScreen
-                        : '📱 ' + t.features.settingsScreen}
-                    </strong>{' '}
+                    <strong>{t.features.settingsScreen}</strong>{' '}
                     {locale === 'ja' ? 'について' : ''}
                     <br />
                     {t.features.description}
@@ -852,132 +1030,6 @@ export default function FlutterSetupForm() {
               />
             </CollapsibleSection>
           </div>
-
-          {/* Firebase環境設定 */}
-          {useFirebase && (
-            <div className="bg-gray-800 p-6 rounded-lg mt-6">
-              <h2 className="text-xl font-semibold mb-4">
-                🔧 Firebase環境設定
-              </h2>
-              <p className="text-sm text-gray-400 mb-4">
-                開発用（Staging）と本番用（Production）でFirebaseプロジェクトを分けることを推奨します。
-              </p>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      {...register('separateEnvironments')}
-                      className="rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span>ステージングとプロダクション環境を分離する</span>
-                  </label>
-                </div>
-
-                <div className="bg-gray-900/50 border border-gray-700 px-3 py-2 rounded text-xs text-gray-400">
-                  <p className="mb-1">📝 環境分離のメリット：</p>
-                  <ul className="list-disc list-inside space-y-1 ml-2">
-                    <li>開発中のテストデータが本番環境に影響しない</li>
-                    <li>安全にデバッグや実験ができる</li>
-                    <li>本番データを保護できる</li>
-                  </ul>
-                </div>
-
-                {separateEnvironments ? (
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-2">
-                        ステージング環境のFirebaseプロジェクトID
-                      </label>
-                      <div className="flex space-x-2">
-                        <input
-                          type="text"
-                          {...register('existingStagingProjectId')}
-                          className="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder="例: my-app-staging"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSelectedProjectType('staging');
-                            setShowProjectSelector(true);
-                            fetchFirebaseProjects();
-                          }}
-                          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-                        >
-                          一覧から選択
-                        </button>
-                      </div>
-                      <p className="text-xs text-gray-400 mt-1">
-                        Firebase
-                        コンソールで事前に作成したステージング用プロジェクト ID
-                        を入力するか、一覧から選択してください。
-                      </p>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2">
-                        プロダクション環境のFirebaseプロジェクトID
-                      </label>
-                      <div className="flex space-x-2">
-                        <input
-                          type="text"
-                          {...register('existingProductionProjectId')}
-                          className="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder="例: my-app-production"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSelectedProjectType('production');
-                            setShowProjectSelector(true);
-                            fetchFirebaseProjects();
-                          }}
-                          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-                        >
-                          一覧から選択
-                        </button>
-                      </div>
-                      <p className="text-xs text-gray-400 mt-1">
-                        本番用の Firebase プロジェクト ID
-                        を直接入力することも可能です。
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      FirebaseプロジェクトID
-                    </label>
-                    <div className="flex space-x-2">
-                      <input
-                        type="text"
-                        {...register('singleProjectId')}
-                        className="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="例: my-app"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSelectedProjectType('single');
-                          setShowProjectSelector(true);
-                          fetchFirebaseProjects();
-                        }}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-                      >
-                        一覧から選択
-                      </button>
-                    </div>
-                    <p className="text-xs text-gray-400 mt-1">
-                      CLI が利用できない場合でも、Firebase コンソールで作成した
-                      ID を直接入力できます。
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
 
           {/* Flutterビルドコマンド表示 */}
           <div className="mt-6">

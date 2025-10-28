@@ -175,7 +175,8 @@ export async function POST(request: NextRequest) {
     await runPubspecUpdate(
       fullOutputPath,
       useFirebase,
-      normalizedAdvancedFeatures
+      normalizedAdvancedFeatures,
+      effectiveTemplateFeatures
     );
 
     // Step 5: iOS設定ファイルの作成（分割）

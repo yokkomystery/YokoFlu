@@ -118,7 +118,6 @@ export function BuildCommands({ useFirebase }: BuildCommandsProps) {
           </div>
         </div>
         <div className="mt-2 bg-yellow-900/30 border border-yellow-700 text-yellow-200 px-3 py-2 rounded text-xs">
-          ℹ️{' '}
           {locale === 'ja'
             ? 'iOSは`--flavor`は使用できません。Xcodeでビルド構成（Staging/Production）を選択してください。\n`flutter build ipa`は自動的にアーカイブしてIPAファイルを生成します（`build/ios/ipa/`）。'
             : 'iOS does not support `--flavor`. Select build configuration (Staging/Production) in Xcode.\n`flutter build ipa` automatically creates an archive and IPA file in `build/ios/ipa/`.'}
@@ -157,7 +156,7 @@ export function BuildCommands({ useFirebase }: BuildCommandsProps) {
 
       <div className="mt-4 p-3 bg-blue-900 border border-blue-700 rounded">
         <p className="text-sm text-blue-200">
-          💡 <strong>{t.build.tips}</strong>
+          <strong>{t.build.tips}</strong>
         </p>
         <ul className="text-xs text-blue-300 mt-2 space-y-1 list-disc list-inside ml-2">
           <li>

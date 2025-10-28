@@ -7,6 +7,10 @@ import 'dart:io' show Platform;
 import 'package:{{APP_NAME}}/l10n/app_localizations.dart';
 import 'package:{{APP_NAME}}/core/providers/theme_provider.dart';
 import 'package:{{APP_NAME}}/core/providers/locale_provider.dart';
+{{#AUTH_SECTION_ENABLED}}
+import 'package:{{APP_NAME}}/features/auth/auth_provider.dart';
+import 'package:{{APP_NAME}}/features/auth/auth_screen.dart';
+{{/AUTH_SECTION_ENABLED}}
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -76,12 +80,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           const Divider(),
 
 {{#AUTH_SECTION_ENABLED}}
-          _buildSectionHeader('認証機能'),
-          _buildFeatureSummaryTile(
-            icon: Icons.lock_outline,
-            title: '有効なサインイン方法',
-            description: '{{AUTH_METHOD_LABELS}}',
-          ),
+          _buildSectionHeader(l10n.settingsAuthSectionTitle),
+          _buildAuthSection(context, l10n),
           const Divider(),
 {{/AUTH_SECTION_ENABLED}}
 {{#REMOTE_CONFIG_SECTION_ENABLED}}
@@ -182,6 +182,174 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       dense: true,
     );
   }
+
+{{#AUTH_SECTION_ENABLED}}
+  Widget _buildAuthSection(BuildContext context, AppLocalizations l10n) {
+    final user = ref.watch(currentUserProvider);
+    final isSignedIn = user != null;
+    final isAnonymous = user?.isAnonymous ?? false;
+
+    if (!isSignedIn) {
+      // 未サインイン状態
+      return ListTile(
+        leading: const Icon(Icons.login),
+        title: Text(l10n.signIn),
+        subtitle: Text(l10n.signInSubtitle),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AuthScreen(),
+            ),
+          );
+        },
+      );
+    } else {
+      // サインイン済み
+      return Column(
+        children: [
+          ListTile(
+            leading: CircleAvatar(
+              backgroundImage: user.photoURL != null
+                  ? NetworkImage(user.photoURL!)
+                  : null,
+              child: user.photoURL == null
+                  ? Icon(isAnonymous ? Icons.person_outline : Icons.person)
+                  : null,
+            ),
+            title: Text(user.displayName ?? l10n.anonymousUser),
+            subtitle: Text(user.email ?? l10n.noEmail),
+          ),
+          if (isAnonymous)
+            ListTile(
+              leading: const Icon(Icons.upgrade),
+              title: Text(l10n.upgradeAccount),
+              subtitle: Text(l10n.upgradeAccountSubtitle),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AuthScreen(),
+                  ),
+                );
+              },
+            ),
+          ListTile(
+            leading: const Icon(Icons.logout),
+            title: Text(l10n.signOut),
+            onTap: () => _showSignOutDialog(context, l10n),
+          ),
+          ListTile(
+            leading: const Icon(Icons.delete_forever, color: Colors.red),
+            title: Text(
+              l10n.deleteAccount,
+              style: const TextStyle(color: Colors.red),
+            ),
+            onTap: () => _showDeleteAccountDialog(context, l10n),
+          ),
+        ],
+      );
+    }
+  }
+
+  void _showSignOutDialog(BuildContext context, AppLocalizations l10n) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(l10n.signOutConfirmTitle),
+          content: Text(l10n.signOutConfirmMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(l10n.cancel),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                try {
+                  final repository = ref.read(authRepositoryProvider);
+                  await repository.signOut();
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(l10n.signOutSuccessful),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('${l10n.signOutFailed}: $e'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+              ),
+              child: Text(l10n.signOut),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showDeleteAccountDialog(BuildContext context, AppLocalizations l10n) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(l10n.deleteAccountConfirmTitle),
+          content: Text(l10n.deleteAccountConfirmMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(l10n.cancel),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                try {
+                  final repository = ref.read(authRepositoryProvider);
+                  await repository.deleteAccount();
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(l10n.deleteAccountSuccessful),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('${l10n.deleteAccountFailed}: $e'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+              ),
+              child: Text(l10n.deleteAccount),
+            ),
+          ],
+        );
+      },
+    );
+  }
+{{/AUTH_SECTION_ENABLED}}
 
   Widget _buildFeatureSummaryTile({
     required IconData icon,
