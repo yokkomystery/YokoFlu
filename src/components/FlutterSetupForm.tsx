@@ -1121,7 +1121,9 @@ export default function FlutterSetupForm() {
             <div className="text-sm text-gray-400 space-y-2">
               <p>
                 Created for Flutter Developers by{' '}
-                <span className="font-medium text-gray-300">横川 智士</span>
+                <span className="font-medium text-gray-300">
+                  Satoshi Yokokawa（横川 智士）
+                </span>
               </p>
               <p className="text-xs text-gray-500">
                 <a
