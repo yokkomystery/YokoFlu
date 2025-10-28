@@ -51,6 +51,7 @@ export default function FlutterSetupForm() {
   );
   const [appIcon, setAppIcon] = useState<string | null>(null);
   const [appIconPreview, setAppIconPreview] = useState<string | null>(null);
+  const [appIconFileName, setAppIconFileName] = useState<string | null>(null);
 
   // CLIステータス管理は useCliStatus フックに分離
   const { environmentStatus, environmentStatusError, fetchEnvironmentStatus } =
@@ -522,6 +523,7 @@ export default function FlutterSetupForm() {
                         onClick={() => {
                           setAppIcon(null);
                           setAppIconPreview(null);
+                          setAppIconFileName(null);
                         }}
                         className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
                       >
@@ -547,54 +549,65 @@ export default function FlutterSetupForm() {
                   )}
                 </div>
                 <div className="flex-1">
-                  <input
-                    type="file"
-                    accept="image/png,image/jpeg"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        // 画像の検証
-                        const img = new Image();
-                        const reader = new FileReader();
+                  <div className="relative">
+                    <input
+                      type="file"
+                      id="app-icon-input"
+                      accept="image/png,image/jpeg"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          // 画像の検証
+                          const img = new Image();
+                          const reader = new FileReader();
 
-                        reader.onload = (e) => {
-                          const base64 = e.target?.result as string;
-                          img.src = base64;
+                          reader.onload = (e) => {
+                            const base64 = e.target?.result as string;
+                            img.src = base64;
 
-                          img.onload = () => {
-                            // 正方形かチェック
-                            if (img.width !== img.height) {
-                              alert(
-                                `画像は正方形である必要があります。\n現在のサイズ: ${img.width}x${img.height}px\n\n正方形（例: 1024x1024px）の画像を選択してください。`
-                              );
-                              return;
-                            }
+                            img.onload = () => {
+                              // 正方形かチェック
+                              if (img.width !== img.height) {
+                                alert(
+                                  t.basicInfo.errorSquareRequired
+                                    .replace('{width}', String(img.width))
+                                    .replace('{height}', String(img.height))
+                                );
+                                return;
+                              }
 
-                            // サイズチェック（最小512x512px）
-                            if (img.width < 512 || img.height < 512) {
-                              alert(
-                                `画像サイズが小さすぎます。\n現在のサイズ: ${img.width}x${img.height}px\n\n最低512x512px以上、推奨1024x1024pxの画像を使用してください。`
-                              );
-                              return;
-                            }
+                              // サイズチェック（最小512x512px）
+                              if (img.width < 512 || img.height < 512) {
+                                alert(
+                                  t.basicInfo.errorSizeTooSmall
+                                    .replace('{width}', String(img.width))
+                                    .replace('{height}', String(img.height))
+                                );
+                                return;
+                              }
 
-                            // すべてOKなら設定
-                            setAppIcon(base64);
-                            setAppIconPreview(base64);
+                              // すべてOKなら設定
+                              setAppIcon(base64);
+                              setAppIconPreview(base64);
+                              setAppIconFileName(file.name);
+                            };
                           };
-                        };
 
-                        reader.readAsDataURL(file);
-                      }
-                    }}
-                    className="block w-full text-sm text-gray-400
-                      file:mr-4 file:py-2 file:px-4
-                      file:rounded-md file:border-0
-                      file:text-sm file:font-semibold
-                      file:bg-blue-600 file:text-white
-                      hover:file:bg-blue-700
-                      file:cursor-pointer cursor-pointer"
-                  />
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      className="hidden"
+                    />
+                    <label
+                      htmlFor="app-icon-input"
+                      className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-md cursor-pointer transition-colors"
+                    >
+                      {t.basicInfo.selectFile}
+                    </label>
+                    <span className="ml-3 text-sm text-gray-400">
+                      {appIconFileName || t.basicInfo.noFileSelected}
+                    </span>
+                  </div>
                   <div className="text-xs text-gray-500 mt-2 space-y-1">
                     {t.basicInfo.appIconRequirements.map((req, index) => (
                       <p key={index}>{req}</p>
@@ -728,7 +741,9 @@ export default function FlutterSetupForm() {
 
           {/* Firebase利用有無の選択 */}
           <div className="bg-gray-800 p-6 rounded-lg mt-6">
-            <h2 className="text-xl font-semibold mb-4">{t.form.firebase.title}</h2>
+            <h2 className="text-xl font-semibold mb-4">
+              {t.form.firebase.title}
+            </h2>
             <div className="bg-gray-900/50 border border-gray-700 rounded-lg p-3 mb-4">
               <p className="text-sm text-gray-300 mb-2">
                 <strong>{t.form.firebase.whatIsFirebase}</strong>
@@ -738,7 +753,8 @@ export default function FlutterSetupForm() {
               </p>
               <ul className="text-xs text-gray-400 space-y-1 list-disc list-inside ml-2">
                 <li>
-                  <strong>Authentication</strong>: {t.form.firebase.authenticationDesc}
+                  <strong>Authentication</strong>:{' '}
+                  {t.form.firebase.authenticationDesc}
                 </li>
                 <li>
                   <strong>Firestore</strong>: {t.form.firebase.firestoreDesc}
@@ -750,7 +766,8 @@ export default function FlutterSetupForm() {
                   <strong>Analytics</strong>: {t.form.firebase.analyticsDesc}
                 </li>
                 <li>
-                  <strong>Remote Config</strong>: {t.form.firebase.remoteConfigDesc}
+                  <strong>Remote Config</strong>:{' '}
+                  {t.form.firebase.remoteConfigDesc}
                 </li>
               </ul>
             </div>
@@ -783,7 +800,9 @@ export default function FlutterSetupForm() {
             {/* Firebase環境選択（Firebase有効時のみ表示） */}
             {useFirebase && (
               <div className="mt-6 pt-6 border-t border-gray-700">
-                <h3 className="text-lg font-semibold mb-3">{t.form.firebase.environmentSetup}</h3>
+                <h3 className="text-lg font-semibold mb-3">
+                  {t.form.firebase.environmentSetup}
+                </h3>
                 <p className="text-sm text-gray-400 mb-4">
                   {t.form.firebase.environmentSetupDesc}
                 </p>
@@ -828,7 +847,9 @@ export default function FlutterSetupForm() {
                   </div>
 
                   <div className="bg-gray-900/50 border border-gray-700 px-4 py-3 rounded text-xs text-gray-400">
-                    <p className="mb-2 font-medium">{t.form.firebase.environmentBenefits}</p>
+                    <p className="mb-2 font-medium">
+                      {t.form.firebase.environmentBenefits}
+                    </p>
                     <ul className="list-disc list-inside space-y-1 ml-2">
                       <li>{t.form.firebase.benefitTestData}</li>
                       <li>{t.form.firebase.benefitSafeDebug}</li>
@@ -938,7 +959,9 @@ export default function FlutterSetupForm() {
                             className="w-full bg-gray-600 hover:bg-gray-700 text-white px-4 py-3 rounded-lg font-medium transition-colors"
                           >
                             {watch('singleProjectId')
-                              ? `${t.form.firebase.selectedProject}: ${watch('singleProjectId')}`
+                              ? `${t.form.firebase.selectedProject}: ${watch(
+                                  'singleProjectId'
+                                )}`
                               : t.form.firebase.selectProject}
                           </button>
                           <input

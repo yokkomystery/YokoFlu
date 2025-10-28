@@ -35,6 +35,10 @@ export interface Translations {
     appIconDescription: string[];
     appIconRequirements: string[];
     appIconSet: string;
+    selectFile: string;
+    noFileSelected: string;
+    errorSquareRequired: string;
+    errorSizeTooSmall: string;
     appNameLabel: string;
     appNameExample: string;
     appNameDesc: string;
@@ -291,6 +295,12 @@ export const translations: Record<Locale, Translations> = {
         '✓ PNG形式（透過なし推奨）',
       ],
       appIconSet: '✓ アイコンが設定されました',
+      selectFile: 'ファイルを選択',
+      noFileSelected: '選択されていません',
+      errorSquareRequired:
+        '画像は正方形である必要があります。\n現在のサイズ: {width}x{height}px\n\n正方形（例: 1024x1024px）の画像を選択してください。',
+      errorSizeTooSmall:
+        '画像サイズが小さすぎます。\n現在のサイズ: {width}x{height}px\n\n最低512x512px以上、推奨1024x1024pxの画像を使用してください。',
       appNameLabel: 'アプリ名',
       appNameExample: '例: MyAwesomeApp',
       appNameDesc:
@@ -363,7 +373,8 @@ export const translations: Record<Locale, Translations> = {
         environmentSetup: '環境構成の選択',
         environmentSetupDesc:
           '開発用（Staging）と本番用（Production）でFirebaseプロジェクトを分けることを推奨します。',
-        createProjectFirst: '注意: 事前にFirebaseプロジェクトを作成してください',
+        createProjectFirst:
+          '注意: 事前にFirebaseプロジェクトを作成してください',
         createProjectInst:
           'でプロジェクトを作成後、下のボタンから選択してください。',
         toolDoesNotCreate:
@@ -666,6 +677,12 @@ export const translations: Record<Locale, Translations> = {
         '✓ PNG format (no transparency recommended)',
       ],
       appIconSet: '✓ Icon is set',
+      selectFile: 'Select File',
+      noFileSelected: 'No file selected',
+      errorSquareRequired:
+        'Image must be square.\nCurrent size: {width}x{height}px\n\nPlease select a square image (e.g., 1024x1024px).',
+      errorSizeTooSmall:
+        'Image size is too small.\nCurrent size: {width}x{height}px\n\nPlease use an image with a minimum of 512x512px, recommended 1024x1024px.',
       appNameLabel: 'App Name',
       appNameExample: 'Example: MyAwesomeApp',
       appNameDesc:
