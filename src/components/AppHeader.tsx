@@ -51,9 +51,7 @@ export function AppHeader() {
         <span className="px-3 py-1.5 bg-gray-800 rounded-lg font-medium">
           v1.0.0
         </span>
-        <span className="text-gray-600">•</span>
-        <span className="font-medium">Created by {t.author}</span>
-        <span className="text-gray-600">•</span>
+
         <a
           href="https://github.com/yokkomystery/yokoflu"
           target="_blank"

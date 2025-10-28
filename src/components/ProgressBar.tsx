@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useLocale } from '../context/LocaleContext';
 
 type ProgressStatus = 'pending' | 'running' | 'completed' | 'error' | 'skipped';
 
@@ -18,6 +19,7 @@ interface Props {
 }
 
 const ProgressBar: React.FC<Props> = ({ steps, isComplete, onClose }) => {
+  const { t } = useLocale();
   // セットアップが完了したかどうか（isCompleteがtrue、またはすべてがcompleted/skipped/errorでrunningがない）
   const allCompleted =
     isComplete ||
@@ -38,9 +40,9 @@ const ProgressBar: React.FC<Props> = ({ steps, isComplete, onClose }) => {
           <h3 className="text-lg font-semibold text-white">
             {isComplete && allCompleted
               ? hasError
-                ? 'エラーが発生しました'
-                : 'セットアップ完了'
-              : 'セットアップ進捗'}
+                ? t.progressBar.errorOccurred
+                : t.progressBar.setupComplete
+              : t.progressBar.setupProgress}
           </h3>
           <span className="text-sm text-gray-300">
             {steps.filter((s) => s.status === 'completed').length} /{' '}
@@ -122,7 +124,7 @@ const ProgressBar: React.FC<Props> = ({ steps, isComplete, onClose }) => {
               onClick={onClose}
               className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
             >
-              閉じる
+              {t.progressBar.closeButton}
             </button>
           </div>
         )}

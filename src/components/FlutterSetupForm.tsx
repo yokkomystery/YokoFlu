@@ -51,6 +51,7 @@ export default function FlutterSetupForm() {
   );
   const [appIcon, setAppIcon] = useState<string | null>(null);
   const [appIconPreview, setAppIconPreview] = useState<string | null>(null);
+  const [appIconFileName, setAppIconFileName] = useState<string | null>(null);
 
   // CLIステータス管理は useCliStatus フックに分離
   const { environmentStatus, environmentStatusError, fetchEnvironmentStatus } =
@@ -522,6 +523,7 @@ export default function FlutterSetupForm() {
                         onClick={() => {
                           setAppIcon(null);
                           setAppIconPreview(null);
+                          setAppIconFileName(null);
                         }}
                         className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
                       >
@@ -547,54 +549,65 @@ export default function FlutterSetupForm() {
                   )}
                 </div>
                 <div className="flex-1">
-                  <input
-                    type="file"
-                    accept="image/png,image/jpeg"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        // 画像の検証
-                        const img = new Image();
-                        const reader = new FileReader();
+                  <div className="relative">
+                    <input
+                      type="file"
+                      id="app-icon-input"
+                      accept="image/png,image/jpeg"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          // 画像の検証
+                          const img = new Image();
+                          const reader = new FileReader();
 
-                        reader.onload = (e) => {
-                          const base64 = e.target?.result as string;
-                          img.src = base64;
+                          reader.onload = (e) => {
+                            const base64 = e.target?.result as string;
+                            img.src = base64;
 
-                          img.onload = () => {
-                            // 正方形かチェック
-                            if (img.width !== img.height) {
-                              alert(
-                                `画像は正方形である必要があります。\n現在のサイズ: ${img.width}x${img.height}px\n\n正方形（例: 1024x1024px）の画像を選択してください。`
-                              );
-                              return;
-                            }
+                            img.onload = () => {
+                              // 正方形かチェック
+                              if (img.width !== img.height) {
+                                alert(
+                                  t.basicInfo.errorSquareRequired
+                                    .replace('{width}', String(img.width))
+                                    .replace('{height}', String(img.height))
+                                );
+                                return;
+                              }
 
-                            // サイズチェック（最小512x512px）
-                            if (img.width < 512 || img.height < 512) {
-                              alert(
-                                `画像サイズが小さすぎます。\n現在のサイズ: ${img.width}x${img.height}px\n\n最低512x512px以上、推奨1024x1024pxの画像を使用してください。`
-                              );
-                              return;
-                            }
+                              // サイズチェック（最小512x512px）
+                              if (img.width < 512 || img.height < 512) {
+                                alert(
+                                  t.basicInfo.errorSizeTooSmall
+                                    .replace('{width}', String(img.width))
+                                    .replace('{height}', String(img.height))
+                                );
+                                return;
+                              }
 
-                            // すべてOKなら設定
-                            setAppIcon(base64);
-                            setAppIconPreview(base64);
+                              // すべてOKなら設定
+                              setAppIcon(base64);
+                              setAppIconPreview(base64);
+                              setAppIconFileName(file.name);
+                            };
                           };
-                        };
 
-                        reader.readAsDataURL(file);
-                      }
-                    }}
-                    className="block w-full text-sm text-gray-400
-                      file:mr-4 file:py-2 file:px-4
-                      file:rounded-md file:border-0
-                      file:text-sm file:font-semibold
-                      file:bg-blue-600 file:text-white
-                      hover:file:bg-blue-700
-                      file:cursor-pointer cursor-pointer"
-                  />
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      className="hidden"
+                    />
+                    <label
+                      htmlFor="app-icon-input"
+                      className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-md cursor-pointer transition-colors"
+                    >
+                      {t.basicInfo.selectFile}
+                    </label>
+                    <span className="ml-3 text-sm text-gray-400">
+                      {appIconFileName || t.basicInfo.noFileSelected}
+                    </span>
+                  </div>
                   <div className="text-xs text-gray-500 mt-2 space-y-1">
                     {t.basicInfo.appIconRequirements.map((req, index) => (
                       <p key={index}>{req}</p>
@@ -728,35 +741,39 @@ export default function FlutterSetupForm() {
 
           {/* Firebase利用有無の選択 */}
           <div className="bg-gray-800 p-6 rounded-lg mt-6">
-            <h2 className="text-xl font-semibold mb-4">Firebase設定</h2>
+            <h2 className="text-xl font-semibold mb-4">
+              {t.form.firebase.title}
+            </h2>
             <div className="bg-gray-900/50 border border-gray-700 rounded-lg p-3 mb-4">
               <p className="text-sm text-gray-300 mb-2">
-                <strong>Firebaseとは？</strong>
+                <strong>{t.form.firebase.whatIsFirebase}</strong>
               </p>
               <p className="text-xs text-gray-400 mb-2">
-                Googleが提供するバックエンドサービス（BaaS）。サーバーを構築せずに、以下の機能をアプリに追加できます：
+                {t.form.firebase.firebaseDescription}
               </p>
               <ul className="text-xs text-gray-400 space-y-1 list-disc list-inside ml-2">
                 <li>
-                  <strong>Authentication</strong>: ログイン・ユーザー管理
+                  <strong>Authentication</strong>:{' '}
+                  {t.form.firebase.authenticationDesc}
                 </li>
                 <li>
-                  <strong>Firestore</strong>: データベース
+                  <strong>Firestore</strong>: {t.form.firebase.firestoreDesc}
                 </li>
                 <li>
-                  <strong>Storage</strong>: 画像・ファイル保存
+                  <strong>Storage</strong>: {t.form.firebase.storageDesc}
                 </li>
                 <li>
-                  <strong>Analytics</strong>: ユーザー行動分析
+                  <strong>Analytics</strong>: {t.form.firebase.analyticsDesc}
                 </li>
                 <li>
-                  <strong>Remote Config</strong>: アプリの動的設定変更
+                  <strong>Remote Config</strong>:{' '}
+                  {t.form.firebase.remoteConfigDesc}
                 </li>
               </ul>
             </div>
             {selectedTemplate === 'chat' && (
               <div className="mb-4 bg-yellow-900/40 border border-yellow-700 text-yellow-200 px-4 py-3 rounded text-sm">
-                注意: {t.form.firebase.required}
+                {t.form.firebase.note}: {t.form.firebase.required}
               </div>
             )}
             <label className="flex items-center space-x-3">
@@ -776,24 +793,24 @@ export default function FlutterSetupForm() {
             </label>
             {!useFirebase && (
               <div className="mt-4 bg-blue-900/30 border border-blue-700 text-blue-200 px-4 py-3 rounded text-sm">
-                {locale === 'ja'
-                  ? 'Firebaseなしでも、カウンター、TODO、ストップウォッチのテンプレートは完全に動作します'
-                  : 'Counter, TODO, and Stopwatch templates work fully without Firebase'}
+                {t.form.firebase.worksWithoutFirebase}
               </div>
             )}
 
             {/* Firebase環境選択（Firebase有効時のみ表示） */}
             {useFirebase && (
               <div className="mt-6 pt-6 border-t border-gray-700">
-                <h3 className="text-lg font-semibold mb-3">環境構成の選択</h3>
+                <h3 className="text-lg font-semibold mb-3">
+                  {t.form.firebase.environmentSetup}
+                </h3>
                 <p className="text-sm text-gray-400 mb-4">
-                  開発用（Staging）と本番用（Production）でFirebaseプロジェクトを分けることを推奨します。
+                  {t.form.firebase.environmentSetupDesc}
                 </p>
 
                 {/* 重要な注意事項 */}
                 <div className="bg-yellow-900/30 border border-yellow-700 rounded-lg p-4 mb-4">
                   <p className="text-sm text-yellow-300 font-semibold mb-1">
-                    注意: 事前にFirebaseプロジェクトを作成してください
+                    {t.form.firebase.createProjectFirst}
                   </p>
                   <p className="text-xs text-yellow-200">
                     <a
@@ -804,9 +821,9 @@ export default function FlutterSetupForm() {
                     >
                       Firebase Console
                     </a>
-                    でプロジェクトを作成後、下のボタンから選択してください。
+                    {t.form.firebase.createProjectInst}
                     <br />
-                    このツールはFirebaseプロジェクトを自動作成しません。
+                    {t.form.firebase.toolDoesNotCreate}
                   </p>
                 </div>
 
@@ -820,21 +837,23 @@ export default function FlutterSetupForm() {
                       />
                       <div className="flex-1">
                         <div className="font-medium">
-                          ステージングとプロダクション環境を分離する（推奨）
+                          {t.form.firebase.separateEnvironments}
                         </div>
                         <div className="text-xs text-gray-400 mt-1">
-                          2つのFirebaseプロジェクトを使用して、開発環境と本番環境を完全に分離
+                          {t.form.firebase.separateEnvironmentsDesc}
                         </div>
                       </div>
                     </label>
                   </div>
 
                   <div className="bg-gray-900/50 border border-gray-700 px-4 py-3 rounded text-xs text-gray-400">
-                    <p className="mb-2 font-medium">環境分離のメリット:</p>
+                    <p className="mb-2 font-medium">
+                      {t.form.firebase.environmentBenefits}
+                    </p>
                     <ul className="list-disc list-inside space-y-1 ml-2">
-                      <li>開発中のテストデータが本番環境に影響しない</li>
-                      <li>安全にデバッグや実験ができる</li>
-                      <li>本番データを保護できる</li>
+                      <li>{t.form.firebase.benefitTestData}</li>
+                      <li>{t.form.firebase.benefitSafeDebug}</li>
+                      <li>{t.form.firebase.benefitDataProtection}</li>
                     </ul>
                   </div>
 
@@ -842,11 +861,11 @@ export default function FlutterSetupForm() {
                     <div className="space-y-4 mt-4">
                       <div className="bg-blue-900/20 border border-blue-700 rounded-lg p-4">
                         <h4 className="text-sm font-semibold mb-3 text-blue-300">
-                          ステージング環境（開発・テスト用）
+                          {t.form.firebase.stagingEnvironment}
                         </h4>
                         <div>
                           <label className="block text-sm font-medium mb-2">
-                            Firebaseプロジェクトを選択
+                            {t.form.firebase.selectFirebaseProject}
                           </label>
                           <div className="space-y-2">
                             <button
@@ -859,10 +878,10 @@ export default function FlutterSetupForm() {
                               className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-medium transition-colors"
                             >
                               {watch('existingStagingProjectId')
-                                ? `選択済み: ${watch(
+                                ? `${t.form.firebase.selectedProject}: ${watch(
                                     'existingStagingProjectId'
                                   )}`
-                                : 'プロジェクトを選択'}
+                                : t.form.firebase.selectProject}
                             </button>
                             <input
                               type="hidden"
@@ -870,12 +889,11 @@ export default function FlutterSetupForm() {
                             />
                             {errors.existingStagingProjectId && (
                               <p className="text-red-400 text-sm">
-                                ステージング環境のプロジェクトを選択してください
+                                {t.form.firebase.selectStagingError}
                               </p>
                             )}
                             <p className="text-xs text-gray-400">
-                              Firebase
-                              Consoleで事前にプロジェクトを作成してから、上のボタンで選択してください
+                              {t.form.firebase.createBeforeSelect}
                             </p>
                           </div>
                         </div>
@@ -883,11 +901,11 @@ export default function FlutterSetupForm() {
 
                       <div className="bg-orange-900/20 border border-orange-700 rounded-lg p-4">
                         <h4 className="text-sm font-semibold mb-3 text-orange-300">
-                          プロダクション環境（本番用）
+                          {t.form.firebase.productionEnvironment}
                         </h4>
                         <div>
                           <label className="block text-sm font-medium mb-2">
-                            Firebaseプロジェクトを選択
+                            {t.form.firebase.selectFirebaseProject}
                           </label>
                           <div className="space-y-2">
                             <button
@@ -900,10 +918,10 @@ export default function FlutterSetupForm() {
                               className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-lg font-medium transition-colors"
                             >
                               {watch('existingProductionProjectId')
-                                ? `選択済み: ${watch(
+                                ? `${t.form.firebase.selectedProject}: ${watch(
                                     'existingProductionProjectId'
                                   )}`
-                                : 'プロジェクトを選択'}
+                                : t.form.firebase.selectProject}
                             </button>
                             <input
                               type="hidden"
@@ -911,12 +929,11 @@ export default function FlutterSetupForm() {
                             />
                             {errors.existingProductionProjectId && (
                               <p className="text-red-400 text-sm">
-                                プロダクション環境のプロジェクトを選択してください
+                                {t.form.firebase.selectProductionError}
                               </p>
                             )}
                             <p className="text-xs text-gray-400">
-                              Firebase
-                              Consoleで事前にプロジェクトを作成してから、上のボタンで選択してください
+                              {t.form.firebase.createBeforeSelect}
                             </p>
                           </div>
                         </div>
@@ -925,11 +942,11 @@ export default function FlutterSetupForm() {
                   ) : (
                     <div className="mt-4 bg-gray-900/50 border border-gray-700 rounded-lg p-4">
                       <h4 className="text-sm font-semibold mb-3">
-                        単一環境（シンプル構成）
+                        {t.form.firebase.singleEnvironment}
                       </h4>
                       <div>
                         <label className="block text-sm font-medium mb-2">
-                          Firebaseプロジェクトを選択
+                          {t.form.firebase.selectFirebaseProject}
                         </label>
                         <div className="space-y-2">
                           <button
@@ -942,8 +959,10 @@ export default function FlutterSetupForm() {
                             className="w-full bg-gray-600 hover:bg-gray-700 text-white px-4 py-3 rounded-lg font-medium transition-colors"
                           >
                             {watch('singleProjectId')
-                              ? `選択済み: ${watch('singleProjectId')}`
-                              : 'プロジェクトを選択'}
+                              ? `${t.form.firebase.selectedProject}: ${watch(
+                                  'singleProjectId'
+                                )}`
+                              : t.form.firebase.selectProject}
                           </button>
                           <input
                             type="hidden"
@@ -951,12 +970,11 @@ export default function FlutterSetupForm() {
                           />
                           {errors.singleProjectId && (
                             <p className="text-red-400 text-sm">
-                              Firebaseプロジェクトを選択してください
+                              {t.form.firebase.selectFirebaseError}
                             </p>
                           )}
                           <p className="text-xs text-gray-400">
-                            Firebase
-                            Consoleで事前にプロジェクトを作成してから、上のボタンで選択してください
+                            {t.form.firebase.createBeforeSelect}
                           </p>
                         </div>
                       </div>
@@ -975,36 +993,46 @@ export default function FlutterSetupForm() {
                 <div className="bg-gray-900/50 border border-gray-700 rounded px-3 py-2 mb-3">
                   <p className="text-xs text-gray-400">
                     <strong>{t.features.settingsScreen}</strong>{' '}
-                    {locale === 'ja' ? 'について' : ''}
+                    {t.common2.about}
                     <br />
                     {t.features.description}
                   </p>
                 </div>
                 <div className="space-y-2">
-                  {TEMPLATE_FEATURE_OPTIONS.map((feature) => (
-                    <label
-                      key={feature.id}
-                      className="flex items-start space-x-3 bg-gray-900/40 border border-gray-700 rounded-lg p-3"
-                    >
-                      <input
-                        type="checkbox"
-                        value={feature.id}
-                        defaultChecked={DEFAULT_TEMPLATE_FEATURE_IDS.includes(
-                          feature.id
-                        )}
-                        {...register('templateFeatures')}
-                        className="mt-1 h-4 w-4 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500"
-                      />
-                      <div>
-                        <div className="text-sm font-medium text-white">
-                          {feature.label}
+                  {TEMPLATE_FEATURE_OPTIONS.map((feature) => {
+                    const featureKey = feature.id.replace(
+                      /-([a-z])/g,
+                      (_, letter) => letter.toUpperCase()
+                    );
+                    const featureData =
+                      t.templateFeatures[
+                        featureKey as keyof typeof t.templateFeatures
+                      ];
+                    return (
+                      <label
+                        key={feature.id}
+                        className="flex items-start space-x-3 bg-gray-900/40 border border-gray-700 rounded-lg p-3"
+                      >
+                        <input
+                          type="checkbox"
+                          value={feature.id}
+                          defaultChecked={DEFAULT_TEMPLATE_FEATURE_IDS.includes(
+                            feature.id
+                          )}
+                          {...register('templateFeatures')}
+                          className="mt-1 h-4 w-4 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500"
+                        />
+                        <div>
+                          <div className="text-sm font-medium text-white">
+                            {featureData.label}
+                          </div>
+                          <p className="text-xs text-gray-400">
+                            {featureData.description}
+                          </p>
                         </div>
-                        <p className="text-xs text-gray-400">
-                          {feature.description}
-                        </p>
-                      </div>
-                    </label>
-                  ))}
+                      </label>
+                    );
+                  })}
                 </div>
               </div>
               <LocalizationSelector
@@ -1020,7 +1048,7 @@ export default function FlutterSetupForm() {
           {/* 高度な機能 */}
           <div className="mt-6">
             <CollapsibleSection
-              title="高度な機能（オプション）"
+              title={t.sections.advancedFeaturesOptional}
               defaultOpen={false}
             >
               <AdvancedFeaturesSelector
@@ -1034,7 +1062,7 @@ export default function FlutterSetupForm() {
           {/* Flutterビルドコマンド表示 */}
           <div className="mt-6">
             <CollapsibleSection
-              title="Flutterビルドコマンド"
+              title={t.sections.flutterBuildCommands}
               defaultOpen={false}
             >
               <BuildCommands useFirebase={useFirebase} />
@@ -1046,7 +1074,7 @@ export default function FlutterSetupForm() {
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
           >
-            {isSubmitting ? '作成中...' : 'Flutterアプリを作成'}
+            {isSubmitting ? t.form.submit.creating : t.form.submit.createApp}
           </button>
         </form>
 
@@ -1093,7 +1121,9 @@ export default function FlutterSetupForm() {
             <div className="text-sm text-gray-400 space-y-2">
               <p>
                 Created for Flutter Developers by{' '}
-                <span className="font-medium text-gray-300">横川 智士</span>
+                <span className="font-medium text-gray-300">
+                  Satoshi Yokokawa（横川 智士）
+                </span>
               </p>
               <p className="text-xs text-gray-500">
                 <a
