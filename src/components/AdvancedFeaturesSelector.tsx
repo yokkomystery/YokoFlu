@@ -52,11 +52,14 @@ const AdvancedFeaturesSelector: React.FC<Props> = ({
         const featuresInCategory = ADVANCED_FEATURE_OPTIONS.filter(
           (f) => f.category === category
         );
-        const categoryLabel = t.advancedFeaturesCategories[
-          category === 'app-management' ? 'appManagement' :
-          category === 'ui-ux' ? 'uiUx' :
-          category
-        ];
+        const categoryLabel =
+          t.advancedFeaturesCategories[
+            category === 'app-management'
+              ? 'appManagement'
+              : category === 'ui-ux'
+              ? 'uiUx'
+              : category
+          ];
         return (
           <div key={category} className="mb-6">
             <h3 className="text-lg font-medium text-blue-300 mb-3">
@@ -69,8 +72,14 @@ const AdvancedFeaturesSelector: React.FC<Props> = ({
                   selected?.includes(feature.id) ??
                   DEFAULT_ADVANCED_FEATURE_IDS.includes(feature.id);
                 // Convert feature.id from kebab-case to camelCase
-                const featureKey = feature.id.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
-                const featureData = t.advancedFeaturesList[featureKey as keyof typeof t.advancedFeaturesList];
+                const featureKey = feature.id.replace(
+                  /-([a-z])/g,
+                  (_, letter) => letter.toUpperCase()
+                );
+                const featureData =
+                  t.advancedFeaturesList[
+                    featureKey as keyof typeof t.advancedFeaturesList
+                  ];
                 return (
                   <label
                     key={feature.id}

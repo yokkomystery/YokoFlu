@@ -35,9 +35,7 @@ const LocalizationSelector: React.FC<Props> = ({
         <p className="text-xs text-gray-400 mb-1">
           {t.localization.description}
         </p>
-        <p className="text-xs text-gray-500">
-          💡 {t.localization.autoChange}
-        </p>
+        <p className="text-xs text-gray-500">💡 {t.localization.autoChange}</p>
       </div>
       <p className="text-xs text-yellow-400 mb-3">
         ⚠️ <strong>{t.common2.required}</strong>: {t.localization.requirement}
