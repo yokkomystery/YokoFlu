@@ -24,7 +24,9 @@ export interface Translations {
     firebase: string;
     basicFeatures: string;
     advancedFeatures: string;
+    advancedFeaturesOptional: string;
     buildCommands: string;
+    flutterBuildCommands: string;
   };
   basicInfo: {
     title: string;
@@ -33,6 +35,10 @@ export interface Translations {
     appIconDescription: string[];
     appIconRequirements: string[];
     appIconSet: string;
+    selectFile: string;
+    noFileSelected: string;
+    errorSquareRequired: string;
+    errorSizeTooSmall: string;
     appNameLabel: string;
     appNameExample: string;
     appNameDesc: string;
@@ -75,12 +81,47 @@ export interface Translations {
       description: string;
     };
     firebase: {
+      title: string;
+      whatIsFirebase: string;
+      firebaseDescription: string;
+      authenticationDesc: string;
+      firestoreDesc: string;
+      storageDesc: string;
+      analyticsDesc: string;
+      remoteConfigDesc: string;
       enable: string;
       description: string;
       loading: string;
       loadFailed: string;
       required: string;
       services: string;
+      worksWithoutFirebase: string;
+      environmentSetup: string;
+      environmentSetupDesc: string;
+      createProjectFirst: string;
+      createProjectInst: string;
+      toolDoesNotCreate: string;
+      separateEnvironments: string;
+      separateEnvironmentsDesc: string;
+      environmentBenefits: string;
+      benefitTestData: string;
+      benefitSafeDebug: string;
+      benefitDataProtection: string;
+      stagingEnvironment: string;
+      productionEnvironment: string;
+      singleEnvironment: string;
+      selectFirebaseProject: string;
+      selectProject: string;
+      selectedProject: string;
+      selectStagingError: string;
+      selectProductionError: string;
+      selectFirebaseError: string;
+      createBeforeSelect: string;
+      note: string;
+    };
+    submit: {
+      creating: string;
+      createApp: string;
     };
   };
   features: {
@@ -150,6 +191,62 @@ export interface Translations {
     cliNotFound: string;
   };
   author: string;
+  progressBar: {
+    setupProgress: string;
+    setupComplete: string;
+    errorOccurred: string;
+    closeButton: string;
+  };
+  projectSelector: {
+    title: string;
+    loadingProjects: string;
+    noProjects: string;
+    retry: string;
+  };
+  templateSelector: {
+    aboutTemplates: string;
+    readyToRun: string;
+    fullyCustomizable: string;
+    firebaseRequired: string;
+  };
+  common2: {
+    development: string;
+    about: string;
+    required: string;
+  };
+  templates: {
+    blank: { label: string; description: string; features: string[] };
+    counter: { label: string; description: string; features: string[] };
+    todo: { label: string; description: string; features: string[] };
+    stopwatch: { label: string; description: string; features: string[] };
+    chat: { label: string; description: string; features: string[] };
+  };
+  advancedFeaturesCategories: {
+    appManagement: string;
+    auth: string;
+    analytics: string;
+    uiUx: string;
+  };
+  advancedFeaturesList: {
+    forcedUpdate: { label: string; description: string; todoNote: string };
+    recommendedUpdate: { label: string; description: string; todoNote: string };
+    maintenanceMode: { label: string; description: string; todoNote: string };
+    appRating: { label: string; description: string; todoNote: string };
+    anonymousAuth: { label: string; description: string; todoNote: string };
+    googleSignin: { label: string; description: string; todoNote: string };
+    appleSignin: { label: string; description: string; todoNote: string };
+    analytics: { label: string; description: string; todoNote: string };
+    crashlytics: { label: string; description: string; todoNote: string };
+    pushNotifications: { label: string; description: string; todoNote: string };
+    onboarding: { label: string; description: string; todoNote: string };
+  };
+  languageOptions: {
+    en: { label: string; description: string };
+    ja: { label: string; description: string };
+  };
+  templateFeatures: {
+    settingsScreen: { label: string; description: string };
+  };
 }
 
 export const translations: Record<Locale, Translations> = {
@@ -177,7 +274,9 @@ export const translations: Record<Locale, Translations> = {
       firebase: 'Firebase設定',
       basicFeatures: '基本機能',
       advancedFeatures: '高度な機能（オプション）',
+      advancedFeaturesOptional: '高度な機能（オプション）',
       buildCommands: 'Flutterビルドコマンド',
+      flutterBuildCommands: 'Flutterビルドコマンド',
     },
     basicInfo: {
       title: '基本情報',
@@ -196,6 +295,12 @@ export const translations: Record<Locale, Translations> = {
         '✓ PNG形式（透過なし推奨）',
       ],
       appIconSet: '✓ アイコンが設定されました',
+      selectFile: 'ファイルを選択',
+      noFileSelected: '選択されていません',
+      errorSquareRequired:
+        '画像は正方形である必要があります。\n現在のサイズ: {width}x{height}px\n\n正方形（例: 1024x1024px）の画像を選択してください。',
+      errorSizeTooSmall:
+        '画像サイズが小さすぎます。\n現在のサイズ: {width}x{height}px\n\n最低512x512px以上、推奨1024x1024pxの画像を使用してください。',
       appNameLabel: 'アプリ名',
       appNameExample: '例: MyAwesomeApp',
       appNameDesc:
@@ -245,6 +350,15 @@ export const translations: Record<Locale, Translations> = {
           'アプリのベースとなる機能付きのサンプルコードが生成されます',
       },
       firebase: {
+        title: 'Firebase設定',
+        whatIsFirebase: 'Firebaseとは？',
+        firebaseDescription:
+          'Googleが提供するバックエンドサービス（BaaS）。サーバーを構築せずに、以下の機能をアプリに追加できます：',
+        authenticationDesc: 'ログイン・ユーザー管理',
+        firestoreDesc: 'データベース',
+        storageDesc: '画像・ファイル保存',
+        analyticsDesc: 'ユーザー行動分析',
+        remoteConfigDesc: 'アプリの動的設定変更',
         enable: 'Firebaseを使用する',
         description:
           'Firebaseを使用する場合は、事前にFirebaseプロジェクトを作成してください',
@@ -254,6 +368,42 @@ export const translations: Record<Locale, Translations> = {
           'チャットテンプレートはFirestoreを使用するため、Firebaseが必須です',
         services:
           '認証、Firestore、Storage、Analytics、Remote Configなどが使用可能になります',
+        worksWithoutFirebase:
+          'Firebaseなしでも、カウンター、TODO、ストップウォッチのテンプレートは完全に動作します',
+        environmentSetup: '環境構成の選択',
+        environmentSetupDesc:
+          '開発用（Staging）と本番用（Production）でFirebaseプロジェクトを分けることを推奨します。',
+        createProjectFirst:
+          '注意: 事前にFirebaseプロジェクトを作成してください',
+        createProjectInst:
+          'でプロジェクトを作成後、下のボタンから選択してください。',
+        toolDoesNotCreate:
+          'このツールはFirebaseプロジェクトを自動作成しません。',
+        separateEnvironments:
+          'ステージングとプロダクション環境を分離する（推奨）',
+        separateEnvironmentsDesc:
+          '2つのFirebaseプロジェクトを使用して、開発環境と本番環境を完全に分離',
+        environmentBenefits: '環境分離のメリット:',
+        benefitTestData: '開発中のテストデータが本番環境に影響しない',
+        benefitSafeDebug: '安全にデバッグや実験ができる',
+        benefitDataProtection: '本番データを保護できる',
+        stagingEnvironment: 'ステージング環境（開発・テスト用）',
+        productionEnvironment: 'プロダクション環境（本番用）',
+        singleEnvironment: '単一環境（シンプル構成）',
+        selectFirebaseProject: 'Firebaseプロジェクトを選択',
+        selectProject: 'プロジェクトを選択',
+        selectedProject: '選択済み',
+        selectStagingError: 'ステージング環境のプロジェクトを選択してください',
+        selectProductionError:
+          'プロダクション環境のプロジェクトを選択してください',
+        selectFirebaseError: 'Firebaseプロジェクトを選択してください',
+        createBeforeSelect:
+          'Firebase Consoleで事前にプロジェクトを作成してから、上のボタンで選択してください',
+        note: '注意',
+      },
+      submit: {
+        creating: '作成中...',
+        createApp: 'Flutterアプリを作成',
       },
     },
     features: {
@@ -340,6 +490,147 @@ export const translations: Record<Locale, Translations> = {
       cliNotFound: 'CLIが見つかりません',
     },
     author: 'Satoshi Yokokawa（横川 智士）',
+    progressBar: {
+      setupProgress: 'セットアップ進捗',
+      setupComplete: 'セットアップ完了',
+      errorOccurred: 'エラーが発生しました',
+      closeButton: '閉じる',
+    },
+    projectSelector: {
+      title: 'Firebaseプロジェクトを選択',
+      loadingProjects: 'プロジェクト一覧を読み込み中...',
+      noProjects: '利用可能なプロジェクトが見つかりません',
+      retry: '再試行',
+    },
+    templateSelector: {
+      aboutTemplates: 'テンプレートについて',
+      readyToRun: 'すぐに動作確認でき、学習や開発のスタート地点として最適',
+      fullyCustomizable: '生成後は自由にカスタマイズ・拡張が可能です',
+      firebaseRequired: 'Firebase必須',
+    },
+    common2: {
+      development: '開発',
+      about: 'について',
+      required: '必須',
+    },
+    templates: {
+      blank: {
+        label: 'ブランクテンプレート',
+        description:
+          'UI を持たない最小構成から開発したい場合に最適なシンプルテンプレートです。',
+        features: ['AppBar と Scaffold のみ', '自由度の高いカスタマイズ'],
+      },
+      counter: {
+        label: 'カウントアップアプリ',
+        description:
+          'シンプルなカウンターアプリ。Flutterの基本を学ぶのに最適です。',
+        features: ['状態管理の基礎', 'ボタンイベント処理'],
+      },
+      todo: {
+        label: 'TODOアプリ',
+        description: 'タスク管理アプリ。CRUD操作とリスト表示を実装しています。',
+        features: ['ローカルストレージ', 'リスト操作', '状態管理'],
+      },
+      stopwatch: {
+        label: 'ストップウォッチアプリ',
+        description: '時間計測アプリ。タイマーとアニメーションを学べます。',
+        features: ['タイマー処理', '時間表示', 'スタート/ストップ/リセット'],
+      },
+      chat: {
+        label: 'チャットアプリ',
+        description:
+          'リアルタイムチャットアプリ。Firestoreとの連携を含みます。',
+        features: ['Firestore連携', 'リアルタイム更新', 'メッセージ送受信'],
+      },
+    },
+    advancedFeaturesCategories: {
+      appManagement: 'アプリ管理',
+      auth: '認証機能',
+      analytics: '分析・監視',
+      uiUx: 'UI/UX機能',
+    },
+    advancedFeaturesList: {
+      forcedUpdate: {
+        label: '強制アップデート',
+        description:
+          'Remote Configでアプリバージョンを管理し、古いバージョンの使用を制限',
+        todoNote:
+          'Remote Configでforced_update_version_ios/androidキーを設定してください',
+      },
+      recommendedUpdate: {
+        label: '推奨アップデート',
+        description: 'ユーザーに新バージョンへの更新を促す（スキップ可能）',
+        todoNote:
+          'Remote Configでrecommended_update_version_ios/androidキーを設定してください',
+      },
+      maintenanceMode: {
+        label: 'メンテナンスモード',
+        description: 'Remote Configでアプリの一時停止を制御',
+        todoNote:
+          'Remote Configでis_maintenance_enabled, maintenance_title, maintenance_messageキーを設定してください',
+      },
+      appRating: {
+        label: 'アプリ評価機能',
+        description: 'ユーザーにアプリストアでの評価を促す',
+        todoNote: 'AppStoreとPlayStoreのアプリIDを設定してください',
+      },
+      anonymousAuth: {
+        label: 'Firebase匿名認証',
+        description: 'ゲストとしてログイン（後で本登録可能）',
+        todoNote: 'Firebase Consoleで匿名認証を有効化してください',
+      },
+      googleSignin: {
+        label: 'Googleサインイン',
+        description: 'Googleアカウントで認証',
+        todoNote:
+          'Firebase ConsoleでGoogle認証を有効化し、OAuth 2.0クライアントIDを設定してください',
+      },
+      appleSignin: {
+        label: 'Appleサインイン',
+        description: 'Apple IDで認証（iOS/macOS必須）',
+        todoNote:
+          'Apple Developer ConsoleでSign in with Appleを設定し、Service IDを取得してください',
+      },
+      analytics: {
+        label: 'Firebase Analytics',
+        description: 'ユーザー行動の分析とイベントトラッキング',
+        todoNote: 'Firebase ConsoleでGoogle Analyticsを有効化してください',
+      },
+      crashlytics: {
+        label: 'Crashlytics',
+        description: 'クラッシュレポートとエラートラッキング',
+        todoNote: 'Firebase ConsoleでCrashlyticsを有効化してください',
+      },
+      pushNotifications: {
+        label: 'プッシュ通知',
+        description: 'Firebase Cloud Messagingでプッシュ通知を送信',
+        todoNote:
+          'APNs証明書（iOS）とFCMサーバーキー（Android）を設定してください',
+      },
+      onboarding: {
+        label: 'オンボーディング画面',
+        description: '初回起動時のチュートリアル画面',
+        todoNote:
+          'assets/images/にオンボーディング画像（onboarding1.png等）を追加してください',
+      },
+    },
+    languageOptions: {
+      en: {
+        label: '英語 (en)',
+        description: 'グローバル向けのデフォルト翻訳ファイルを生成します。',
+      },
+      ja: {
+        label: '日本語 (ja)',
+        description: '日本語 UI 文言のテンプレートを生成します。',
+      },
+    },
+    templateFeatures: {
+      settingsScreen: {
+        label: '設定画面テンプレート',
+        description:
+          '設定画面（テーマ切り替え・言語選択など）を自動生成します。',
+      },
+    },
   },
   en: {
     common: {
@@ -365,7 +656,9 @@ export const translations: Record<Locale, Translations> = {
       firebase: 'Firebase Configuration',
       basicFeatures: 'Basic Features',
       advancedFeatures: 'Advanced Features (Optional)',
+      advancedFeaturesOptional: 'Advanced Features (Optional)',
       buildCommands: 'Flutter Build Commands',
+      flutterBuildCommands: 'Flutter Build Commands',
     },
     basicInfo: {
       title: 'Basic Information',
@@ -384,6 +677,12 @@ export const translations: Record<Locale, Translations> = {
         '✓ PNG format (no transparency recommended)',
       ],
       appIconSet: '✓ Icon is set',
+      selectFile: 'Select File',
+      noFileSelected: 'No file selected',
+      errorSquareRequired:
+        'Image must be square.\nCurrent size: {width}x{height}px\n\nPlease select a square image (e.g., 1024x1024px).',
+      errorSizeTooSmall:
+        'Image size is too small.\nCurrent size: {width}x{height}px\n\nPlease use an image with a minimum of 512x512px, recommended 1024x1024px.',
       appNameLabel: 'App Name',
       appNameExample: 'Example: MyAwesomeApp',
       appNameDesc:
@@ -434,6 +733,15 @@ export const translations: Record<Locale, Translations> = {
           'Sample code with features will be generated as base for your app',
       },
       firebase: {
+        title: 'Firebase Configuration',
+        whatIsFirebase: 'What is Firebase?',
+        firebaseDescription:
+          'A Backend as a Service (BaaS) provided by Google. Add the following features to your app without building a server:',
+        authenticationDesc: 'Login and user management',
+        firestoreDesc: 'Database',
+        storageDesc: 'Image and file storage',
+        analyticsDesc: 'User behavior analysis',
+        remoteConfigDesc: 'Dynamic app configuration',
         enable: 'Use Firebase',
         description:
           'If you use Firebase, please create a Firebase project first',
@@ -442,6 +750,41 @@ export const translations: Record<Locale, Translations> = {
         required: 'Chat template requires Firebase as it uses Firestore',
         services:
           'Authentication, Firestore, Storage, Analytics, Remote Config, etc. are available',
+        worksWithoutFirebase:
+          'Counter, TODO, and Stopwatch templates work fully without Firebase',
+        environmentSetup: 'Environment Configuration',
+        environmentSetupDesc:
+          'It is recommended to separate Firebase projects for development (Staging) and production (Production).',
+        createProjectFirst: 'Note: Please create a Firebase project first',
+        createProjectInst:
+          'After creating a project in the console, select it using the button below.',
+        toolDoesNotCreate:
+          'This tool does not automatically create Firebase projects.',
+        separateEnvironments:
+          'Separate Staging and Production Environments (Recommended)',
+        separateEnvironmentsDesc:
+          'Use two Firebase projects to completely separate development and production environments',
+        environmentBenefits: 'Benefits of Environment Separation:',
+        benefitTestData:
+          'Test data during development does not affect production',
+        benefitSafeDebug: 'Safe debugging and experimentation',
+        benefitDataProtection: 'Protect production data',
+        stagingEnvironment: 'Staging Environment (Development/Testing)',
+        productionEnvironment: 'Production Environment (Live)',
+        singleEnvironment: 'Single Environment (Simple Configuration)',
+        selectFirebaseProject: 'Select Firebase Project',
+        selectProject: 'Select Project',
+        selectedProject: 'Selected',
+        selectStagingError: 'Please select a staging environment project',
+        selectProductionError: 'Please select a production environment project',
+        selectFirebaseError: 'Please select a Firebase project',
+        createBeforeSelect:
+          'Create a project in Firebase Console first, then select it using the button above',
+        note: 'Note',
+      },
+      submit: {
+        creating: 'Creating...',
+        createApp: 'Create Flutter App',
       },
     },
     features: {
@@ -528,5 +871,145 @@ export const translations: Record<Locale, Translations> = {
       cliNotFound: 'CLI not found',
     },
     author: 'Satoshi Yokokawa（横川 智士）',
+    progressBar: {
+      setupProgress: 'Setup Progress',
+      setupComplete: 'Setup Complete',
+      errorOccurred: 'Error Occurred',
+      closeButton: 'Close',
+    },
+    projectSelector: {
+      title: 'Select Firebase Project',
+      loadingProjects: 'Loading projects...',
+      noProjects: 'No projects found',
+      retry: 'Retry',
+    },
+    templateSelector: {
+      aboutTemplates: 'About Templates',
+      readyToRun:
+        'Ready to run immediately, ideal for learning and development',
+      fullyCustomizable: 'Fully customizable and extensible after generation',
+      firebaseRequired: 'Firebase Required',
+    },
+    common2: {
+      development: 'Development',
+      about: 'About',
+      required: 'Required',
+    },
+    templates: {
+      blank: {
+        label: 'Blank Template',
+        description:
+          'A simple template optimal for starting development from minimal configuration without UI.',
+        features: ['AppBar and Scaffold only', 'Highly customizable'],
+      },
+      counter: {
+        label: 'Counter App',
+        description:
+          'A simple counter app. Perfect for learning Flutter basics.',
+        features: ['State management basics', 'Button event handling'],
+      },
+      todo: {
+        label: 'TODO App',
+        description:
+          'A task management app. Implements CRUD operations and list display.',
+        features: ['Local storage', 'List operations', 'State management'],
+      },
+      stopwatch: {
+        label: 'Stopwatch App',
+        description: 'A time measurement app. Learn timers and animations.',
+        features: ['Timer processing', 'Time display', 'Start/Stop/Reset'],
+      },
+      chat: {
+        label: 'Chat App',
+        description: 'A real-time chat app. Includes Firestore integration.',
+        features: ['Firestore integration', 'Real-time updates', 'Messaging'],
+      },
+    },
+    advancedFeaturesCategories: {
+      appManagement: 'App Management',
+      auth: 'Authentication',
+      analytics: 'Analytics & Monitoring',
+      uiUx: 'UI/UX Features',
+    },
+    advancedFeaturesList: {
+      forcedUpdate: {
+        label: 'Forced Update',
+        description:
+          'Manage app versions with Remote Config and restrict old version usage',
+        todoNote: 'Set forced_update_version_ios/android keys in Remote Config',
+      },
+      recommendedUpdate: {
+        label: 'Recommended Update',
+        description: 'Prompt users to update to new version (skippable)',
+        todoNote:
+          'Set recommended_update_version_ios/android keys in Remote Config',
+      },
+      maintenanceMode: {
+        label: 'Maintenance Mode',
+        description: 'Control app suspension with Remote Config',
+        todoNote:
+          'Set is_maintenance_enabled, maintenance_title, maintenance_message keys in Remote Config',
+      },
+      appRating: {
+        label: 'App Rating',
+        description: 'Prompt users to rate app on app stores',
+        todoNote: 'Set AppStore and PlayStore app IDs',
+      },
+      anonymousAuth: {
+        label: 'Firebase Anonymous Auth',
+        description: 'Login as guest (can upgrade to full registration later)',
+        todoNote: 'Enable anonymous authentication in Firebase Console',
+      },
+      googleSignin: {
+        label: 'Google Sign-In',
+        description: 'Authenticate with Google account',
+        todoNote:
+          'Enable Google authentication in Firebase Console and set OAuth 2.0 client ID',
+      },
+      appleSignin: {
+        label: 'Apple Sign-In',
+        description: 'Authenticate with Apple ID (iOS/macOS required)',
+        todoNote:
+          'Set up Sign in with Apple in Apple Developer Console and obtain Service ID',
+      },
+      analytics: {
+        label: 'Firebase Analytics',
+        description: 'User behavior analysis and event tracking',
+        todoNote: 'Enable Google Analytics in Firebase Console',
+      },
+      crashlytics: {
+        label: 'Crashlytics',
+        description: 'Crash reports and error tracking',
+        todoNote: 'Enable Crashlytics in Firebase Console',
+      },
+      pushNotifications: {
+        label: 'Push Notifications',
+        description: 'Send push notifications with Firebase Cloud Messaging',
+        todoNote: 'Set APNs certificate (iOS) and FCM server key (Android)',
+      },
+      onboarding: {
+        label: 'Onboarding Screen',
+        description: 'Tutorial screen for first-time app launch',
+        todoNote:
+          'Add onboarding images (onboarding1.png, etc.) to assets/images/',
+      },
+    },
+    languageOptions: {
+      en: {
+        label: 'English (en)',
+        description: 'Generate default translation files for global audience.',
+      },
+      ja: {
+        label: 'Japanese (ja)',
+        description: 'Generate Japanese UI text templates.',
+      },
+    },
+    templateFeatures: {
+      settingsScreen: {
+        label: 'Settings Screen Template',
+        description:
+          'Automatically generate settings screen (theme switching, language selection, etc.).',
+      },
+    },
   },
 };
