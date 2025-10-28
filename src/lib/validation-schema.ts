@@ -68,14 +68,15 @@ export function createSetupSchema(useFirebase: boolean) {
         if (!data.existingStagingProjectId) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: 'Staging環境のFirebaseプロジェクトIDを入力してください',
+            message: 'ステージング環境のFirebaseプロジェクトを選択してください',
             path: ['existingStagingProjectId'],
           });
         }
         if (!data.existingProductionProjectId) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: 'Production環境のFirebaseプロジェクトIDを入力してください',
+            message:
+              'プロダクション環境のFirebaseプロジェクトを選択してください',
             path: ['existingProductionProjectId'],
           });
         }
@@ -84,7 +85,7 @@ export function createSetupSchema(useFirebase: boolean) {
         if (!data.singleProjectId) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: 'FirebaseプロジェクトIDを入力してください',
+            message: 'Firebaseプロジェクトを選択してください',
             path: ['singleProjectId'],
           });
         }

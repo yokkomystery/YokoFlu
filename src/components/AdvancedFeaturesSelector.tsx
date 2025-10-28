@@ -15,7 +15,11 @@ interface Props {
   onChange: (next: string[]) => void;
 }
 
-const AdvancedFeaturesSelector: React.FC<Props> = ({ useFirebase, selected, onChange }) => {
+const AdvancedFeaturesSelector: React.FC<Props> = ({
+  useFirebase,
+  selected,
+  onChange,
+}) => {
   const { t, locale } = useLocale();
   const toggle = (id: string, checked: boolean) => {
     const current = selected ?? [];
@@ -26,7 +30,12 @@ const AdvancedFeaturesSelector: React.FC<Props> = ({ useFirebase, selected, onCh
     }
   };
 
-  const categories: AdvancedFeatureCategory[] = ['app-management', 'auth', 'analytics', 'ui-ux'];
+  const categories: AdvancedFeatureCategory[] = [
+    'app-management',
+    'auth',
+    'analytics',
+    'ui-ux',
+  ];
 
   return (
     <div>
@@ -40,7 +49,9 @@ const AdvancedFeaturesSelector: React.FC<Props> = ({ useFirebase, selected, onCh
       </div>
 
       {categories.map((category) => {
-        const featuresInCategory = ADVANCED_FEATURE_OPTIONS.filter((f) => f.category === category);
+        const featuresInCategory = ADVANCED_FEATURE_OPTIONS.filter(
+          (f) => f.category === category
+        );
         return (
           <div key={category} className="mb-6">
             <h3 className="text-lg font-medium text-blue-300 mb-3">
@@ -49,12 +60,16 @@ const AdvancedFeaturesSelector: React.FC<Props> = ({ useFirebase, selected, onCh
             <div className="space-y-2">
               {featuresInCategory.map((feature) => {
                 const isDisabled = feature.requiresFirebase && !useFirebase;
-                const checked = selected?.includes(feature.id) ?? DEFAULT_ADVANCED_FEATURE_IDS.includes(feature.id);
+                const checked =
+                  selected?.includes(feature.id) ??
+                  DEFAULT_ADVANCED_FEATURE_IDS.includes(feature.id);
                 return (
                   <label
                     key={feature.id}
                     className={`flex items-start space-x-3 bg-gray-900/40 border rounded-lg p-3 ${
-                      isDisabled ? 'border-gray-700 opacity-60' : 'border-gray-700'
+                      isDisabled
+                        ? 'border-gray-700 opacity-60'
+                        : 'border-gray-700'
                     }`}
                   >
                     <input
@@ -67,17 +82,23 @@ const AdvancedFeaturesSelector: React.FC<Props> = ({ useFirebase, selected, onCh
                     />
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-sm font-medium text-white">{feature.label}</span>
+                        <span className="text-sm font-medium text-white">
+                          {feature.label}
+                        </span>
                         {feature.requiresFirebase && (
                           <span className="text-xs bg-yellow-900 text-yellow-300 px-2 py-0.5 rounded-full">
-                            {locale === 'ja' ? 'Firebase必須' : 'Firebase Required'}
+                            {locale === 'ja'
+                              ? 'Firebase必須'
+                              : 'Firebase Required'}
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-gray-400 mb-2">{feature.description}</p>
+                      <p className="text-xs text-gray-400 mb-2">
+                        {feature.description}
+                      </p>
                       {feature.todoNote && (
                         <p className="text-xs text-blue-300 flex items-start gap-1">
-                          <span>📝</span>
+                          <span className="font-semibold">NOTE:</span>
                           <span>{feature.todoNote}</span>
                         </p>
                       )}
@@ -94,4 +115,3 @@ const AdvancedFeaturesSelector: React.FC<Props> = ({ useFirebase, selected, onCh
 };
 
 export default AdvancedFeaturesSelector;
-

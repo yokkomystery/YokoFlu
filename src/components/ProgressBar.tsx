@@ -38,8 +38,8 @@ const ProgressBar: React.FC<Props> = ({ steps, isComplete, onClose }) => {
           <h3 className="text-lg font-semibold text-white">
             {isComplete && allCompleted
               ? hasError
-                ? '⚠️ エラーが発生しました'
-                : '✅ セットアップ完了！'
+                ? 'エラーが発生しました'
+                : 'セットアップ完了'
               : 'セットアップ進捗'}
           </h3>
           <span className="text-sm text-gray-300">

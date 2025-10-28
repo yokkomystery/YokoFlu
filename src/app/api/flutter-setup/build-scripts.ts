@@ -105,16 +105,50 @@ ${formatDependencyVersions(packageVersions, useFirebase).dependencies}`;
       `📦 高度な機能のパッケージを追加: ${additionalDependencies.join(', ')}`
     );
 
-    // 各依存関係のバージョンマップ（高度な機能用）
     const advancedFeatureVersions: Record<string, string> = {
       in_app_review: packageVersions.in_app_review,
       google_sign_in: packageVersions.google_sign_in,
       sign_in_with_apple: packageVersions.sign_in_with_apple,
+      package_info_plus: packageVersions.package_info_plus,
+      device_info_plus: packageVersions.device_info_plus,
+      firebase_messaging: packageVersions.firebase_messaging,
+      url_launcher: packageVersions.url_launcher,
+      shared_preferences: packageVersions.shared_preferences,
     };
+
+    const basePackages = new Set([
+      'flutter_riverpod',
+      'shared_preferences',
+      // Firebaseを使用する場合は、これらも基本パッケージとして含まれる
+      ...(useFirebase
+        ? [
+            'firebase_core',
+            'firebase_auth',
+            'cloud_firestore',
+            'firebase_storage',
+            'firebase_analytics',
+            'firebase_crashlytics',
+            'firebase_messaging',
+            'firebase_remote_config',
+          ]
+        : []),
+    ]);
 
     const linesToAdd: string[] = [];
     additionalDependencies.forEach((dep) => {
-      const version = advancedFeatureVersions[dep] || '^1.0.0';
+      if (basePackages.has(dep)) {
+        console.log(`  ⏭️  ${dep}: 基本パッケージとして既に含まれています`);
+        return;
+      }
+
+      const version = advancedFeatureVersions[dep];
+      if (!version) {
+        console.warn(
+          `⚠️  ${dep}: バージョン情報が見つかりません。スキップします。`
+        );
+        return;
+      }
+
       linesToAdd.push(`  ${dep}: ${version}`);
       console.log(`  📌 ${dep}: ${version}`);
     });

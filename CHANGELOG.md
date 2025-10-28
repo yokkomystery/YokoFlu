@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+#### Authentication UI (New Feature)
+- 🔐 **Complete authentication UI implementation**
+  - Login screen with support for Anonymous, Google, and Apple sign-in
+  - Authentication state management using Riverpod providers
+  - Integrated sign-in/sign-out functionality in settings screen
+  - User profile display with avatar and account details
+  - Account upgrade flow for anonymous users
+  - Account deletion with confirmation dialog
+- 📱 **New template files**
+  - `auth_screen.dart` - Beautiful login screen with gradient background
+  - `auth_provider.dart` - Centralized auth state management
+  - Updated `settings_screen.dart` with auth section
+- 🌍 **Multilingual support**
+  - Added 20+ new localization keys for authentication UI
+  - Full support for Japanese and English
+- 🎨 **Modern UI/UX**
+  - Platform-specific sign-in buttons (Google, Apple, Anonymous)
+  - Conditional rendering based on selected auth methods
+  - Smooth transitions and user feedback
+- ✅ **Auto-generation**
+  - Auth UI files automatically generated when auth features are selected
+  - Seamless integration with existing advanced features system
+
 ## [1.0.0] - 2025-10-28
 
 ### Added
