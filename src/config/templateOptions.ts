@@ -58,6 +58,7 @@ export interface TemplateFeatureOption {
   label: string;
   description: string;
   defaultEnabled: boolean;
+  dependencies: string[]; // 必要なパッケージ
 }
 
 export const TEMPLATE_FEATURE_OPTIONS: TemplateFeatureOption[] = [
@@ -66,6 +67,7 @@ export const TEMPLATE_FEATURE_OPTIONS: TemplateFeatureOption[] = [
     label: '設定画面テンプレート',
     description: '設定画面（テーマ切り替え・言語選択など）を自動生成します。',
     defaultEnabled: true,
+    dependencies: ['package_info_plus', 'url_launcher'],
   },
 ];
 
@@ -208,7 +210,12 @@ export const ADVANCED_FEATURE_OPTIONS: AdvancedFeatureOption[] = [
     description: 'ゲストとしてログイン（後で本登録可能）',
     category: 'auth',
     requiresFirebase: true,
-    dependencies: ['firebase_auth'],
+    dependencies: [
+      'firebase_auth',
+      'firebase_messaging',
+      'package_info_plus',
+      'device_info_plus',
+    ],
     defaultEnabled: false,
     todoNote: 'Firebase Consoleで匿名認証を有効化してください',
   },
@@ -218,7 +225,13 @@ export const ADVANCED_FEATURE_OPTIONS: AdvancedFeatureOption[] = [
     description: 'Googleアカウントで認証',
     category: 'auth',
     requiresFirebase: true,
-    dependencies: ['firebase_auth', 'google_sign_in'],
+    dependencies: [
+      'firebase_auth',
+      'google_sign_in',
+      'firebase_messaging',
+      'package_info_plus',
+      'device_info_plus',
+    ],
     defaultEnabled: false,
     todoNote:
       'Firebase ConsoleでGoogle認証を有効化し、OAuth 2.0クライアントIDを設定してください',
@@ -229,7 +242,13 @@ export const ADVANCED_FEATURE_OPTIONS: AdvancedFeatureOption[] = [
     description: 'Apple IDで認証（iOS/macOS必須）',
     category: 'auth',
     requiresFirebase: true,
-    dependencies: ['firebase_auth', 'sign_in_with_apple'],
+    dependencies: [
+      'firebase_auth',
+      'sign_in_with_apple',
+      'firebase_messaging',
+      'package_info_plus',
+      'device_info_plus',
+    ],
     defaultEnabled: false,
     todoNote:
       'Apple Developer ConsoleでSign in with Appleを設定し、Service IDを取得してください',

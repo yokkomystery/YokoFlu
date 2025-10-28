@@ -1,14 +1,19 @@
 import { updateProgress, recordStepResult } from '../utils';
 import { updatePubspecYaml } from '../build-scripts';
 import { getAdvancedFeatureDependencies } from '../advanced-features-utils';
+import { getTemplateFeatureDependencies } from '../settings-utils';
 import { detectOptimalPackageVersions } from '../package-versions';
 
-import { AdvancedFeatureId } from '../../../../config/templateOptions';
+import {
+  AdvancedFeatureId,
+  TemplateFeatureId,
+} from '../../../../config/templateOptions';
 
 export async function runPubspecUpdate(
   fullOutputPath: string,
   useFirebase: boolean,
-  advancedFeatures: AdvancedFeatureId[]
+  advancedFeatures: AdvancedFeatureId[],
+  templateFeatures: TemplateFeatureId[]
 ) {
   updateProgress(
     'pubspec-update',
@@ -39,11 +44,14 @@ export async function runPubspecUpdate(
       );
     }
 
-    const additionalDeps = getAdvancedFeatureDependencies(advancedFeatures);
+    const templateDeps = getTemplateFeatureDependencies(templateFeatures);
+    const advancedDeps = getAdvancedFeatureDependencies(advancedFeatures);
+    const allDeps = Array.from(new Set([...templateDeps, ...advancedDeps]));
+
     const pubspecPath = updatePubspecYaml(
       fullOutputPath,
       useFirebase,
-      additionalDeps,
+      allDeps,
       versions // 検出されたバージョンセットを渡す
     );
 

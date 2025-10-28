@@ -115,13 +115,6 @@ export async function runFirebaseInit({
         `テスト環境「${resolvedStagingProjectId}」を設定中...`
       );
 
-      const pubspecPath = path.join(fullOutputPath, 'pubspec.yaml');
-      if (fs.existsSync(pubspecPath)) {
-        const pubspecContent = fs.readFileSync(pubspecPath, 'utf8');
-        console.log('📄 pubspec.yamlの内容（flutterfire configure実行前）:');
-        console.log(pubspecContent.substring(0, 200) + '...');
-      }
-
       const stagingConfigCommand = `cd ${fullOutputPath} && flutterfire configure --project=${resolvedStagingProjectId} --out=lib/firebase_options_staging.dart --ios-bundle-id=${stagingBundleId} --android-package-name=${stagingPackageName} --yes --platforms=android,ios`;
       await execAsync(stagingConfigCommand, {
         timeout: 60000,

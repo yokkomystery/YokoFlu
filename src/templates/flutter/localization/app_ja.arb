@@ -258,5 +258,17 @@
   "cancel": "キャンセル",
   "@cancel": {
     "description": "キャンセルボタンのラベル"
+  },
+  "networkError": "ネットワークエラーが発生しました。接続を確認してもう一度お試しください。",
+  "@networkError": {
+    "description": "ネットワークエラーのメッセージ"
+  },
+  "accountDisabled": "このアカウントは無効化されています",
+  "@accountDisabled": {
+    "description": "アカウントが無効化されている場合のエラーメッセージ"
+  },
+  "accountExistsWithDifferentCredential": "別のサインイン方法で既にアカウントが存在します",
+  "@accountExistsWithDifferentCredential": {
+    "description": "異なる認証方法でアカウントが存在する場合のエラーメッセージ"
   }
 }

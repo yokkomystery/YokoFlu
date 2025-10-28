@@ -1,6 +1,10 @@
 import path from 'path';
 import { copyTemplateFile, getTemplatePath } from './template-utils';
-import { AdvancedFeatureId } from '../../../config/templateOptions';
+import {
+  AdvancedFeatureId,
+  TemplateFeatureId,
+  TEMPLATE_FEATURE_OPTIONS,
+} from '../../../config/templateOptions';
 
 interface SettingsScreenOptions {
   advancedFeatures?: AdvancedFeatureId[];
@@ -67,4 +71,20 @@ export function createSettingsScreen(
 
   console.log('✅ 設定画面を作成しました');
   return settingsScreenPath;
+}
+
+// テンプレート機能の依存関係を取得
+export function getTemplateFeatureDependencies(
+  selectedFeatures: TemplateFeatureId[]
+): string[] {
+  const dependencies = new Set<string>();
+
+  selectedFeatures.forEach((featureId) => {
+    const feature = TEMPLATE_FEATURE_OPTIONS.find((f) => f.id === featureId);
+    if (feature) {
+      feature.dependencies.forEach((dep) => dependencies.add(dep));
+    }
+  });
+
+  return Array.from(dependencies);
 }

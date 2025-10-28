@@ -258,5 +258,17 @@
   "cancel": "Cancel",
   "@cancel": {
     "description": "Cancel button label"
+  },
+  "networkError": "Network error occurred. Please check your connection and try again.",
+  "@networkError": {
+    "description": "Error message for network errors"
+  },
+  "accountDisabled": "This account has been disabled",
+  "@accountDisabled": {
+    "description": "Error message when account is disabled"
+  },
+  "accountExistsWithDifferentCredential": "An account already exists with a different sign-in method",
+  "@accountExistsWithDifferentCredential": {
+    "description": "Error message when account exists with different credential"
   }
 }

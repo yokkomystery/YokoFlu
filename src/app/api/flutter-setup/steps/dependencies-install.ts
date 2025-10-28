@@ -13,13 +13,6 @@ export async function runDependenciesInstall(fullOutputPath: string) {
     '依存関係をインストール中...'
   );
   try {
-    const pubspecPath = path.join(fullOutputPath, 'pubspec.yaml');
-    if (fs.existsSync(pubspecPath)) {
-      const pubspecContent = fs.readFileSync(pubspecPath, 'utf8');
-      console.log('📄 pubspec.yamlの内容（flutter pub get実行前）:');
-      console.log(pubspecContent.substring(0, 200) + '...');
-    }
-
     await execAsync(`cd ${fullOutputPath} && flutter pub get`);
 
     updateProgress(
