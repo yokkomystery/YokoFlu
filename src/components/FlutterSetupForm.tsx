@@ -975,36 +975,40 @@ export default function FlutterSetupForm() {
                 <div className="bg-gray-900/50 border border-gray-700 rounded px-3 py-2 mb-3">
                   <p className="text-xs text-gray-400">
                     <strong>{t.features.settingsScreen}</strong>{' '}
-                    {locale === 'ja' ? 'について' : ''}
+                    {t.common2.about}
                     <br />
                     {t.features.description}
                   </p>
                 </div>
                 <div className="space-y-2">
-                  {TEMPLATE_FEATURE_OPTIONS.map((feature) => (
-                    <label
-                      key={feature.id}
-                      className="flex items-start space-x-3 bg-gray-900/40 border border-gray-700 rounded-lg p-3"
-                    >
-                      <input
-                        type="checkbox"
-                        value={feature.id}
-                        defaultChecked={DEFAULT_TEMPLATE_FEATURE_IDS.includes(
-                          feature.id
-                        )}
-                        {...register('templateFeatures')}
-                        className="mt-1 h-4 w-4 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500"
-                      />
-                      <div>
-                        <div className="text-sm font-medium text-white">
-                          {feature.label}
+                  {TEMPLATE_FEATURE_OPTIONS.map((feature) => {
+                    const featureKey = feature.id.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+                    const featureData = t.templateFeatures[featureKey as keyof typeof t.templateFeatures];
+                    return (
+                      <label
+                        key={feature.id}
+                        className="flex items-start space-x-3 bg-gray-900/40 border border-gray-700 rounded-lg p-3"
+                      >
+                        <input
+                          type="checkbox"
+                          value={feature.id}
+                          defaultChecked={DEFAULT_TEMPLATE_FEATURE_IDS.includes(
+                            feature.id
+                          )}
+                          {...register('templateFeatures')}
+                          className="mt-1 h-4 w-4 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500"
+                        />
+                        <div>
+                          <div className="text-sm font-medium text-white">
+                            {featureData.label}
+                          </div>
+                          <p className="text-xs text-gray-400">
+                            {featureData.description}
+                          </p>
                         </div>
-                        <p className="text-xs text-gray-400">
-                          {feature.description}
-                        </p>
-                      </div>
-                    </label>
-                  ))}
+                      </label>
+                    );
+                  })}
                 </div>
               </div>
               <LocalizationSelector
