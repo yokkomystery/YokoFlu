@@ -1,0 +1,35 @@
+name: Dependabot Auto-merge
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: Check PR
+        uses: actions/checkout@v4
+      - name: Wait for status checks
+        uses: lewagon/wait-on-check-action@v1.3.4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 30
+          check-regexp: '^.*$'
+      # NOTE: 自動マージは手動レビューが推奨のためコメントアウト
+      # 自動マージが必要な場合のみ有効化してください
+      # 有効化: gh pr merge --auto --squash のコメントを外す
+      # - name: Enable auto-merge
+      #   run: gh pr merge --auto --squash "$PR_URL"
+      #   env:
+      #     PR_URL: ${{ github.event.pull_request.html_url }}
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 代わりにラベルを追加して通知
+      - name: Label PR
+        run: gh pr edit "$PR_URL" --add-label "dependencies"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,158 @@
+{
+  "@@locale": "ja",
+  "settingsScreenTitle": "設定",
+  "@settingsScreenTitle": {
+    "description": "設定画面のタイトル"
+  },
+  "settingsGeneralSectionTitle": "全般",
+  "@settingsGeneralSectionTitle": {
+    "description": "設定画面の全般セクションのタイトル"
+  },
+  "settingsThemeSettingListTileTitle": "テーマ設定",
+  "@settingsThemeSettingListTileTitle": {
+    "description": "設定画面のテーマ設定メニュー"
+  },
+  "settingsNotificationSettingListTileTitle": "通知設定",
+  "@settingsNotificationSettingListTileTitle": {
+    "description": "設定画面の通知設定メニュー"
+  },
+  "settingsSelectThemeDialogTitle": "テーマを選択",
+  "@settingsSelectThemeDialogTitle": {
+    "description": "テーマ選択ダイアログのタイトル"
+  },
+  "settingsThemeLightMode": "ライトモード",
+  "@settingsThemeLightMode": {
+    "description": "ライトモードオプション"
+  },
+  "settingsThemeDarkMode": "ダークモード",
+  "@settingsThemeDarkMode": {
+    "description": "ダークモードオプション"
+  },
+  "settingsThemeSystemMode": "システム設定に従う",
+  "@settingsThemeSystemMode": {
+    "description": "システムデフォルトテーマオプション"
+  },
+  "settingsSupportSectionTitle": "サポート",
+  "@settingsSupportSectionTitle": {
+    "description": "サポートセクションのタイトル"
+  },
+  "settingsTermsOfServiceListTileTitle": "利用規約",
+  "@settingsTermsOfServiceListTileTitle": {
+    "description": "利用規約メニュー項目"
+  },
+  "settingsPrivacyPolicyListTileTitle": "プライバシーポリシー",
+  "@settingsPrivacyPolicyListTileTitle": {
+    "description": "プライバシーポリシーメニュー項目"
+  },
+  "settingsContactUsListTileTitle": "お問い合わせ",
+  "@settingsContactUsListTileTitle": {
+    "description": "お問い合わせメニュー項目"
+  },
+  "settingsAboutSectionTitle": "アプリについて",
+  "@settingsAboutSectionTitle": {
+    "description": "アプリについてセクションのタイトル"
+  },
+  "settingsAboutAppListTileTitle": "このアプリについて",
+  "@settingsAboutAppListTileTitle": {
+    "description": "アプリについてメニュー項目"
+  },
+  "settingsLicensesListTileTitle": "オープンソースライセンス",
+  "@settingsLicensesListTileTitle": {
+    "description": "ライセンスメニュー項目"
+  },
+  "settingsButtonLabelCancel": "キャンセル",
+  "@settingsButtonLabelCancel": {
+    "description": "キャンセルボタンのラベル"
+  },
+  "settingsEmailSubjectContactUs": "[{appName}]問い合わせ",
+  "@settingsEmailSubjectContactUs": {
+    "description": "お問い合わせメールの件名",
+    "placeholders": {
+      "appName": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsEmailBodyContactUsWithoutUserIdNew": "OS: {osVersion}\nアプリバージョン: {appVersion}\nデバイス: {deviceModel}\nロケール: {locale}",
+  "@settingsEmailBodyContactUsWithoutUserIdNew": {
+    "description": "ユーザーIDなしのお問い合わせメール本文",
+    "placeholders": {
+      "osVersion": {
+        "type": "String"
+      },
+      "appVersion": {
+        "type": "String"
+      },
+      "deviceModel": {
+        "type": "String"
+      },
+      "locale": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSnackbarCannotLaunchEmail": "メールアプリを起動できませんでした。",
+  "@settingsSnackbarCannotLaunchEmail": {
+    "description": "メールアプリが起動できない場合のエラーメッセージ"
+  },
+  "rateAppTitle": "アプリを評価",
+  "@rateAppTitle": {
+    "description": "アプリ評価メニュー項目"
+  },
+  "cannotOpenStoreErrorSnackbar": "ストアを開けませんでした。",
+  "@cannotOpenStoreErrorSnackbar": {
+    "description": "ストアが開けない場合のエラーメッセージ"
+  },
+  "updateRequiredTitle": "アップデートが必要です",
+  "@updateRequiredTitle": {
+    "description": "強制アップデートダイアログのタイトル"
+  },
+  "updateRequiredBody": "アプリを続行するには新しいバージョンが必要です。アプリをアップデートしてください。",
+  "@updateRequiredBody": {
+    "description": "強制アップデートダイアログのメッセージ"
+  },
+  "updateButton": "アップデート",
+  "@updateButton": {
+    "description": "アップデートボタンのラベル"
+  },
+  "updateAvailableTitle": "アップデートが利用可能です",
+  "@updateAvailableTitle": {
+    "description": "推奨アップデートダイアログのタイトル"
+  },
+  "updateAvailableBody": "アプリの新しいバージョンが利用可能です。今すぐアップデートしますか？",
+  "@updateAvailableBody": {
+    "description": "推奨アップデートダイアログのメッセージ"
+  },
+  "laterButton": "後で",
+  "@laterButton": {
+    "description": "アップデートダイアログの後でボタンのラベル"
+  },
+  "maintenanceTitleDefault": "メンテナンス中",
+  "@maintenanceTitleDefault": {
+    "description": "メンテナンスダイアログのデフォルトタイトル"
+  },
+  "maintenanceMessageDefault": "アプリは現在メンテナンス中です。しばらくしてからお試しください。",
+  "@maintenanceMessageDefault": {
+    "description": "メンテナンスダイアログのデフォルトメッセージ"
+  },
+  "homeTabLabel": "ホーム",
+  "@homeTabLabel": {
+    "description": "ホームタブのラベル"
+  },
+  "homePlaceholderTitle": "新しい Flutter アプリへようこそ",
+  "@homePlaceholderTitle": {
+    "description": "デフォルトのホームプレースホルダーに表示するタイトル"
+  },
+  "homePlaceholderDescription": "ここにダッシュボードやタイムラインなど、ユーザー向けのメインコンテンツを配置してください。",
+  "@homePlaceholderDescription": {
+    "description": "デフォルトのホームプレースホルダーに表示する説明文"
+  },
+  "homePlaceholderActionLabel": "ウィジェットを追加する",
+  "@homePlaceholderActionLabel": {
+    "description": "ホームプレースホルダーのアクションボタンのラベル"
+  },
+  "homePlaceholderActionHint": "lib/main.dart を編集して HomeTabPlaceholder を本来のコンテンツに置き換えてください。",
+  "@homePlaceholderActionHint": {
+    "description": "プレースホルダーのボタンをタップした際に表示するヒント"
+  }
+}
