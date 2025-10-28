@@ -154,5 +154,109 @@
   "homePlaceholderActionHint": "Open lib/main.dart and replace the HomeTabPlaceholder with your real content.",
   "@homePlaceholderActionHint": {
     "description": "Snack bar hint shown when the placeholder action is tapped"
+  },
+  "settingsAuthSectionTitle": "Authentication",
+  "@settingsAuthSectionTitle": {
+    "description": "Title for authentication section in settings"
+  },
+  "authScreenTitle": "Sign In",
+  "@authScreenTitle": {
+    "description": "Title for authentication screen"
+  },
+  "authScreenSubtitle": "Sign in to access all features",
+  "@authScreenSubtitle": {
+    "description": "Subtitle for authentication screen"
+  },
+  "signIn": "Sign In",
+  "@signIn": {
+    "description": "Sign in button label"
+  },
+  "signInSubtitle": "Sign in to sync your data",
+  "@signInSubtitle": {
+    "description": "Sign in subtitle in settings"
+  },
+  "signInWithGoogle": "Sign in with Google",
+  "@signInWithGoogle": {
+    "description": "Google sign in button label"
+  },
+  "signInWithApple": "Sign in with Apple",
+  "@signInWithApple": {
+    "description": "Apple sign in button label"
+  },
+  "signInAnonymously": "Continue as Guest",
+  "@signInAnonymously": {
+    "description": "Anonymous sign in button label"
+  },
+  "skipSignIn": "Skip for now",
+  "@skipSignIn": {
+    "description": "Skip sign in button label"
+  },
+  "signInSuccessful": "Successfully signed in",
+  "@signInSuccessful": {
+    "description": "Success message after signing in"
+  },
+  "signInFailed": "Sign in failed",
+  "@signInFailed": {
+    "description": "Error message when sign in fails"
+  },
+  "signOut": "Sign Out",
+  "@signOut": {
+    "description": "Sign out button label"
+  },
+  "signOutConfirmTitle": "Sign Out",
+  "@signOutConfirmTitle": {
+    "description": "Title for sign out confirmation dialog"
+  },
+  "signOutConfirmMessage": "Are you sure you want to sign out?",
+  "@signOutConfirmMessage": {
+    "description": "Message for sign out confirmation dialog"
+  },
+  "signOutSuccessful": "Successfully signed out",
+  "@signOutSuccessful": {
+    "description": "Success message after signing out"
+  },
+  "signOutFailed": "Sign out failed",
+  "@signOutFailed": {
+    "description": "Error message when sign out fails"
+  },
+  "deleteAccount": "Delete Account",
+  "@deleteAccount": {
+    "description": "Delete account button label"
+  },
+  "deleteAccountConfirmTitle": "Delete Account",
+  "@deleteAccountConfirmTitle": {
+    "description": "Title for delete account confirmation dialog"
+  },
+  "deleteAccountConfirmMessage": "Are you sure you want to delete your account? This action cannot be undone.",
+  "@deleteAccountConfirmMessage": {
+    "description": "Message for delete account confirmation dialog"
+  },
+  "deleteAccountSuccessful": "Account successfully deleted",
+  "@deleteAccountSuccessful": {
+    "description": "Success message after deleting account"
+  },
+  "deleteAccountFailed": "Account deletion failed",
+  "@deleteAccountFailed": {
+    "description": "Error message when account deletion fails"
+  },
+  "anonymousUser": "Guest User",
+  "@anonymousUser": {
+    "description": "Label for anonymous user"
+  },
+  "noEmail": "No email address",
+  "@noEmail": {
+    "description": "Label when user has no email"
+  },
+  "upgradeAccount": "Upgrade Account",
+  "@upgradeAccount": {
+    "description": "Upgrade account button label"
+  },
+  "upgradeAccountSubtitle": "Link your account to Google or Apple",
+  "@upgradeAccountSubtitle": {
+    "description": "Subtitle for upgrade account option"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button label"
   }
 }

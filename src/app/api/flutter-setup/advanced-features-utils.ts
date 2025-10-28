@@ -56,6 +56,14 @@ const FEATURE_IMPLEMENTATIONS: Record<
         templatePath: 'features/auth/auth_repository.dart',
         targetPath: 'lib/features/auth/auth_repository.dart',
       },
+      {
+        templatePath: 'features/auth/auth_provider.dart',
+        targetPath: 'lib/features/auth/auth_provider.dart',
+      },
+      {
+        templatePath: 'features/auth/auth_screen.dart',
+        targetPath: 'lib/features/auth/auth_screen.dart',
+      },
     ],
     conditions: {
       ANONYMOUS_AUTH: true,
@@ -67,6 +75,14 @@ const FEATURE_IMPLEMENTATIONS: Record<
         templatePath: 'features/auth/auth_repository.dart',
         targetPath: 'lib/features/auth/auth_repository.dart',
       },
+      {
+        templatePath: 'features/auth/auth_provider.dart',
+        targetPath: 'lib/features/auth/auth_provider.dart',
+      },
+      {
+        templatePath: 'features/auth/auth_screen.dart',
+        targetPath: 'lib/features/auth/auth_screen.dart',
+      },
     ],
     conditions: {
       GOOGLE_SIGNIN: true,
@@ -77,6 +93,14 @@ const FEATURE_IMPLEMENTATIONS: Record<
       {
         templatePath: 'features/auth/auth_repository.dart',
         targetPath: 'lib/features/auth/auth_repository.dart',
+      },
+      {
+        templatePath: 'features/auth/auth_provider.dart',
+        targetPath: 'lib/features/auth/auth_provider.dart',
+      },
+      {
+        templatePath: 'features/auth/auth_screen.dart',
+        targetPath: 'lib/features/auth/auth_screen.dart',
       },
     ],
     conditions: {
