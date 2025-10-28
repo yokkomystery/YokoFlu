@@ -40,7 +40,7 @@ const LocalizationSelector: React.FC<Props> = ({
         </p>
       </div>
       <p className="text-xs text-yellow-400 mb-3">
-        ⚠️ <strong>{locale === 'ja' ? '必須' : 'Required'}</strong>: {t.localization.requirement}
+        ⚠️ <strong>{t.common2.required}</strong>: {t.localization.requirement}
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         {LOCALIZATION_LANGUAGE_OPTIONS.map((language) => {
@@ -50,6 +50,7 @@ const LocalizationSelector: React.FC<Props> = ({
             selected?.filter((id) => id === 'ja' || id === 'en') ?? [];
           const isDisabled =
             isJaOrEn && selectedJaOrEn.length === 1 && isChecked;
+          const langData = t.languageOptions[language.id];
 
           return (
             <label
@@ -66,14 +67,14 @@ const LocalizationSelector: React.FC<Props> = ({
               />
               <div>
                 <div className="text-sm font-medium text-white flex items-center gap-2">
-                  {language.label}
+                  {langData.label}
                   {isDisabled && (
                     <span className="text-xs text-yellow-400">
-                      ({locale === 'ja' ? '必須' : 'Required'})
+                      ({t.common2.required})
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-gray-400">{language.description}</p>
+                <p className="text-xs text-gray-400">{langData.description}</p>
               </div>
             </label>
           );

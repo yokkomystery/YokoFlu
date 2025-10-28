@@ -52,10 +52,15 @@ const AdvancedFeaturesSelector: React.FC<Props> = ({
         const featuresInCategory = ADVANCED_FEATURE_OPTIONS.filter(
           (f) => f.category === category
         );
+        const categoryLabel = t.advancedFeaturesCategories[
+          category === 'app-management' ? 'appManagement' :
+          category === 'ui-ux' ? 'uiUx' :
+          category
+        ];
         return (
           <div key={category} className="mb-6">
             <h3 className="text-lg font-medium text-blue-300 mb-3">
-              {ADVANCED_FEATURE_CATEGORY_LABELS[category]}
+              {categoryLabel}
             </h3>
             <div className="space-y-2">
               {featuresInCategory.map((feature) => {
@@ -63,6 +68,9 @@ const AdvancedFeaturesSelector: React.FC<Props> = ({
                 const checked =
                   selected?.includes(feature.id) ??
                   DEFAULT_ADVANCED_FEATURE_IDS.includes(feature.id);
+                // Convert feature.id from kebab-case to camelCase
+                const featureKey = feature.id.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+                const featureData = t.advancedFeaturesList[featureKey as keyof typeof t.advancedFeaturesList];
                 return (
                   <label
                     key={feature.id}
@@ -83,23 +91,21 @@ const AdvancedFeaturesSelector: React.FC<Props> = ({
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-sm font-medium text-white">
-                          {feature.label}
+                          {featureData.label}
                         </span>
                         {feature.requiresFirebase && (
                           <span className="text-xs bg-yellow-900 text-yellow-300 px-2 py-0.5 rounded-full">
-                            {locale === 'ja'
-                              ? 'Firebase必須'
-                              : 'Firebase Required'}
+                            {t.templateSelector.firebaseRequired}
                           </span>
                         )}
                       </div>
                       <p className="text-xs text-gray-400 mb-2">
-                        {feature.description}
+                        {featureData.description}
                       </p>
-                      {feature.todoNote && (
+                      {featureData.todoNote && (
                         <p className="text-xs text-blue-300 flex items-start gap-1">
                           <span className="font-semibold">NOTE:</span>
-                          <span>{feature.todoNote}</span>
+                          <span>{featureData.todoNote}</span>
                         </p>
                       )}
                     </div>
