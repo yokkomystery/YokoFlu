@@ -4,6 +4,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import { moveFirebaseConfigFiles } from '../firebase-utils';
 import { updateProgress, recordStepResult } from '../utils';
+import { copyTemplateFile, getTemplatePath } from '../template-utils';
 
 const execAsync = promisify(exec);
 
@@ -102,6 +103,29 @@ export async function runFirebaseInit({
     'Firebaseプロジェクトの初期化',
     'Firebaseプロジェクトを初期化中...'
   );
+
+  // firebase_config.dartの作成
+  const coreDir = path.join(fullOutputPath, 'lib', 'core');
+  if (!fs.existsSync(coreDir)) {
+    fs.mkdirSync(coreDir, { recursive: true });
+  }
+
+  const firebaseConfigPath = path.join(coreDir, 'firebase_config.dart');
+  const templatePath = getTemplatePath('core/firebase_config.dart');
+
+  const appName = path
+    .basename(fullOutputPath)
+    .toLowerCase()
+    .replace(/-/g, '_');
+
+  copyTemplateFile(
+    templatePath,
+    firebaseConfigPath,
+    { APP_NAME: appName },
+    { ENVIRONMENT_SEPARATION: separateEnvironments }
+  );
+
+  console.log('✅ firebase_config.dart を作成しました');
 
   try {
     if (separateEnvironments) {

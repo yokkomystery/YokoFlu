@@ -29,7 +29,7 @@ class AnalyticsService {
   /// 例: logEvent('purchase', {'product_id': 'abc123', 'price': 999})
   static Future<void> logEvent(
     String name, {
-    Map<String, dynamic>? parameters,
+    Map<String, Object>? parameters,
   }) async {
     try {
       await _analytics.logEvent(
@@ -80,7 +80,7 @@ class AnalyticsService {
   /// 例: setUserId('user123')
   static Future<void> setUserId(String? userId) async {
     try {
-      await _analytics.setUserId(userId);
+      await _analytics.setUserId(id: userId);
       if (userId != null) {
         debugPrint('📊 User ID set: $userId');
       } else {
@@ -106,7 +106,7 @@ class AnalyticsService {
     required String transactionId,
     required String currency,
     required double value,
-    Map<String, dynamic>? parameters,
+    Map<String, Object>? parameters,
   }) async {
     try {
       await _analytics.logPurchase(
