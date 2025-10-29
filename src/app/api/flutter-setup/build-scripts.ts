@@ -20,14 +20,29 @@ export function createBuildScripts(
 ) {
   const createdFiles: string[] = [];
 
-  // README.mdの更新
+  // README（多言語対応）
   const readmePath = path.join(projectPath, 'README.md');
+  const readmeJaPath = path.join(projectPath, 'README_ja.md');
 
-  // テンプレートファイルをコピー
-  const readmeTemplatePath = getTemplatePath('core/README.md');
+  // 英語版（デフォルト）
+  const readmeEnTemplatePath = getTemplatePath('core/README_en.md');
   copyTemplateFile(
-    readmeTemplatePath,
+    readmeEnTemplatePath,
     readmePath,
+    {
+      APP_NAME: appName,
+    },
+    {
+      ENVIRONMENT_SEPARATION: separateEnvironments,
+      FIREBASE_ENABLED: useFirebase,
+    }
+  );
+
+  // 日本語版
+  const readmeJaTemplatePath = getTemplatePath('core/README_ja.md');
+  copyTemplateFile(
+    readmeJaTemplatePath,
+    readmeJaPath,
     {
       APP_NAME: appName,
     },
@@ -68,6 +83,7 @@ export function createBuildScripts(
   }
 
   createdFiles.push(readmePath);
+  createdFiles.push(readmeJaPath);
   console.log('✅ ビルドスクリプトを作成しました');
   return createdFiles.join(', ');
 }

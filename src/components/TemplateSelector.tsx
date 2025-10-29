@@ -10,7 +10,7 @@ interface Props {
 }
 
 const TemplateSelector: React.FC<Props> = ({ selectedTemplate, onSelect }) => {
-  const { t, locale } = useLocale();
+  const { t } = useLocale();
 
   return (
     <div className="bg-gray-800 p-6 rounded-lg mb-6">

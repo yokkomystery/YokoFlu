@@ -18,7 +18,7 @@ const LocalizationSelector: React.FC<Props> = ({
   onChange,
   error,
 }) => {
-  const { t, locale } = useLocale();
+  const { t } = useLocale();
   const handleToggle = (id: LocalizationLanguageId, checked: boolean) => {
     const current = selected ?? [];
     if (checked) {

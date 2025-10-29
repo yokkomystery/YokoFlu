@@ -28,6 +28,7 @@ import { runAdvancedFeatures } from './steps/advanced-features';
 import { runFirebaseServices } from './steps/firebase-services';
 import { normalizeParameters } from './helpers/parameter-normalizer';
 import { addPostSetupSteps, finalizeSetup } from './helpers/completion-helpers';
+import { runTodoGeneration } from './steps/todo-generation';
 
 let setupResult: SetupResult;
 
@@ -258,6 +259,18 @@ export async function POST(request: NextRequest) {
     setupResult.success = true;
     setupResult.appName = appName;
     setupResult.outputPath = fullOutputPath;
+
+    // Step 13: TODO.mdの生成
+    runTodoGeneration({
+      fullOutputPath,
+      appName,
+      useFirebase,
+      separateEnvironments,
+      stagingProjectId: resolvedStagingProjectId,
+      productionProjectId: resolvedProductionProjectId,
+      singleProjectId: resolvedSingleProjectId,
+      advancedFeatures: normalizedAdvancedFeatures,
+    });
 
     // 次のステップの追加
     addPostSetupSteps(fullOutputPath, useFirebase);
