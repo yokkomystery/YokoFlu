@@ -218,44 +218,44 @@ npm run lint
 
 ```bash
 # Staging (Development)
-flutter run --flavor staging --dart-define=ENVIRONMENT=staging --dart-define=PRODUCTION=false
+flutter run --flavor staging --dart-define=ENVIRONMENT=staging
 
 # Staging - APK (for test distribution)
-flutter build apk --flavor staging --dart-define=ENVIRONMENT=staging --dart-define=PRODUCTION=false --release
+flutter build apk --flavor staging --dart-define=ENVIRONMENT=staging --release
 
 # Staging - AAB (for Google Play)
-flutter build appbundle --flavor staging --dart-define=ENVIRONMENT=staging --dart-define=PRODUCTION=false --release
+flutter build appbundle --flavor staging --dart-define=ENVIRONMENT=staging --release
 
 # Production (Development)
-flutter run --flavor production --dart-define=ENVIRONMENT=production --dart-define=PRODUCTION=true
+flutter run --flavor production --dart-define=ENVIRONMENT=production
 
 # Production - APK (for test distribution)
-flutter build apk --flavor production --dart-define=ENVIRONMENT=production --dart-define=PRODUCTION=true --release
+flutter build apk --flavor production --dart-define=ENVIRONMENT=production --release
 
 # Production - AAB (for Google Play)
-flutter build appbundle --flavor production --dart-define=ENVIRONMENT=production --dart-define=PRODUCTION=true --release
+flutter build appbundle --flavor production --dart-define=ENVIRONMENT=production --release
 ```
 
 ### iOS
 
 ```bash
 # Staging (Development)
-flutter run --dart-define=ENVIRONMENT=staging --dart-define=PRODUCTION=false
+flutter run --dart-define=ENVIRONMENT=staging
 
 # Staging - iOS Build
-flutter build ios --dart-define=ENVIRONMENT=staging --dart-define=PRODUCTION=false --release
+flutter build ios --dart-define=ENVIRONMENT=staging --release
 
 # Staging - IPA File
-flutter build ipa --dart-define=ENVIRONMENT=staging --dart-define=PRODUCTION=false --release
+flutter build ipa --dart-define=ENVIRONMENT=staging --release
 
 # Production (Development)
-flutter run --dart-define=ENVIRONMENT=production --dart-define=PRODUCTION=true
+flutter run --dart-define=ENVIRONMENT=production
 
 # Production - iOS Build
-flutter build ios --dart-define=ENVIRONMENT=production --dart-define=PRODUCTION=true --release
+flutter build ios --dart-define=ENVIRONMENT=production --release
 
 # Production - IPA File
-flutter build ipa --dart-define=ENVIRONMENT=production --dart-define=PRODUCTION=true --release
+flutter build ipa --dart-define=ENVIRONMENT=production --release
 ```
 
 > **Note**: iOS does not support `--flavor` option. You need to manually select build configuration (Staging/Production) in Xcode.  
