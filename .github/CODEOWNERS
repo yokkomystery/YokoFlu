@@ -1,0 +1,34 @@
+# CODEOWNERS
+# This file defines individuals or teams that are responsible for code in this repository.
+# Code owners are automatically requested for review when someone opens a pull request
+# that modifies code that they own.
+#
+# For more information, see:
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners for everything in the repo
+* @yokkomystery
+
+# Source code
+/src/ @yokkomystery
+
+# Templates
+/src/templates/ @yokkomystery
+
+# API routes
+/src/app/api/ @yokkomystery
+
+# Configuration files
+/src/config/ @yokkomystery
+
+# Documentation
+*.md @yokkomystery
+/docs/ @yokkomystery
+
+# GitHub workflows and configuration
+/.github/ @yokkomystery
+
+# Package configuration
+package.json @yokkomystery
+package-lock.json @yokkomystery
+

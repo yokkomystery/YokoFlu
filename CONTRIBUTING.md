@@ -1,5 +1,7 @@
 # コントリビューションガイド
 
+> 🌐 **English**: See [CONTRIBUTING_en.md](CONTRIBUTING_en.md)
+
 Flutter Setup Tool への貢献に興味を持っていただき、ありがとうございます！
 
 ## 🤝 貢献方法
