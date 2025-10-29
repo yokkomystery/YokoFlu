@@ -129,6 +129,10 @@ const FEATURE_IMPLEMENTATIONS: Record<
         templatePath: 'core/services/push_notification_service.dart',
         targetPath: 'lib/core/services/push_notification_service.dart',
       },
+      {
+        templatePath: 'features/settings/notification_settings_screen.dart',
+        targetPath: 'lib/features/settings/notification_settings_screen.dart',
+      },
     ],
   },
   onboarding: {
