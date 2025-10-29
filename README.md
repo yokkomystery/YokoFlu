@@ -60,6 +60,19 @@ Generate production-ready Flutter projects in minutes by simply selecting settin
 
 ## Prerequisites
 
+### Supported Platforms
+
+| Platform    | Android Development | iOS Development    |
+| ----------- | ------------------- | ------------------ |
+| **macOS**   | ✅ Fully Supported  | ✅ Fully Supported |
+| **Windows** | ✅ Fully Supported  | ❌ Not Supported\* |
+| **Linux**   | ⚠️ Not Tested\*\*   | ❌ Not Supported\* |
+
+\* iOS development requires Xcode, which is only available on macOS.  
+\*\* Linux should work for Android development, but has not been tested.
+
+### Required Software
+
 - Node.js 18 or higher
 - Flutter SDK 3.x / Dart SDK 3.x
 - Firebase CLI 13+ (`npm install -g firebase-tools`)
@@ -198,6 +211,8 @@ npm run lint
 
 ## Troubleshooting
 
+### General Issues
+
 **Flutter not found**: Install Flutter SDK and add to PATH
 
 **Firebase CLI not found**: Install Firebase CLI with `npm install -g firebase-tools`
@@ -211,6 +226,44 @@ npm run lint
 **CLI execution fails**: Review execution user permissions and shell environment (zsh/bash) initialization scripts
 
 **`flutter pub get` fails**: Run `flutter pub get` directly and check dependencies, network settings, and `pubspec.yaml` descriptions
+
+### Windows-Specific Issues
+
+**PATH not recognized**: After installing Flutter/Firebase CLI, restart your terminal or run `refreshenv` (if using Chocolatey)
+
+**PowerShell execution policy error**: Run PowerShell as Administrator and execute:
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+**Command not found on Windows**: Verify the PATH environment variable includes:
+
+- `%LOCALAPPDATA%\Pub\Cache\bin` (for Dart global packages)
+- Flutter SDK's `bin` directory
+- Node.js installation directory
+
+**Git Bash issues**: Use PowerShell or Command Prompt for better compatibility with Flutter CLI
+
+### macOS-Specific Issues
+
+**Xcode Command Line Tools**: Ensure Xcode Command Line Tools are installed:
+
+```bash
+xcode-select --install
+```
+
+**CocoaPods issues**: Update CocoaPods if you encounter iOS build errors:
+
+```bash
+sudo gem install cocoapods
+```
+
+### Linux-Specific Issues
+
+**Snap-installed Flutter**: If Flutter was installed via snap, you may need to manually configure PATH
+
+**Permission issues**: You may need to adjust file permissions or use `sudo` for global package installations
 
 ## Build Commands
 
