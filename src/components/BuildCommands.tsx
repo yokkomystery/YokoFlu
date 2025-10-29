@@ -21,7 +21,7 @@ export function BuildCommands({ useFirebase }: BuildCommandsProps) {
           </div>
           <div className="text-gray-300">
             {useFirebase
-              ? 'flutter run --flavor staging --dart-define=ENVIRONMENT=staging --dart-define=PRODUCTION=false'
+              ? 'flutter run --flavor staging --dart-define=ENVIRONMENT=staging'
               : 'flutter run --flavor staging'}
           </div>
           <div className="text-green-400 mt-2">
@@ -29,7 +29,7 @@ export function BuildCommands({ useFirebase }: BuildCommandsProps) {
           </div>
           <div className="text-gray-300">
             {useFirebase
-              ? 'flutter build apk --flavor staging --dart-define=ENVIRONMENT=staging --dart-define=PRODUCTION=false --release'
+              ? 'flutter build apk --flavor staging --dart-define=ENVIRONMENT=staging --release'
               : 'flutter build apk --flavor staging --release'}
           </div>
           <div className="text-green-400 mt-2">
@@ -37,7 +37,7 @@ export function BuildCommands({ useFirebase }: BuildCommandsProps) {
           </div>
           <div className="text-gray-300">
             {useFirebase
-              ? 'flutter build appbundle --flavor staging --dart-define=ENVIRONMENT=staging --dart-define=PRODUCTION=false --release'
+              ? 'flutter build appbundle --flavor staging --dart-define=ENVIRONMENT=staging --release'
               : 'flutter build appbundle --flavor staging --release'}
           </div>
           <div className="text-green-400 mt-2">
@@ -45,7 +45,7 @@ export function BuildCommands({ useFirebase }: BuildCommandsProps) {
           </div>
           <div className="text-gray-300">
             {useFirebase
-              ? 'flutter run --flavor production --dart-define=ENVIRONMENT=production --dart-define=PRODUCTION=true'
+              ? 'flutter run --flavor production --dart-define=ENVIRONMENT=production'
               : 'flutter run --flavor production'}
           </div>
           <div className="text-green-400 mt-2">
@@ -53,7 +53,7 @@ export function BuildCommands({ useFirebase }: BuildCommandsProps) {
           </div>
           <div className="text-gray-300">
             {useFirebase
-              ? 'flutter build apk --flavor production --dart-define=ENVIRONMENT=production --dart-define=PRODUCTION=true --release'
+              ? 'flutter build apk --flavor production --dart-define=ENVIRONMENT=production --release'
               : 'flutter build apk --flavor production --release'}
           </div>
           <div className="text-green-400 mt-2">
@@ -61,7 +61,7 @@ export function BuildCommands({ useFirebase }: BuildCommandsProps) {
           </div>
           <div className="text-gray-300">
             {useFirebase
-              ? 'flutter build appbundle --flavor production --dart-define=ENVIRONMENT=production --dart-define=PRODUCTION=true --release'
+              ? 'flutter build appbundle --flavor production --dart-define=ENVIRONMENT=production --release'
               : 'flutter build appbundle --flavor production --release'}
           </div>
         </div>
@@ -77,7 +77,7 @@ export function BuildCommands({ useFirebase }: BuildCommandsProps) {
           </div>
           <div className="text-gray-300">
             {useFirebase
-              ? 'flutter run --dart-define=ENVIRONMENT=staging --dart-define=PRODUCTION=false'
+              ? 'flutter run --dart-define=ENVIRONMENT=staging'
               : 'flutter run'}
           </div>
           <div className="text-green-400 mt-2">
@@ -85,13 +85,13 @@ export function BuildCommands({ useFirebase }: BuildCommandsProps) {
           </div>
           <div className="text-gray-300">
             {useFirebase
-              ? 'flutter build ios --dart-define=ENVIRONMENT=staging --dart-define=PRODUCTION=false --release'
+              ? 'flutter build ios --dart-define=ENVIRONMENT=staging --release'
               : 'flutter build ios --release'}
           </div>
           <div className="text-green-400 mt-2"># {t.build.staging} IPA</div>
           <div className="text-gray-300">
             {useFirebase
-              ? 'flutter build ipa --dart-define=ENVIRONMENT=staging --dart-define=PRODUCTION=false --release'
+              ? 'flutter build ipa --dart-define=ENVIRONMENT=staging --release'
               : 'flutter build ipa --release'}
           </div>
           <div className="text-green-400 mt-2">
@@ -99,7 +99,7 @@ export function BuildCommands({ useFirebase }: BuildCommandsProps) {
           </div>
           <div className="text-gray-300">
             {useFirebase
-              ? 'flutter run --dart-define=ENVIRONMENT=production --dart-define=PRODUCTION=true'
+              ? 'flutter run --dart-define=ENVIRONMENT=production'
               : 'flutter run'}
           </div>
           <div className="text-green-400 mt-2">
@@ -107,13 +107,13 @@ export function BuildCommands({ useFirebase }: BuildCommandsProps) {
           </div>
           <div className="text-gray-300">
             {useFirebase
-              ? 'flutter build ios --dart-define=ENVIRONMENT=production --dart-define=PRODUCTION=true --release'
+              ? 'flutter build ios --dart-define=ENVIRONMENT=production --release'
               : 'flutter build ios --release'}
           </div>
           <div className="text-green-400 mt-2"># {t.build.production} IPA</div>
           <div className="text-gray-300">
             {useFirebase
-              ? 'flutter build ipa --dart-define=ENVIRONMENT=production --dart-define=PRODUCTION=true --release'
+              ? 'flutter build ipa --dart-define=ENVIRONMENT=production --release'
               : 'flutter build ipa --release'}
           </div>
         </div>
@@ -132,23 +132,23 @@ export function BuildCommands({ useFirebase }: BuildCommandsProps) {
           <div className="text-green-400"># {t.build.android}</div>
           <div className="text-gray-300">
             {useFirebase
-              ? 'flutter build apk --flavor staging --dart-define=ENVIRONMENT=staging --dart-define=PRODUCTION=false --debug'
+              ? 'flutter build apk --flavor staging --dart-define=ENVIRONMENT=staging --debug'
               : 'flutter build apk --flavor staging --debug'}
           </div>
           <div className="text-gray-300">
             {useFirebase
-              ? 'flutter build apk --flavor production --dart-define=ENVIRONMENT=production --dart-define=PRODUCTION=true --debug'
+              ? 'flutter build apk --flavor production --dart-define=ENVIRONMENT=production --debug'
               : 'flutter build apk --flavor production --debug'}
           </div>
           <div className="text-green-400 mt-2"># {t.build.ios}</div>
           <div className="text-gray-300">
             {useFirebase
-              ? 'flutter build ios --dart-define=ENVIRONMENT=staging --dart-define=PRODUCTION=false --debug'
+              ? 'flutter build ios --dart-define=ENVIRONMENT=staging --debug'
               : 'flutter build ios --debug'}
           </div>
           <div className="text-gray-300">
             {useFirebase
-              ? 'flutter build ios --dart-define=ENVIRONMENT=production --dart-define=PRODUCTION=true --debug'
+              ? 'flutter build ios --dart-define=ENVIRONMENT=production --debug'
               : 'flutter build ios --debug'}
           </div>
         </div>
@@ -176,8 +176,8 @@ export function BuildCommands({ useFirebase }: BuildCommandsProps) {
           </li>
           <li>
             {locale === 'ja'
-              ? 'Firebase使用時は環境変数を指定: `--dart-define=ENVIRONMENT=staging`など'
-              : 'When using Firebase, specify environment variables: `--dart-define=ENVIRONMENT=staging`, etc.'}
+              ? 'Firebase環境切り替え: `--dart-define=ENVIRONMENT=staging`または`production`を指定'
+              : 'Firebase environment switching: Specify `--dart-define=ENVIRONMENT=staging` or `production`'}
           </li>
         </ul>
       </div>
