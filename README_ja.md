@@ -60,6 +60,19 @@ GUI で必要な設定を選択するだけで、実務レベルの Flutter プ�
 
 ## 前提条件
 
+### 対応プラットフォーム
+
+| プラットフォーム | Android 開発  | iOS 開発    |
+| ---------------- | ------------- | ----------- |
+| **macOS**        | ✅ 完全対応   | ✅ 完全対応 |
+| **Windows**      | ✅ 完全対応   | ❌ 非対応\* |
+| **Linux**        | ⚠️ 未検証\*\* | ❌ 非対応\* |
+
+\* iOS 開発には Xcode が必要で、macOS でのみ利用可能です。  
+\*\* Linux でも Android 開発は動作すると思われますが、未検証です。
+
+### 必要なソフトウェア
+
 - Node.js 18 以上
 - Flutter SDK 3.x / Dart SDK 3.x
 - Firebase CLI 13+（`npm install -g firebase-tools`）
@@ -305,6 +318,8 @@ flutter build ipa --dart-define=ENVIRONMENT=production --release
 
 ## トラブルシューティング
 
+### 一般的な問題
+
 **Firebase CLI が未検出**: `npm install -g firebase-tools` 実行後、`firebase --version` が成功することを確認。必要に応じて `PATH` に `$(npm bin -g)` を追加。
 
 **Flutter CLI が未検出**: https://docs.flutter.dev/get-started/install を参照して SDK を導入し、`flutter --version` が実行できるようにする。
@@ -316,6 +331,44 @@ flutter build ipa --dart-define=ENVIRONMENT=production --release
 **CLI が実行できない**: 実行ユーザーの権限やシェル環境（zsh/bash）の初期化スクリプトを見直す。
 
 **`flutter pub get` が失敗する**: `flutter pub get` を直接実行し、依存関係やネットワーク設定、`pubspec.yaml` の記述に問題がないか確認。
+
+### Windows 固有の問題
+
+**PATH が認識されない**: Flutter/Firebase CLI をインストール後、ターミナルを再起動するか、`refreshenv` を実行（Chocolatey を使用している場合）
+
+**PowerShell 実行ポリシーエラー**: PowerShell を管理者として実行し、以下を実行：
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+**Windows でコマンドが見つからない**: PATH 環境変数に以下が含まれているか確認：
+
+- `%LOCALAPPDATA%\Pub\Cache\bin`（Dart グローバルパッケージ用）
+- Flutter SDK の `bin` ディレクトリ
+- Node.js インストールディレクトリ
+
+**Git Bash での問題**: Flutter CLI との互換性を高めるため、PowerShell または コマンドプロンプトを使用
+
+### macOS 固有の問題
+
+**Xcode Command Line Tools**: Xcode Command Line Tools がインストールされていることを確認：
+
+```bash
+xcode-select --install
+```
+
+**CocoaPods の問題**: iOS ビルドエラーが発生した場合は CocoaPods を更新：
+
+```bash
+sudo gem install cocoapods
+```
+
+### Linux 固有の問題
+
+**Snap でインストールした Flutter**: snap 経由で Flutter をインストールした場合、手動で PATH を設定する必要がある場合があります
+
+**権限の問題**: グローバルパッケージのインストール時に、ファイル権限の調整や `sudo` の使用が必要な場合があります
 
 ## Author
 

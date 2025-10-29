@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import ProgressBar from './ProgressBar';
 import ResultSection from './ResultSection';
 import CliStatusPanel from './CliStatusPanel';
+import PlatformWarning from './PlatformWarning';
 import ProjectSelectorModal from './ProjectSelectorModal';
 import TemplateSelector from './TemplateSelector';
 import LocalizationSelector from './LocalizationSelector';
@@ -454,6 +455,9 @@ export default function FlutterSetupForm() {
               fetchEnvironmentStatus();
             }}
           />
+
+          {/* プラットフォーム警告 */}
+          <PlatformWarning />
 
           {/* 基本情報 */}
           <div
