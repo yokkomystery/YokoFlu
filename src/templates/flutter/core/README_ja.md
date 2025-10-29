@@ -1,29 +1,30 @@
 # {{APP_NAME}}
 
-Flutterプロジェクトのテンプレートです。
+Flutter プロジェクトのテンプレートです。
 
 > ## ⚡ クイックスタート
-> 
+>
 > セットアップ手順は [`TODO_ja.md`](TODO_ja.md) をご確認ください。英語版: [`TODO.md`](TODO.md)
-> 
+>
 > 以下が含まれます：
-> - ✅ Firebase設定（Firestore有効化、セキュリティルール、認証設定）
-> - ✅ アプリ設定（利用規約リンク、ストアID、コンテンツ更新）
+>
+> - ✅ Firebase 設定（Firestore 有効化、セキュリティルール、認証設定）
+> - ✅ アプリ設定（利用規約リンク、ストア ID、コンテンツ更新）
 > - ✅ テスト・ビルド確認手順
 > - ✅ ストア公開準備
-> 
+>
 > すべてのチェックが完了すれば、本番リリースの準備完了です！
 
 ## はじめに
 
-このプロジェクトはFlutterアプリケーションのスターターテンプレートです。
+このプロジェクトは Flutter アプリケーションのスターターテンプレートです。
 
-Flutter初学者向けの参考リンク：
+Flutter 初学者向けの参考リンク：
 
-- [Lab: 初めてのFlutterアプリ](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: 実用的なFlutterサンプル](https://docs.flutter.dev/cookbook)
+- [Lab: 初めての Flutter アプリ](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: 実用的な Flutter サンプル](https://docs.flutter.dev/cookbook)
 
-Flutter開発の詳細は
+Flutter 開発の詳細は
 [オンラインドキュメント](https://docs.flutter.dev/) を参照してください。
 
 ## Flutter ビルドコマンド
@@ -89,8 +90,8 @@ flutter build ios --release
 
 ### 環境変数
 
-- `ENVIRONMENT=staging|production` - Firebase環境の切り替えに使用
-{{/FIREBASE_ENABLED}}
+- `ENVIRONMENT=staging|production` - Firebase 環境の切り替えに使用
+  {{/FIREBASE_ENABLED}}
 
 ## 開発ガイド
 
