@@ -132,8 +132,10 @@ class _NotificationSettingsScreenState
     HapticFeedback.lightImpact();
 
     try {
+      // ドット記法を使用してネストされたフィールドを更新
+      // これにより他の通知設定が消えることを防ぐ
       await _firestore.collection('users').doc(user.uid).set({
-        'notificationSettings': {key: value}
+        'notificationSettings.$key': value
       }, SetOptions(merge: true));
       debugPrint('通知設定を更新: $key = $value');
     } catch (e) {
