@@ -45,8 +45,8 @@ flutter build ios --release
 flutter build apk --flavor staging --debug
 flutter build apk --flavor staging --release
 {{#FIREBASE_ENABLED}}
-flutter build ios --debug --dart-define=ENVIRONMENT=staging --dart-define=PRODUCTION=false
-flutter build ios --release --dart-define=ENVIRONMENT=staging --dart-define=PRODUCTION=false
+flutter build ios --debug --dart-define=ENVIRONMENT=staging
+flutter build ios --release --dart-define=ENVIRONMENT=staging
 {{/FIREBASE_ENABLED}}
 {{^FIREBASE_ENABLED}}
 flutter build ios --debug
@@ -57,8 +57,8 @@ flutter build ios --release
 flutter build apk --flavor production --debug
 flutter build apk --flavor production --release
 {{#FIREBASE_ENABLED}}
-flutter build ios --debug --dart-define=ENVIRONMENT=production --dart-define=PRODUCTION=true
-flutter build ios --release --dart-define=ENVIRONMENT=production --dart-define=PRODUCTION=true
+flutter build ios --debug --dart-define=ENVIRONMENT=production
+flutter build ios --release --dart-define=ENVIRONMENT=production
 {{/FIREBASE_ENABLED}}
 {{^FIREBASE_ENABLED}}
 flutter build ios --debug
@@ -85,8 +85,7 @@ flutter build ios --release
 
 ### 環境変数
 
-- `ENVIRONMENT=staging|production` - Dart 側で使用する環境文字列
-- `PRODUCTION=true|false` - Dart 側で使用するブールフラグ
+- `ENVIRONMENT=staging|production` - Firebase環境の切り替えに使用
   {{/FIREBASE_ENABLED}}
 
 ## 開発ガイド

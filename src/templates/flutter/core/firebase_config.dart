@@ -12,11 +12,12 @@ import 'firebase_options.dart';
 class FirebaseConfig {
   static Future<void> initializeApp() async {
     {{#ENVIRONMENT_SEPARATION}}
-    if (bool.fromEnvironment('PRODUCTION') || String.fromEnvironment('ENVIRONMENT') == 'production') {
+    if (String.fromEnvironment('ENVIRONMENT') == 'production') {
       await Firebase.initializeApp(
         options: production.DefaultFirebaseOptions.currentPlatform,
       );
     } else {
+      // デフォルトはstaging環境（ENVIRONMENTが未指定またはstagingの場合）
       await Firebase.initializeApp(
         options: staging.DefaultFirebaseOptions.currentPlatform,
       );
@@ -32,7 +33,7 @@ class FirebaseConfig {
 
   static String get currentEnvironment {
     {{#ENVIRONMENT_SEPARATION}}
-    if (bool.fromEnvironment('PRODUCTION') || String.fromEnvironment('ENVIRONMENT') == 'production') {
+    if (String.fromEnvironment('ENVIRONMENT') == 'production') {
       return 'production';
     } else {
       return 'staging';

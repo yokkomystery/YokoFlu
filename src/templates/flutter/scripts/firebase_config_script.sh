@@ -11,7 +11,6 @@ import os
 
 dart_defines = os.environ.get("DART_DEFINES", "")
 environment = ""
-production_flag = ""
 
 for entry in filter(None, dart_defines.split(",")):
     try:
@@ -21,11 +20,7 @@ for entry in filter(None, dart_defines.split(",")):
 
     if decoded.startswith("ENVIRONMENT="):
         environment = decoded.split("=", 1)[1]
-    elif decoded.startswith("PRODUCTION=") and not environment:
-        production_flag = decoded.split("=", 1)[1]
-
-if not environment and production_flag:
-    environment = "production" if production_flag.lower() == "true" else "staging"
+        break
 
 print(environment)
 PY
@@ -36,6 +31,7 @@ PY
         return
     fi
 
+    # DART_DEFINESが無い場合はXcode設定から判定
     case "${CONFIGURATION}" in
         Release*)
             echo "production"
