@@ -62,11 +62,11 @@ Generate production-ready Flutter projects in minutes by simply selecting settin
 
 ### Supported Platforms
 
-| Platform | Android Development | iOS Development |
-|----------|-------------------|-----------------|
-| **macOS** | ✅ Fully Supported | ✅ Fully Supported |
-| **Windows** | ✅ Fully Supported | ❌ Not Supported* |
-| **Linux** | ⚠️ Not Tested** | ❌ Not Supported* |
+| Platform    | Android Development | iOS Development    |
+| ----------- | ------------------- | ------------------ |
+| **macOS**   | ✅ Fully Supported  | ✅ Fully Supported |
+| **Windows** | ✅ Fully Supported  | ❌ Not Supported\* |
+| **Linux**   | ⚠️ Not Tested\*\*   | ❌ Not Supported\* |
 
 \* iOS development requires Xcode, which is only available on macOS.  
 \*\* Linux should work for Android development, but has not been tested.
@@ -232,11 +232,13 @@ npm run lint
 **PATH not recognized**: After installing Flutter/Firebase CLI, restart your terminal or run `refreshenv` (if using Chocolatey)
 
 **PowerShell execution policy error**: Run PowerShell as Administrator and execute:
+
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
 **Command not found on Windows**: Verify the PATH environment variable includes:
+
 - `%LOCALAPPDATA%\Pub\Cache\bin` (for Dart global packages)
 - Flutter SDK's `bin` directory
 - Node.js installation directory
@@ -246,11 +248,13 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ### macOS-Specific Issues
 
 **Xcode Command Line Tools**: Ensure Xcode Command Line Tools are installed:
+
 ```bash
 xcode-select --install
 ```
 
 **CocoaPods issues**: Update CocoaPods if you encounter iOS build errors:
+
 ```bash
 sudo gem install cocoapods
 ```

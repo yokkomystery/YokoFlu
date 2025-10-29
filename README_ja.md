@@ -62,11 +62,11 @@ GUI で必要な設定を選択するだけで、実務レベルの Flutter プ�
 
 ### 対応プラットフォーム
 
-| プラットフォーム | Android 開発 | iOS 開発 |
-|----------|----------|---------|
-| **macOS** | ✅ 完全対応 | ✅ 完全対応 |
-| **Windows** | ✅ 完全対応 | ❌ 非対応* |
-| **Linux** | ⚠️ 未検証** | ❌ 非対応* |
+| プラットフォーム | Android 開発  | iOS 開発    |
+| ---------------- | ------------- | ----------- |
+| **macOS**        | ✅ 完全対応   | ✅ 完全対応 |
+| **Windows**      | ✅ 完全対応   | ❌ 非対応\* |
+| **Linux**        | ⚠️ 未検証\*\* | ❌ 非対応\* |
 
 \* iOS 開発には Xcode が必要で、macOS でのみ利用可能です。  
 \*\* Linux でも Android 開発は動作すると思われますが、未検証です。
@@ -337,11 +337,13 @@ flutter build ipa --dart-define=ENVIRONMENT=production --release
 **PATH が認識されない**: Flutter/Firebase CLI をインストール後、ターミナルを再起動するか、`refreshenv` を実行（Chocolatey を使用している場合）
 
 **PowerShell 実行ポリシーエラー**: PowerShell を管理者として実行し、以下を実行：
+
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
 **Windows でコマンドが見つからない**: PATH 環境変数に以下が含まれているか確認：
+
 - `%LOCALAPPDATA%\Pub\Cache\bin`（Dart グローバルパッケージ用）
 - Flutter SDK の `bin` ディレクトリ
 - Node.js インストールディレクトリ
@@ -351,11 +353,13 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ### macOS 固有の問題
 
 **Xcode Command Line Tools**: Xcode Command Line Tools がインストールされていることを確認：
+
 ```bash
 xcode-select --install
 ```
 
 **CocoaPods の問題**: iOS ビルドエラーが発生した場合は CocoaPods を更新：
+
 ```bash
 sudo gem install cocoapods
 ```
