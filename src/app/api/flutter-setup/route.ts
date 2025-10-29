@@ -181,7 +181,7 @@ export async function POST(request: NextRequest) {
     );
 
     // Step 5: iOS設定ファイルの作成（分割）
-    await runIOSConfig(bundleId, appName, fullOutputPath, separateEnvironments);
+    await runIOSConfig(bundleId, appName, fullOutputPath, separateEnvironments, useFirebase);
 
     // Step 6: Android設定ファイルの作成（分割）
     await runAndroidConfig(

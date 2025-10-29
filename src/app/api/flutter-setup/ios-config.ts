@@ -204,7 +204,8 @@ function createIOSConfigs(
   bundleId: string,
   appName: string,
   projectPath: string,
-  separateEnvironments: boolean = true
+  separateEnvironments: boolean = true,
+  useFirebase: boolean = false
 ) {
   const createdFiles: string[] = [];
 
@@ -268,33 +269,36 @@ ENVIRONMENT = release`;
       releaseConfigPath
     );
 
-    // Firebase設定スクリプトの作成
-    const firebaseConfigScriptPath = path.join(
-      projectPath,
-      'ios',
-      'Runner',
-      'firebase_config_script.sh'
-    );
-    const firebaseConfigScriptTemplatePath = getTemplatePath(
-      'scripts/firebase_config_script.sh'
-    );
+    // Firebaseを使用している場合のみ設定スクリプトを追加
+    if (useFirebase) {
+      // Firebase設定スクリプトの作成
+      const firebaseConfigScriptPath = path.join(
+        projectPath,
+        'ios',
+        'Runner',
+        'firebase_config_script.sh'
+      );
+      const firebaseConfigScriptTemplatePath = getTemplatePath(
+        'scripts/firebase_config_script.sh'
+      );
 
-    copyTemplateFile(
-      firebaseConfigScriptTemplatePath,
-      firebaseConfigScriptPath,
-      {
-        APP_NAME: appName,
+      copyTemplateFile(
+        firebaseConfigScriptTemplatePath,
+        firebaseConfigScriptPath,
+        {
+          APP_NAME: appName,
+        }
+      );
+
+      // スクリプトに実行権限を付与
+      fs.chmodSync(firebaseConfigScriptPath, 0o755);
+      createdFiles.push(firebaseConfigScriptPath);
+
+      // Xcodeプロジェクトにビルドスクリプトを追加
+      const updatedProjectPath = addBuildScriptToXcodeProject(projectPath);
+      if (updatedProjectPath) {
+        createdFiles.push(updatedProjectPath);
       }
-    );
-
-    // スクリプトに実行権限を付与
-    fs.chmodSync(firebaseConfigScriptPath, 0o755);
-    createdFiles.push(firebaseConfigScriptPath);
-
-    // Xcodeプロジェクトにビルドスクリプトを追加
-    const updatedProjectPath = addBuildScriptToXcodeProject(projectPath);
-    if (updatedProjectPath) {
-      createdFiles.push(updatedProjectPath);
     }
   } else {
     // 単一環境の場合、基本的な設定ファイルのみ作成
