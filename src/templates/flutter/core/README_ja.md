@@ -1,31 +1,30 @@
 # {{APP_NAME}}
 
-A new Flutter project.
+Flutterプロジェクトのテンプレートです。
 
 > ## ⚡ クイックスタート
 > 
-> **セットアップを完了するには [`TODO.md`](TODO.md) を確認してください！**
+> セットアップ手順は [`TODO_ja.md`](TODO_ja.md) をご確認ください。英語版: [`TODO.md`](TODO.md)
 > 
-> このファイルには以下が含まれます：
+> 以下が含まれます：
 > - ✅ Firebase設定（Firestore有効化、セキュリティルール、認証設定）
 > - ✅ アプリ設定（利用規約リンク、ストアID、コンテンツ更新）
 > - ✅ テスト・ビルド確認手順
 > - ✅ ストア公開準備
 > 
-> すべてのチェックボックスを完了させれば、本番デプロイ準備完了です！
+> すべてのチェックが完了すれば、本番リリースの準備完了です！
 
-## Getting Started
+## はじめに
 
-This project is a starting point for a Flutter application.
+このプロジェクトはFlutterアプリケーションのスターターテンプレートです。
 
-A few resources to get you started if this is your first Flutter project:
+Flutter初学者向けの参考リンク：
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- [Lab: 初めてのFlutterアプリ](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: 実用的なFlutterサンプル](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Flutter開発の詳細は
+[オンラインドキュメント](https://docs.flutter.dev/) を参照してください。
 
 ## Flutter ビルドコマンド
 
@@ -33,7 +32,7 @@ samples, guidance on mobile development, and a full API reference.
 
 ```bash
 # デバッグビルド
-flutter build apk --debug
+aflutter build apk --debug
 flutter build ios --debug
 
 # リリースビルド
@@ -91,7 +90,7 @@ flutter build ios --release
 ### 環境変数
 
 - `ENVIRONMENT=staging|production` - Firebase環境の切り替えに使用
-  {{/FIREBASE_ENABLED}}
+{{/FIREBASE_ENABLED}}
 
 ## 開発ガイド
 
