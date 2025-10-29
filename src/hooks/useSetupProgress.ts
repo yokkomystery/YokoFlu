@@ -37,7 +37,7 @@ export default function useSetupProgress(
           clearInterval(interval);
           onComplete();
         }
-      } catch (_) {
+      } catch {
         // swallow polling errors; next tick will retry
       }
     }, intervalMs);
