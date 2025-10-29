@@ -5,11 +5,12 @@ export async function runIOSConfig(
   bundleId: string,
   appName: string,
   fullOutputPath: string,
-  separateEnvironments: boolean
+  separateEnvironments: boolean,
+  useFirebase: boolean
 ): Promise<string[]> {
   updateProgress('ios-config', 'iOS設定ファイルの作成', 'iOS設定ファイルを作成中...');
   try {
-    const files = createIOSConfigs(bundleId, appName, fullOutputPath, separateEnvironments);
+    const files = createIOSConfigs(bundleId, appName, fullOutputPath, separateEnvironments, useFirebase);
     files.forEach((f) => addCreatedFile(f));
     updateProgress('ios-config', '✅ iOS設定ファイルを作成しました', 'iOS設定ファイルを作成しました');
     recordStepResult('ios-config', 'success', 'iOS設定ファイルを作成しました', { files });
