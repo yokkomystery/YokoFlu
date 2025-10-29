@@ -2,17 +2,17 @@
 
 A new Flutter project.
 
-> ## ⚡ クイックスタート
+> ## ⚡ Quick Start
 > 
-> **セットアップを完了するには [`TODO.md`](TODO.md) を確認してください！**
+> Check [`TODO.md`](TODO.md) for setup steps. Japanese version: [`TODO_ja.md`](TODO_ja.md)
 > 
-> このファイルには以下が含まれます：
-> - ✅ Firebase設定（Firestore有効化、セキュリティルール、認証設定）
-> - ✅ アプリ設定（利用規約リンク、ストアID、コンテンツ更新）
-> - ✅ テスト・ビルド確認手順
-> - ✅ ストア公開準備
+> It includes:
+> - ✅ Firebase setup (enable Firestore, security rules, auth)
+> - ✅ App configuration (links, store IDs, content updates)
+> - ✅ Test & build verification
+> - ✅ Store submission prep
 > 
-> すべてのチェックボックスを完了させれば、本番デプロイ準備完了です！
+> Once all checkboxes are done, you're ready for production!
 
 ## Getting Started
 
@@ -27,26 +27,26 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
-## Flutter ビルドコマンド
+## Flutter Build Commands
 
-### 開発環境
+### Development
 
 ```bash
-# デバッグビルド
+# Debug build
 flutter build apk --debug
 flutter build ios --debug
 
-# リリースビルド
+# Release build
 flutter build apk --release
 flutter build ios --release
 ```
 
 {{#ENVIRONMENT_SEPARATION}}
 
-### 環境別ビルド（環境分離を有効にした場合）
+### Environment-specific builds (when separation is enabled)
 
 ```bash
-# Staging環境
+# Staging
 flutter build apk --flavor staging --debug
 flutter build apk --flavor staging --release
 {{#FIREBASE_ENABLED}}
@@ -58,7 +58,7 @@ flutter build ios --debug
 flutter build ios --release
 {{/FIREBASE_ENABLED}}
 
-# Production環境
+# Production
 flutter build apk --flavor production --debug
 flutter build apk --flavor production --release
 {{#FIREBASE_ENABLED}}
@@ -75,51 +75,51 @@ flutter build ios --release
 
 {{#FIREBASE_ENABLED}}
 
-## Xcode ビルドスクリプトの設定
+## Xcode Build Script
 
-このツールで自動的に追加されます。ビルドフェーズに「Firebase Config Script」が入っているかを確認してください。
+Added automatically by this tool. Make sure the "Firebase Config Script" build phase exists.
 
-## 環境設定
+## Environment Setup
 
-### Firebase 設定ファイル
+### Firebase configuration files
 
-- `ios/Runner/GoogleService-Info-staging.plist` - Staging 環境用
-- `ios/Runner/GoogleService-Info-production.plist` - Production 環境用
-- `android/app/google-services-staging.json` - Staging 環境用
-- `android/app/google-services-production.json` - Production 環境用
+- `ios/Runner/GoogleService-Info-staging.plist` - for Staging
+- `ios/Runner/GoogleService-Info-production.plist` - for Production
+- `android/app/google-services-staging.json` - for Staging
+- `android/app/google-services-production.json` - for Production
 
-### 環境変数
+### Environment variables
 
-- `ENVIRONMENT=staging|production` - Firebase環境の切り替えに使用
-  {{/FIREBASE_ENABLED}}
+- `ENVIRONMENT=staging|production` - used to switch Firebase environments
+{{/FIREBASE_ENABLED}}
 
-## 開発ガイド
+## Development Guide
 
-### 依存関係の追加
+### Add dependencies
 
 ```bash
 flutter pub add <package_name>
 ```
 
-### 依存関係の更新
+### Upgrade dependencies
 
 ```bash
 flutter pub upgrade
 ```
 
-### コード生成
+### Code generation
 
 ```bash
 flutter packages pub run build_runner build
 ```
 
-### テスト実行
+### Run tests
 
 ```bash
 flutter test
 ```
 
-### コード分析
+### Lint
 
 ```bash
 flutter analyze
