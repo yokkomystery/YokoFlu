@@ -260,44 +260,44 @@ Firebase を利用した場合は、Firebase コンソールで以下を設定�
 
 ```bash
 # Staging環境（開発）
-flutter run --flavor staging --dart-define=ENVIRONMENT=staging --dart-define=PRODUCTION=false
+flutter run --flavor staging --dart-define=ENVIRONMENT=staging
 
 # Staging環境 - APK（テスト配布用）
-flutter build apk --flavor staging --dart-define=ENVIRONMENT=staging --dart-define=PRODUCTION=false --release
+flutter build apk --flavor staging --dart-define=ENVIRONMENT=staging --release
 
 # Staging環境 - AAB（Google Play用）
-flutter build appbundle --flavor staging --dart-define=ENVIRONMENT=staging --dart-define=PRODUCTION=false --release
+flutter build appbundle --flavor staging --dart-define=ENVIRONMENT=staging --release
 
 # Production環境（開発）
-flutter run --flavor production --dart-define=ENVIRONMENT=production --dart-define=PRODUCTION=true
+flutter run --flavor production --dart-define=ENVIRONMENT=production
 
 # Production環境 - APK（テスト配布用）
-flutter build apk --flavor production --dart-define=ENVIRONMENT=production --dart-define=PRODUCTION=true --release
+flutter build apk --flavor production --dart-define=ENVIRONMENT=production --release
 
 # Production環境 - AAB（Google Play用）
-flutter build appbundle --flavor production --dart-define=ENVIRONMENT=production --dart-define=PRODUCTION=true --release
+flutter build appbundle --flavor production --dart-define=ENVIRONMENT=production --release
 ```
 
 ### iOS
 
 ```bash
 # Staging環境（開発）
-flutter run --dart-define=ENVIRONMENT=staging --dart-define=PRODUCTION=false
+flutter run --dart-define=ENVIRONMENT=staging
 
 # Staging環境 - iOSビルド
-flutter build ios --dart-define=ENVIRONMENT=staging --dart-define=PRODUCTION=false --release
+flutter build ios --dart-define=ENVIRONMENT=staging --release
 
 # Staging環境 - IPAファイル
-flutter build ipa --dart-define=ENVIRONMENT=staging --dart-define=PRODUCTION=false --release
+flutter build ipa --dart-define=ENVIRONMENT=staging --release
 
 # Production環境（開発）
-flutter run --dart-define=ENVIRONMENT=production --dart-define=PRODUCTION=true
+flutter run --dart-define=ENVIRONMENT=production
 
 # Production環境 - iOSビルド
-flutter build ios --dart-define=ENVIRONMENT=production --dart-define=PRODUCTION=true --release
+flutter build ios --dart-define=ENVIRONMENT=production --release
 
 # Production環境 - IPAファイル
-flutter build ipa --dart-define=ENVIRONMENT=production --dart-define=PRODUCTION=true --release
+flutter build ipa --dart-define=ENVIRONMENT=production --release
 ```
 
 > **注意**: iOS は`--flavor`オプションが使用できません。Xcode でビルド構成（Staging/Production）を手動で選択する必要があります。  
