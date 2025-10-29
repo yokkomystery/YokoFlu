@@ -5,30 +5,19 @@ import 'package:{{APP_NAME}}/l10n/app_localizations.dart';
 import 'package:{{APP_NAME}}/core/providers/theme_provider.dart';
 import 'package:{{APP_NAME}}/core/providers/locale_provider.dart';
 import 'package:{{APP_NAME}}/features/settings/settings_screen.dart';
-{{#ONBOARDING_ENABLED}}
-import 'package:{{APP_NAME}}/features/onboarding/onboarding_screen.dart';
+{{#ONBOARDING_ENABLED}}import 'package:{{APP_NAME}}/features/onboarding/onboarding_screen.dart';
 import 'package:{{APP_NAME}}/features/onboarding/onboarding_state.dart';
-{{/ONBOARDING_ENABLED}}
-{{#FIREBASE_ENABLED}}
-import 'package:{{APP_NAME}}/core/firebase_config.dart';
+{{/ONBOARDING_ENABLED}}{{#FIREBASE_ENABLED}}import 'package:{{APP_NAME}}/core/firebase_config.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kDebugMode;
-{{/FIREBASE_ENABLED}}
-{{#PUSH_NOTIFICATIONS_ENABLED}}
-import 'package:{{APP_NAME}}/core/services/push_notification_service.dart';
-{{/PUSH_NOTIFICATIONS_ENABLED}}
-{{#ANALYTICS_ENABLED}}
-import 'package:{{APP_NAME}}/core/services/analytics_service.dart';
-{{/ANALYTICS_ENABLED}}
-{{#CRASHLYTICS_ENABLED}}
-import 'package:{{APP_NAME}}/core/services/crashlytics_service.dart';
-{{/CRASHLYTICS_ENABLED}}
-{{#APP_RATING_ENABLED}}
-import 'package:{{APP_NAME}}/core/services/app_rating_service.dart';
+{{/FIREBASE_ENABLED}}{{#PUSH_NOTIFICATIONS_ENABLED}}import 'package:{{APP_NAME}}/core/services/push_notification_service.dart';
+{{/PUSH_NOTIFICATIONS_ENABLED}}{{#ANALYTICS_ENABLED}}import 'package:{{APP_NAME}}/core/services/analytics_service.dart';
+{{/ANALYTICS_ENABLED}}{{#CRASHLYTICS_ENABLED}}import 'package:{{APP_NAME}}/core/services/crashlytics_service.dart';
+{{/CRASHLYTICS_ENABLED}}{{#APP_RATING_ENABLED}}import 'package:{{APP_NAME}}/core/services/app_rating_service.dart';
 {{/APP_RATING_ENABLED}}
 
 // MaterialApp のための GlobalKey
@@ -36,8 +25,8 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
 {{#FIREBASE_ENABLED}}
+
   try {
     await FirebaseConfig.initializeApp();
     print('[MAIN_DEBUG] Firebase initialized successfully (${FirebaseConfig.currentEnvironment})');
@@ -46,9 +35,8 @@ void main() async {
     print('[MAIN_DEBUG] Stack trace: $stackTrace');
     rethrow;
   }
-{{/FIREBASE_ENABLED}}
+{{/FIREBASE_ENABLED}}{{#PUSH_NOTIFICATIONS_ENABLED}}
 
-{{#PUSH_NOTIFICATIONS_ENABLED}}
   // Push通知を初期化（Firebase初期化後に実行）
   // これにより、アプリ起動時に通知許可ダイアログが表示されます
   try {
@@ -58,9 +46,8 @@ void main() async {
     print('[MAIN_DEBUG] ⚠️ Push notification initialization failed: $e');
     // エラーでもアプリは起動させる（通知以外の機能に影響なし）
   }
-{{/PUSH_NOTIFICATIONS_ENABLED}}
+{{/PUSH_NOTIFICATIONS_ENABLED}}{{#ANALYTICS_ENABLED}}
 
-{{#ANALYTICS_ENABLED}}
   // Firebase Analytics を初期化
   try {
     await AnalyticsService.initialize();
@@ -68,9 +55,8 @@ void main() async {
   } catch (e) {
     print('[MAIN_DEBUG] ⚠️ Firebase Analytics initialization failed: $e');
   }
-{{/ANALYTICS_ENABLED}}
+{{/ANALYTICS_ENABLED}}{{#CRASHLYTICS_ENABLED}}
 
-{{#CRASHLYTICS_ENABLED}}
   // Firebase Crashlytics を初期化
   try {
     await CrashlyticsService.initialize();
@@ -78,8 +64,8 @@ void main() async {
   } catch (e) {
     print('[MAIN_DEBUG] ⚠️ Firebase Crashlytics initialization failed: $e');
   }
-{{/CRASHLYTICS_ENABLED}}
-{{#APP_RATING_ENABLED}}
+{{/CRASHLYTICS_ENABLED}}{{#APP_RATING_ENABLED}}
+
   // アプリ評価機能の起動回数トラッキング
   try {
     // TODO: AppRatingService を初期化して起動をトラッキング
@@ -102,18 +88,16 @@ class MyApp extends ConsumerStatefulWidget {
 }
 
 class _MyAppState extends ConsumerState<MyApp> {
-{{#ONBOARDING_ENABLED}}
-  bool _showOnboarding = true;
-{{/ONBOARDING_ENABLED}}
-  @override
+{{#ONBOARDING_ENABLED}}  bool _showOnboarding = true;
+
+{{/ONBOARDING_ENABLED}}  @override
   void initState() {
     super.initState();
 {{#FIREBASE_ENABLED}}
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkAppStatusAndShowDialogs();
     });
-{{/FIREBASE_ENABLED}}
-  }
+{{/FIREBASE_ENABLED}}  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +107,6 @@ class _MyAppState extends ConsumerState<MyApp> {
 {{#ONBOARDING_ENABLED}}
     final onboardingCompleted = ref.watch(onboardingCompletedProvider);
 {{/ONBOARDING_ENABLED}}
-
     return MaterialApp(
       navigatorKey: navigatorKey,
       title: '{{APP_NAME}}',
@@ -153,8 +136,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         useMaterial3: true,
       ),
       themeMode: currentThemeMode,
-{{#ONBOARDING_ENABLED}}
-      home: _showOnboarding
+{{#ONBOARDING_ENABLED}}      home: _showOnboarding
           ? OnboardingScreen(
               onComplete: () {
                 setState(() {
@@ -163,11 +145,8 @@ class _MyAppState extends ConsumerState<MyApp> {
               },
             )
           : const MyHomePage(title: '{{APP_DISPLAY_NAME}}'),
-{{/ONBOARDING_ENABLED}}
-{{^ONBOARDING_ENABLED}}
-      home: const MyHomePage(title: '{{APP_DISPLAY_NAME}}'),
-{{/ONBOARDING_ENABLED}}
-    );
+{{/ONBOARDING_ENABLED}}{{^ONBOARDING_ENABLED}}      home: const MyHomePage(title: '{{APP_DISPLAY_NAME}}'),
+{{/ONBOARDING_ENABLED}}    );
   }
 }
 
@@ -262,8 +241,8 @@ class HomeTabPlaceholder extends StatelessWidget {
     );
   }
 }
-
 {{#FIREBASE_ENABLED}}
+
 // Remote Config Keys
 const String _rcKeyIsMaintenanceEnabled = 'is_maintenance_enabled';
 const String _rcKeyMaintenanceTitle = 'maintenance_title';
