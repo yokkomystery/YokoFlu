@@ -96,4 +96,3 @@ export default function PlatformWarning() {
     </div>
   );
 }
-
