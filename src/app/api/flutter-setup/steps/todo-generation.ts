@@ -86,7 +86,7 @@ export function runTodoGeneration({
     });
 
     console.log('✅ TODO.md を生成しました');
-    return todoPath;
+    return todoEnPath;
   } catch (error) {
     updateProgress(
       'todo-generation',
