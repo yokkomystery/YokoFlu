@@ -209,15 +209,20 @@ export async function runFirebaseInit({
       // 注意: GoogleService-Info.plist はXcodeプロジェクトに追加しない
       // firebase_config_script.sh が環境に応じて適切なplistファイルをコピーするため、
       // デフォルトのGoogleService-Info.plistがあると、それが優先されて環境切り替えが機能しなくなります
-      console.log('ℹ️  GoogleService-Info.plist は firebase_config_script.sh により自動管理されます');
-      console.log('   ビルド時に --dart-define=ENVIRONMENT で適切なファイルに切り替わります');
-      
+      console.log(
+        'ℹ️  GoogleService-Info.plist は firebase_config_script.sh により自動管理されます'
+      );
+      console.log(
+        '   ビルド時に --dart-define=ENVIRONMENT で適切なファイルに切り替わります'
+      );
+
       // .gitignoreにGoogleService-Info.plistを追加
       const gitignorePath = path.join(fullOutputPath, '.gitignore');
       if (fs.existsSync(gitignorePath)) {
         let gitignoreContent = fs.readFileSync(gitignorePath, 'utf8');
         if (!gitignoreContent.includes('GoogleService-Info.plist')) {
-          gitignoreContent += '\n# Firebase configuration (managed by firebase_config_script.sh)\n';
+          gitignoreContent +=
+            '\n# Firebase configuration (managed by firebase_config_script.sh)\n';
           gitignoreContent += 'ios/Runner/GoogleService-Info.plist\n';
           gitignoreContent += 'android/app/google-services.json\n';
           fs.writeFileSync(gitignorePath, gitignoreContent);
