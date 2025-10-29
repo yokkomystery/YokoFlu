@@ -112,9 +112,12 @@ export async function runFirebaseInit({
 
   const firebaseConfigPath = path.join(coreDir, 'firebase_config.dart');
   const templatePath = getTemplatePath('core/firebase_config.dart');
-  
-  const appName = path.basename(fullOutputPath).toLowerCase().replace(/-/g, '_');
-  
+
+  const appName = path
+    .basename(fullOutputPath)
+    .toLowerCase()
+    .replace(/-/g, '_');
+
   copyTemplateFile(
     templatePath,
     firebaseConfigPath,
