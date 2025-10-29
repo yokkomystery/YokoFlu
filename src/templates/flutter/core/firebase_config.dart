@@ -1,46 +1,46 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
-
-{{#ENVIRONMENT_SEPARATION}}
-import '../firebase_options_staging.dart' as staging;
-import '../firebase_options_production.dart' as production;
-{{/ENVIRONMENT_SEPARATION}}
-{{^ENVIRONMENT_SEPARATION}}
-import '../firebase_options.dart';
-{{/ENVIRONMENT_SEPARATION}}
+import 'dart:io' show Platform;
 
 class FirebaseConfig {
+  static String? _detectedEnvironment;
+
   static Future<void> initializeApp() async {
+    print('[FIREBASE_CONFIG] Initializing Firebase...');
+    
     {{#ENVIRONMENT_SEPARATION}}
-    if (String.fromEnvironment('ENVIRONMENT') == 'production') {
-      await Firebase.initializeApp(
-        options: production.DefaultFirebaseOptions.currentPlatform,
-      );
+    // iOSの場合、GoogleService-Info.plistから自動的に読み込まれる
+    // firebase_config_script.shが環境に応じて正しいplistファイルをコピー済み
+    // Androidの場合も、google-services.jsonから自動的に読み込まれる
+    await Firebase.initializeApp();
+    
+    // 初期化後、実際のprojectIdから環境を判定
+    final app = Firebase.app();
+    final projectId = app.options.projectId;
+    print('[FIREBASE_CONFIG] ProjectId: $projectId');
+    
+    if (projectId.contains('production') || projectId.contains('prod')) {
+      _detectedEnvironment = 'production';
+      print('[FIREBASE_CONFIG] 🏭 Using PRODUCTION Firebase configuration');
+    } else if (projectId.contains('staging') || projectId.contains('stg')) {
+      _detectedEnvironment = 'staging';
+      print('[FIREBASE_CONFIG] 📱 Using STAGING Firebase configuration');
     } else {
-      // デフォルトはstaging環境（ENVIRONMENTが未指定またはstagingの場合）
-      await Firebase.initializeApp(
-        options: staging.DefaultFirebaseOptions.currentPlatform,
-      );
+      _detectedEnvironment = 'unknown';
+      print('[FIREBASE_CONFIG] ⚠️  Unknown environment: $projectId');
     }
     {{/ENVIRONMENT_SEPARATION}}
     {{^ENVIRONMENT_SEPARATION}}
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+    // 単一環境の場合は、デフォルトのFirebase設定を使用
+    await Firebase.initializeApp();
+    _detectedEnvironment = 'production';
+    print('[FIREBASE_CONFIG] Initialized with default configuration');
     {{/ENVIRONMENT_SEPARATION}}
+    
     // TODO: Add any additional Firebase initialisation (Crashlytics, Analytics, etc.) here.
   }
 
   static String get currentEnvironment {
-    {{#ENVIRONMENT_SEPARATION}}
-    if (String.fromEnvironment('ENVIRONMENT') == 'production') {
-      return 'production';
-    } else {
-      return 'staging';
-    }
-    {{/ENVIRONMENT_SEPARATION}}
-    {{^ENVIRONMENT_SEPARATION}}
-    return 'production';
-    {{/ENVIRONMENT_SEPARATION}}
+    return _detectedEnvironment ?? 'unknown';
   }
-} 
+}
