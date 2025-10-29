@@ -1,43 +1,43 @@
-# コントリビューションガイド
+# Contributing Guide
 
-> 🌐 **English**: See [CONTRIBUTING_en.md](CONTRIBUTING_en.md)
+> 🌐 **日本語**: See [CONTRIBUTING_ja.md](CONTRIBUTING_ja.md)
 
-Flutter Setup Tool への貢献に興味を持っていただき、ありがとうございます！
+Thank you for your interest in contributing to the Flutter Setup Tool!
 
-## 🤝 貢献方法
+## 🤝 How to Contribute
 
-### バグ報告
+### Bug Reports
 
-バグを発見した場合は、以下の情報を含めて Issue を作成してください：
+If you find a bug, please create an issue with the following information:
 
-1. **環境情報**
+1. **Environment Information**
 
-   - OS（macOS、Windows、Linux）
-   - Node.js バージョン
-   - Flutter SDK バージョン
-   - Firebase CLI バージョン
+   - OS (macOS, Windows, Linux)
+   - Node.js version
+   - Flutter SDK version
+   - Firebase CLI version
 
-2. **再現手順**
+2. **Reproduction Steps**
 
-   - 具体的な操作手順
-   - 期待される動作
-   - 実際の動作
+   - Specific operation steps
+   - Expected behavior
+   - Actual behavior
 
-3. **エラーログ**
-   - コンソールのエラーメッセージ
-   - ブラウザの開発者ツールのエラー
+3. **Error Logs**
+   - Console error messages
+   - Browser developer tools errors
 
-### 機能提案
+### Feature Requests
 
-新機能の提案は大歓迎です！Issue で以下を説明してください：
+We welcome new feature proposals! Please explain the following in an issue:
 
-- 提案する機能の概要
-- その機能が解決する課題
-- 可能であれば、実装案や UI のモックアップ
+- Overview of the proposed feature
+- Problems that the feature would solve
+- If possible, implementation ideas or UI mockups
 
-### プルリクエスト
+### Pull Requests
 
-1. **フォークとクローン**
+1. **Fork and Clone**
 
    ```bash
    git clone https://github.com/yokkomystery/yokoflu.git
@@ -45,64 +45,65 @@ Flutter Setup Tool への貢献に興味を持っていただき、ありがと�
    npm install
    ```
 
-2. **ブランチを作成**
+2. **Create a Branch**
 
    ```bash
    git checkout -b feature/your-feature-name
    ```
 
-3. **開発**
+3. **Development**
 
-   - コードを編集
-   - 動作確認（`npm run dev`）
-   - 必要に応じてテストを追加
+   - Edit code
+   - Test functionality (`npm run dev`)
+   - Add tests if necessary
 
-4. **コミット**
+4. **Commit**
 
    ```bash
    git add .
-   git commit -m "feat: 機能の説明"
+   git commit -m "feat: description of feature"
    ```
 
-5. **プッシュと PR 作成**
+5. **Push and Create PR**
    ```bash
    git push origin feature/your-feature-name
    ```
 
-## 📝 コーディング規約
+## 📝 Coding Conventions
 
-- TypeScript/JavaScript は既存のコードスタイルに従う
-- Dart コードは`flutter_lints`の推奨に従う
-- 変数名・関数名は分かりやすく
-- 複雑な処理にはコメントを追加
+- Follow existing code style for TypeScript/JavaScript
+- Follow `flutter_lints` recommendations for Dart code
+- Use clear variable and function names
+- Add comments for complex logic
 
-## 🧪 テスト
+## 🧪 Testing
 
-- 変更後、必ず実際に Flutter プロジェクトを生成して動作確認
-- Firebase 有効/無効の両パターンをテスト
-- 各テンプレート（カウンター、TODO 等）をテスト
+- After changes, always generate a Flutter project to verify functionality
+- Test both Firebase enabled/disabled scenarios
+- Test each template (Counter, TODO, etc.)
 
-## 🎨 新しいテンプレートの追加
+## 🎨 Adding New Templates
 
-新しいアプリテンプレートを追加する場合：
+When adding a new app template:
 
-1. `src/templates/flutter/app_templates/`に新しいファイルを作成
-2. `src/config/templateOptions.ts`の`APP_TEMPLATE_OPTIONS`に追加
-3. `src/app/api/flutter-setup/app-template-utils.ts`に設定を追加
+1. Create a new file in `src/templates/flutter/app_templates/`
+2. Add to `APP_TEMPLATE_OPTIONS` in `src/config/templateOptions.ts`
+3. Add configuration to `src/app/api/flutter-setup/app-template-utils.ts`
 
-## 🚀 新しい高度な機能の追加
+## 🚀 Adding New Advanced Features
 
-新しい高度な機能を追加する場合：
+When adding a new advanced feature:
 
-1. `src/templates/flutter/`に必要なテンプレートファイルを作成
-2. `src/config/templateOptions.ts`の`ADVANCED_FEATURE_OPTIONS`に追加
-3. `src/app/api/flutter-setup/advanced-features-utils.ts`に実装を追加
-4. 必要に応じて依存関係を pubspec.yaml に追加する処理を実装
+1. Create necessary template files in `src/templates/flutter/`
+2. Add to `ADVANCED_FEATURE_OPTIONS` in `src/config/templateOptions.ts`
+3. Add implementation to `src/app/api/flutter-setup/advanced-features-utils.ts`
+4. Implement processing to add dependencies to pubspec.yaml if necessary
 
-## 📧 質問や相談
+## 📧 Questions or Consultation
 
-不明点があれば、Issue で質問するか、contact@mysterylog.com までお気軽にご連絡ください。
+If you have any questions, please ask in an issue or feel free to contact us at contact@mysterylog.com.
 
 ---
 
-皆様の貢献に感謝します！🙏
+We appreciate your contributions! 🙏
+
