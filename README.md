@@ -274,6 +274,16 @@ MIT License - See [LICENSE](LICENSE) file for details.
 
 Copyright (c) 2025 Satoshi Yokokawa（横川 智士）
 
+## Terms of Use
+
+Please review the [Terms of Use](TERMS_OF_USE.md) before using this tool. Key points:
+
+- ✅ **Generated code is 100% yours** - use freely for any purpose
+- ✅ **No attribution required** - credit is appreciated but optional
+- ✅ **Commercial use fully permitted** - no fees or royalties
+- ❌ **No warranties provided** - use at your own risk
+- ⚠️ **Third-party compliance** - you're responsible for Firebase, etc. terms
+
 ## Contact
 
 - Email: contact@mysterylog.com
