@@ -1,5 +1,7 @@
 # YOKOFLU (Flutter Setup Tool)
 
+> 🌐 **日本語**: See [README_ja.md](README_ja.md)
+
 **A comprehensive project setup tool for rapid Flutter app development**
 
 Generate production-ready Flutter projects in minutes by simply selecting settings through the GUI. Automatically generates template code for commonly used features like Firebase integration, multi-language support, theme switching, and authentication.
@@ -10,8 +12,6 @@ Generate production-ready Flutter projects in minutes by simply selecting settin
 [![GitHub issues](https://img.shields.io/github/issues/yokkomystery/YokoFlu)](https://github.com/yokkomystery/YokoFlu/issues)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
 [![Flutter](https://img.shields.io/badge/Flutter-3.x-blue)](https://flutter.dev/)
-
-> 🌐 **日本語**: See [README_ja.md](README_ja.md)
 
 > 💡 **This is a local-only tool.**  
 > Run `npm run dev` on your machine, not deployed as a web hosting service.
