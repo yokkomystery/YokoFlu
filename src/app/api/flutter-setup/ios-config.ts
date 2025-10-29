@@ -131,7 +131,7 @@ function addBuildScriptToXcodeProject(projectPath: string) {
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "bash \\"\\${SRCROOT}/Runner/firebase_config_script.sh\\"\\n";
+			shellScript = "bash \\"\\$\\{SRCROOT\\}/Runner/firebase_config_script.sh\\"\\n";
 		};
 		/* End PBXShellScriptBuildPhase section */`;
 
