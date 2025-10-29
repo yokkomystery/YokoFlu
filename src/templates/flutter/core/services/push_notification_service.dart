@@ -16,13 +16,16 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 /// - iOS: Info.plist に UIBackgroundModes を追加
 /// - Android: AndroidManifest.xml に権限を追加
 class PushNotificationService {
+  // シングルトンインスタンス
+  static PushNotificationService? _instance;
+  
   final FirebaseMessaging _messaging;
   final FirebaseFirestore _firestore;
   final FirebaseAuth _auth;
   final GlobalKey<NavigatorState>? navigatorKey;
   final FlutterLocalNotificationsPlugin _localNotifications;
 
-  PushNotificationService({
+  PushNotificationService._internal({
     FirebaseMessaging? messaging,
     FirebaseFirestore? firestore,
     FirebaseAuth? auth,
@@ -32,8 +35,20 @@ class PushNotificationService {
         _auth = auth ?? FirebaseAuth.instance,
         _localNotifications = FlutterLocalNotificationsPlugin();
 
-  /// 通知を初期化
-  Future<void> initialize() async {
+  /// シングルトンインスタンスを取得
+  factory PushNotificationService({GlobalKey<NavigatorState>? navigatorKey}) {
+    _instance ??= PushNotificationService._internal(navigatorKey: navigatorKey);
+    return _instance!;
+  }
+
+  /// 通知を初期化（静的メソッド版 - シンプルな使い方）
+  static Future<void> initialize({GlobalKey<NavigatorState>? navigatorKey}) async {
+    final service = PushNotificationService(navigatorKey: navigatorKey);
+    await service._initialize();
+  }
+
+  /// 通知を初期化（インスタンスメソッド版）
+  Future<void> _initialize() async {
     try {
       // flutter_local_notifications の初期化
       const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -268,6 +283,38 @@ class PushNotificationService {
       debugPrint('❌ トークン取得に失敗: $e');
       return null;
     }
+  }
+
+  // === 静的メソッド版（シンプルな使い方） ===
+
+  /// 通知権限の状態を確認（静的メソッド版）
+  static Future<AuthorizationStatus> checkPermissionStatus() async {
+    final service = PushNotificationService();
+    return await service.getPermissionStatus();
+  }
+
+  /// 通知権限が拒否されているかチェック（静的メソッド版）
+  static Future<bool> checkIsPermissionDenied() async {
+    final service = PushNotificationService();
+    return await service.isPermissionDenied();
+  }
+
+  /// トピックを購読（静的メソッド版）
+  static Future<void> subscribeToTopicStatic(String topic) async {
+    final service = PushNotificationService();
+    await service.subscribeToTopic(topic);
+  }
+
+  /// トピックを購読解除（静的メソッド版）
+  static Future<void> unsubscribeFromTopicStatic(String topic) async {
+    final service = PushNotificationService();
+    await service.unsubscribeFromTopic(topic);
+  }
+
+  /// FCMトークンを取得（静的メソッド版）
+  static Future<String?> getTokenStatic() async {
+    final service = PushNotificationService();
+    return await service.getToken();
   }
 }
 

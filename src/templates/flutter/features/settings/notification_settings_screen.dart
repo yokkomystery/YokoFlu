@@ -69,13 +69,13 @@ class _NotificationSettingsScreenState
               child: const Text('キャンセル'),
               onPressed: () => Navigator.of(dialogContext).pop(),
             ),
-            TextButton(
-              child: const Text('設定を開く'),
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                openAppSettings();
-              },
-            ),
+              TextButton(
+                child: const Text('設定を開く'),
+                onPressed: () async {
+                  Navigator.of(dialogContext).pop();
+                  await openAppSettings();
+                },
+              ),
           ],
         );
       },
