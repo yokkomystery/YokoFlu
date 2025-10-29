@@ -280,7 +280,11 @@ export const ADVANCED_FEATURE_OPTIONS: AdvancedFeatureOption[] = [
     description: 'Firebase Cloud Messagingでプッシュ通知を送信',
     category: 'analytics',
     requiresFirebase: true,
-    dependencies: ['firebase_messaging'],
+    dependencies: [
+      'firebase_messaging',
+      'flutter_local_notifications',
+      'permission_handler',
+    ],
     defaultEnabled: false,
     todoNote: 'APNs証明書（iOS）とFCMサーバーキー（Android）を設定してください',
   },
