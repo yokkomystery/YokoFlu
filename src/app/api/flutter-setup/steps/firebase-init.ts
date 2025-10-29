@@ -205,6 +205,22 @@ export async function runFirebaseInit({
         '✅ 本番環境の設定が完了しました',
         '本番環境の設定が完了しました'
       );
+
+      // 環境分離を使用する場合、Xcodeのビルド前チェック用にデフォルトファイルを作成
+      // デフォルトでstagingファイルをコピー（無効なダミーデータだとFirebase初期化でクラッシュするため）
+      const iosRunnerPath = path.join(fullOutputPath, 'ios', 'Runner');
+      const defaultPlistPath = path.join(iosRunnerPath, 'GoogleService-Info.plist');
+      const stagingPlistPath = path.join(iosRunnerPath, 'GoogleService-Info-staging.plist');
+      
+      // staging環境のファイルをデフォルトとしてコピー
+      // ビルドスクリプトが実行されると、環境に応じて適切なファイルに置き換わります
+      if (fs.existsSync(stagingPlistPath)) {
+        fs.copyFileSync(stagingPlistPath, defaultPlistPath);
+        console.log('✅ GoogleService-Info.plist を作成（デフォルト: staging）');
+        console.log('   ビルド時に --dart-define=ENVIRONMENT で適切なファイルに切り替わります');
+      } else {
+        console.warn('⚠️ GoogleService-Info-staging.plist が見つかりません。手動で設定が必要です。');
+      }
     } else {
       const singleConfigCommand = `cd ${fullOutputPath} && flutterfire configure --project=${resolvedSingleProjectId} --out=lib/firebase_options.dart --ios-bundle-id=${bundleId} --android-package-name=${packageName} --yes --platforms=android,ios`;
       await execAsync(singleConfigCommand, {
