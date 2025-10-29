@@ -205,6 +205,50 @@ export async function runFirebaseInit({
         '✅ 本番環境の設定が完了しました',
         '本番環境の設定が完了しました'
       );
+
+      // 環境分離を使用する場合、Xcodeのビルド前チェック用のダミーファイルを作成
+      // 実際にはビルドスクリプトで適切な環境のファイルがコピーされます
+      const iosRunnerPath = path.join(fullOutputPath, 'ios', 'Runner');
+      const dummyPlistPath = path.join(iosRunnerPath, 'GoogleService-Info.plist');
+      
+      // 最小限のダミーPlistファイルを作成（Xcodeのビルドチェックを通過するため）
+      const dummyPlistContent = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CLIENT_ID</key>
+  <string>dummy-client-id</string>
+  <key>REVERSED_CLIENT_ID</key>
+  <string>com.googleusercontent.apps.dummy</string>
+  <key>API_KEY</key>
+  <string>dummy-api-key</string>
+  <key>GCM_SENDER_ID</key>
+  <string>000000000000</string>
+  <key>PLIST_VERSION</key>
+  <string>1</string>
+  <key>BUNDLE_ID</key>
+  <string>${bundleId}</string>
+  <key>PROJECT_ID</key>
+  <string>dummy-project</string>
+  <key>STORAGE_BUCKET</key>
+  <string>dummy-project.appspot.com</string>
+  <key>IS_ADS_ENABLED</key>
+  <false/>
+  <key>IS_ANALYTICS_ENABLED</key>
+  <false/>
+  <key>IS_APPINVITE_ENABLED</key>
+  <false/>
+  <key>IS_GCM_ENABLED</key>
+  <true/>
+  <key>IS_SIGNIN_ENABLED</key>
+  <true/>
+  <key>GOOGLE_APP_ID</key>
+  <string>1:000000000000:ios:0000000000000000000000</string>
+</dict>
+</plist>`;
+      
+      fs.writeFileSync(dummyPlistPath, dummyPlistContent);
+      console.log('✅ ダミーGoogleService-Info.plist を作成（ビルドスクリプトで環境別ファイルに置き換わります）');
     } else {
       const singleConfigCommand = `cd ${fullOutputPath} && flutterfire configure --project=${resolvedSingleProjectId} --out=lib/firebase_options.dart --ios-bundle-id=${bundleId} --android-package-name=${packageName} --yes --platforms=android,ios`;
       await execAsync(singleConfigCommand, {
