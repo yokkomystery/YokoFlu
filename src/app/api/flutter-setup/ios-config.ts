@@ -156,15 +156,23 @@ function addBuildScriptToXcodeProject(projectPath: string) {
     }
   }
 
-  // ターゲットのbuildPhasesにスクリプトを追加
-  const targetBuildPhasesRegex = /(buildPhases = \([^)]*\))/;
-  if (targetBuildPhasesRegex.test(projectContent)) {
-    projectContent = projectContent.replace(targetBuildPhasesRegex, (match) =>
-      match.replace(
+  // RunnerターゲットのbuildPhasesにスクリプトを追加（RunnerTestsではなくRunner）
+  const nativeTargetSectionRegex = /\/\* Begin PBXNativeTarget section \*\/[\s\S]*?\/\* End PBXNativeTarget section \*\//;
+  const runnerTargetRegex = /(\b[0-9A-F]{24}\b \/\* Runner \*\/ = \{[\s\S]*?buildPhases = \([\s\S]*?\);[\s\S]*?\};)/;
+
+  const nativeSectionMatch = projectContent.match(nativeTargetSectionRegex);
+  if (nativeSectionMatch) {
+    const nativeSection = nativeSectionMatch[0];
+    const updatedNativeSection = nativeSection.replace(runnerTargetRegex, (runnerBlock) => {
+      if (runnerBlock.includes('FIREBASE_CONFIG_SCRIPT_ID')) {
+        return runnerBlock; // 既に追加済み
+      }
+      return runnerBlock.replace(
         /buildPhases = \(/,
         'buildPhases = (\n\t\t\t\tFIREBASE_CONFIG_SCRIPT_ID /* Firebase Config Script */,'
-      )
-    );
+      );
+    });
+    projectContent = projectContent.replace(nativeTargetSectionRegex, updatedNativeSection);
   }
 
   // ファイル参照を追加
