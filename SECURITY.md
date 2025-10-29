@@ -1,5 +1,7 @@
 # Security Policy
 
+> 🌐 **日本語**: See [SECURITY_ja.md](SECURITY_ja.md)
+
 ## Supported Versions
 
 We release patches for security vulnerabilities. Which versions are eligible for receiving such patches depends on the CVSS v3.0 Rating:
