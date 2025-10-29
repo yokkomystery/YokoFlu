@@ -231,6 +231,14 @@
   "@deleteAccountConfirmMessage": {
     "description": "アカウント削除確認ダイアログのメッセージ"
   },
+  "deleteAccountConfirmCheckbox": "上記を理解しました",
+  "@deleteAccountConfirmCheckbox": {
+    "description": "アカウント削除確認チェックボックスのラベル"
+  },
+  "deleteAccountWarningNonAnonymous": "警告: アカウントを削除すると、すべてのデータが完全に削除されます。この操作は取り消せません。",
+  "@deleteAccountWarningNonAnonymous": {
+    "description": "非匿名ユーザー向けのアカウント削除警告メッセージ"
+  },
   "deleteAccountSuccessful": "アカウントを削除しました",
   "@deleteAccountSuccessful": {
     "description": "アカウント削除成功時のメッセージ"

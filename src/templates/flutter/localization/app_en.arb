@@ -231,6 +231,14 @@
   "@deleteAccountConfirmMessage": {
     "description": "Message for delete account confirmation dialog"
   },
+  "deleteAccountConfirmCheckbox": "I understand the above",
+  "@deleteAccountConfirmCheckbox": {
+    "description": "Label for account deletion confirmation checkbox"
+  },
+  "deleteAccountWarningNonAnonymous": "Warning: Deleting your account will permanently remove all your data. This action cannot be undone.",
+  "@deleteAccountWarningNonAnonymous": {
+    "description": "Warning message for non-anonymous user account deletion"
+  },
   "deleteAccountSuccessful": "Account successfully deleted",
   "@deleteAccountSuccessful": {
     "description": "Success message after deleting account"
