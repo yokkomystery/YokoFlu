@@ -235,13 +235,13 @@ function createIOSConfigs(
     // Debug.xcconfig (開発中は staging として扱う)
     const debugConfig = `#include "Generated.xcconfig"
 PRODUCT_BUNDLE_IDENTIFIER = ${bundleId}.staging
-PRODUCT_NAME = ${appName} (Dev)
+PRODUCT_NAME = ${appName}-STG
 ENVIRONMENT = staging`;
 
     // Staging.xcconfig
     const stagingConfig = `#include "Generated.xcconfig"
 PRODUCT_BUNDLE_IDENTIFIER = ${bundleId}.staging
-PRODUCT_NAME = ${appName} (Staging)
+PRODUCT_NAME = ${appName}-STG
 ENVIRONMENT = staging`;
 
     // Production.xcconfig
