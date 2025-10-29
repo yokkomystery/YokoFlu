@@ -84,24 +84,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           _buildAuthSection(context, l10n),
           const Divider(),
 {{/AUTH_SECTION_ENABLED}}
-{{#REMOTE_CONFIG_SECTION_ENABLED}}
-          _buildSectionHeader('アプリ運用と配信管理'),
-          _buildFeatureSummaryTile(
-            icon: Icons.system_update_alt_outlined,
-            title: '有効なリリース施策',
-            description: '{{REMOTE_CONFIG_LABELS}}',
-          ),
-          const Divider(),
-{{/REMOTE_CONFIG_SECTION_ENABLED}}
-{{#ANALYTICS_SECTION_ENABLED}}
-          _buildSectionHeader('分析・モニタリング'),
-          _buildFeatureSummaryTile(
-            icon: Icons.query_stats_outlined,
-            title: '連携サービス',
-            description: '{{ANALYTICS_LABELS}}',
-          ),
-          const Divider(),
-{{/ANALYTICS_SECTION_ENABLED}}
 
           // サポート
           _buildSectionHeader(l10n.settingsSupportSectionTitle),
@@ -303,51 +285,201 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   void _showDeleteAccountDialog(BuildContext context, AppLocalizations l10n) {
+    final user = ref.watch(currentUserProvider);
+    if (user == null) return;
+
+    // 匿名ユーザーと非匿名ユーザーで異なるダイアログを表示
+    if (user.isAnonymous) {
+      _showDeleteAnonymousDialog(context, l10n);
+    } else {
+      _showDeleteNonAnonymousDialog(context, l10n);
+    }
+  }
+
+  void _showDeleteAnonymousDialog(BuildContext context, AppLocalizations l10n) {
+    bool isChecked = false;
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: Text(l10n.deleteAccountConfirmTitle),
-          content: Text(l10n.deleteAccountConfirmMessage),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: Text(l10n.cancel),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                Navigator.of(dialogContext).pop();
-                try {
-                  final repository = ref.read(authRepositoryProvider);
-                  await repository.deleteAccount();
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(l10n.deleteAccountSuccessful),
-                        backgroundColor: Colors.green,
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(l10n.deleteAccountConfirmTitle),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l10n.deleteAccountConfirmMessage),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: isChecked,
+                        onChanged: (value) {
+                          setState(() {
+                            isChecked = value ?? false;
+                          });
+                        },
                       ),
-                    );
-                  }
-                } catch (e) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('${l10n.deleteAccountFailed}: $e'),
-                        backgroundColor: Colors.red,
+                      Expanded(
+                        child: Text(
+                          l10n.deleteAccountConfirmCheckbox,
+                          style: const TextStyle(fontSize: 14),
+                        ),
                       ),
-                    );
-                  }
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
+                    ],
+                  ),
+                ],
               ),
-              child: Text(l10n.deleteAccount),
-            ),
-          ],
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: Text(l10n.cancel),
+                ),
+                TextButton(
+                  onPressed: isChecked
+                      ? () async {
+                          Navigator.of(dialogContext).pop();
+                          await _deleteAnonymousAccount(context, l10n);
+                        }
+                      : null,
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.red,
+                  ),
+                  child: Text(l10n.deleteAccount),
+                ),
+              ],
+            );
+          },
         );
       },
     );
+  }
+
+  void _showDeleteNonAnonymousDialog(
+      BuildContext context, AppLocalizations l10n) {
+    bool isChecked = false;
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(l10n.deleteAccountConfirmTitle),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l10n.deleteAccountWarningNonAnonymous),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: isChecked,
+                        onChanged: (value) {
+                          setState(() {
+                            isChecked = value ?? false;
+                          });
+                        },
+                      ),
+                      Expanded(
+                        child: Text(
+                          l10n.deleteAccountConfirmCheckbox,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: Text(l10n.cancel),
+                ),
+                TextButton(
+                  onPressed: isChecked
+                      ? () async {
+                          Navigator.of(dialogContext).pop();
+                          await _deleteNonAnonymousAccount(context, l10n);
+                        }
+                      : null,
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.red,
+                  ),
+                  child: Text(l10n.deleteAccount),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteAnonymousAccount(
+      BuildContext context, AppLocalizations l10n) async {
+    try {
+      final repository = ref.read(authRepositoryProvider);
+      await repository.deleteAccount();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.deleteAccountSuccessful),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${l10n.deleteAccountFailed}: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _deleteNonAnonymousAccount(
+      BuildContext context, AppLocalizations l10n) async {
+    try {
+      final repository = ref.read(authRepositoryProvider);
+      final user = ref.watch(currentUserProvider);
+      if (user == null) return;
+
+      // 非匿名ユーザーの場合は再認証が必要
+      // プロバイダーに応じて再認証
+      final providers = user.providerData.map((p) => p.providerId).toList();
+
+      if (providers.contains('google.com')) {
+        await repository.reauthenticateWithGoogle();
+      } else if (providers.contains('apple.com')) {
+        await repository.reauthenticateWithApple();
+      }
+
+      // 再認証後にアカウント削除
+      await repository.deleteAccount();
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.deleteAccountSuccessful),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${l10n.deleteAccountFailed}: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 {{/AUTH_SECTION_ENABLED}}
 

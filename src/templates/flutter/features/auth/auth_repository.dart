@@ -57,8 +57,43 @@ class AuthRepository {
   /// 認証状態の変更を監視
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
-  /// ユーザードキュメントが存在しない場合は作成
+  /// ユーザードキュメントが存在しない場合は作成（リトライ機能付き）
   Future<void> _ensureUserDocument({
+    required User user,
+    required String localeCode,
+    int maxRetries = 3,
+  }) async {
+    int retryCount = 0;
+    Duration retryDelay = const Duration(seconds: 1);
+
+    while (retryCount < maxRetries) {
+      try {
+        await _performEnsureUserDocument(
+          user: user,
+          localeCode: localeCode,
+        );
+        debugPrint('[AuthRepository] ユーザードキュメント作成/更新成功');
+        return; // 成功したら終了
+      } catch (e) {
+        retryCount++;
+        if (retryCount >= maxRetries) {
+          debugPrint(
+              '[AuthRepository] ユーザードキュメント作成失敗（リトライ${maxRetries}回後）: $e');
+          // Firestoreへの書き込みは失敗したが、サインイン自体は成功しているので
+          // エラーを再スローせず、警告ログのみ出力
+          debugPrint('[AuthRepository] 警告: ユーザードキュメントは後で作成されます');
+          return;
+        }
+        debugPrint(
+            '[AuthRepository] リトライ ${retryCount}/${maxRetries} (${retryDelay.inSeconds}秒後): $e');
+        await Future.delayed(retryDelay);
+        retryDelay *= 2; // exponential backoff
+      }
+    }
+  }
+
+  /// ユーザードキュメントの作成または更新（実装部分）
+  Future<void> _performEnsureUserDocument({
     required User user,
     required String localeCode,
   }) async {
