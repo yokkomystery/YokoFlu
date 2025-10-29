@@ -268,6 +268,12 @@ ENVIRONMENT = release`;
       releaseConfigPath
     );
 
+    // Xcodeプロジェクトの設定ファイル参照を更新
+    const updatedConfigPath = updateXcodeConfigReferences(projectPath);
+    if (updatedConfigPath) {
+      createdFiles.push(updatedConfigPath);
+    }
+
     // Firebase設定スクリプトの作成
     const firebaseConfigScriptPath = path.join(
       projectPath,
@@ -368,10 +374,66 @@ function createXcodeBuildScripts(projectPath: string, appName: string) {
   };
 }
 
+// Xcodeプロジェクトの設定ファイル参照を更新
+function updateXcodeConfigReferences(projectPath: string) {
+  const projectPbxprojPath = path.join(
+    projectPath,
+    'ios',
+    'Runner.xcodeproj',
+    'project.pbxproj'
+  );
+
+  if (!fs.existsSync(projectPbxprojPath)) {
+    console.log('⚠️ Xcode project.pbxproj not found, skipping config reference update');
+    return null;
+  }
+
+  let projectContent = fs.readFileSync(projectPbxprojPath, 'utf8');
+
+  // カスタム設定ファイルの参照を追加
+  const fileRefSection = /\/\* Begin PBXFileReference section \*\//;
+  if (fileRefSection.test(projectContent)) {
+    const customConfigRefs = `
+		CUSTOM_DEBUG_CONFIG /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		CUSTOM_STAGING_CONFIG /* Staging.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Staging.xcconfig; sourceTree = "<group>"; };
+		CUSTOM_PRODUCTION_CONFIG /* Production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Production.xcconfig; sourceTree = "<group>"; };`;
+    
+    if (!projectContent.includes('CUSTOM_DEBUG_CONFIG')) {
+      projectContent = projectContent.replace(
+        fileRefSection,
+        `$&${customConfigRefs}`
+      );
+    }
+  }
+
+  // Debug設定の参照を変更（Flutter/Debug.xcconfig → ios/Debug.xcconfig）
+  projectContent = projectContent.replace(
+    /(97C147061CF9000F007C117D \/\* Debug \*\/ = \{[\s\S]*?baseConfigurationReference = )[0-9A-F]+ \/\* [^*]+ \*\/;/,
+    '$1CUSTOM_DEBUG_CONFIG /* Debug.xcconfig */;'
+  );
+
+  // Release設定の参照を変更（Flutter/Release.xcconfig → ios/Production.xcconfig）
+  projectContent = projectContent.replace(
+    /(97C147071CF9000F007C117D \/\* Release \*\/ = \{[\s\S]*?baseConfigurationReference = )[0-9A-F]+ \/\* [^*]+ \*\/;/,
+    '$1CUSTOM_PRODUCTION_CONFIG /* Production.xcconfig */;'
+  );
+
+  // Profile設定の参照を変更（Flutter/Release.xcconfig → ios/Production.xcconfig）
+  projectContent = projectContent.replace(
+    /(249021D4217E4FDB00AE95B9 \/\* Profile \*\/ = \{[\s\S]*?baseConfigurationReference = )[0-9A-F]+ \/\* [^*]+ \*\/;/,
+    '$1CUSTOM_PRODUCTION_CONFIG /* Production.xcconfig */;'
+  );
+
+  fs.writeFileSync(projectPbxprojPath, projectContent);
+  console.log('✅ Xcode project.pbxproj の設定参照を更新しました');
+  return projectPbxprojPath;
+}
+
 export {
   createIOSConfigs,
   createXcodeBuildScripts,
   updatePodfile,
   updateXcodeProjectDeploymentTarget,
   addBuildScriptToXcodeProject,
+  updateXcodeConfigReferences,
 };
