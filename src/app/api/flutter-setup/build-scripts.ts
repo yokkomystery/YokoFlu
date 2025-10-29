@@ -114,6 +114,8 @@ ${formatDependencyVersions(packageVersions, useFirebase).dependencies}`;
       firebase_messaging: packageVersions.firebase_messaging,
       url_launcher: packageVersions.url_launcher,
       shared_preferences: packageVersions.shared_preferences,
+      flutter_local_notifications: packageVersions.flutter_local_notifications,
+      permission_handler: packageVersions.permission_handler,
     };
 
     const basePackages = new Set([

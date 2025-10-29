@@ -30,6 +30,8 @@ export interface PackageVersionSet {
   in_app_review: string;
   google_sign_in: string;
   sign_in_with_apple: string;
+  flutter_local_notifications: string;
+  permission_handler: string;
 
   // dev dependencies
   flutter_lints: string;
@@ -57,6 +59,8 @@ const FLUTTER_3_UNIVERSAL: PackageVersionSet = {
   in_app_review: '^2.0.10',
   google_sign_in: '^6.2.3',
   sign_in_with_apple: '^6.1.3',
+  flutter_local_notifications: '^18.0.1',
+  permission_handler: '^11.3.1',
   flutter_lints: '^5.0.0',
 };
 
