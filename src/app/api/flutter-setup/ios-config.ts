@@ -131,7 +131,7 @@ function addBuildScriptToXcodeProject(projectPath: string) {
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "\\"\\$(SRCROOT)/Runner/firebase_config_script.sh\\"\\n";
+			shellScript = "bash \\"\\$\\{SRCROOT\\}/Runner/firebase_config_script.sh\\"\\n";
 		};
 		/* End PBXShellScriptBuildPhase section */`;
 
@@ -156,14 +156,30 @@ function addBuildScriptToXcodeProject(projectPath: string) {
     }
   }
 
-  // ターゲットのbuildPhasesにスクリプトを追加
-  const targetBuildPhasesRegex = /(buildPhases = \([^)]*\))/;
-  if (targetBuildPhasesRegex.test(projectContent)) {
-    projectContent = projectContent.replace(targetBuildPhasesRegex, (match) =>
-      match.replace(
-        /buildPhases = \(/,
-        'buildPhases = (\n\t\t\t\tFIREBASE_CONFIG_SCRIPT_ID /* Firebase Config Script */,'
-      )
+  // RunnerターゲットのbuildPhasesにスクリプトを追加（RunnerTestsではなくRunner）
+  const nativeTargetSectionRegex =
+    /\/\* Begin PBXNativeTarget section \*\/[\s\S]*?\/\* End PBXNativeTarget section \*\//;
+  const runnerTargetRegex =
+    /(\b[0-9A-F]{24}\b \/\* Runner \*\/ = \{[\s\S]*?buildPhases = \([\s\S]*?\);[\s\S]*?\};)/;
+
+  const nativeSectionMatch = projectContent.match(nativeTargetSectionRegex);
+  if (nativeSectionMatch) {
+    const nativeSection = nativeSectionMatch[0];
+    const updatedNativeSection = nativeSection.replace(
+      runnerTargetRegex,
+      (runnerBlock) => {
+        if (runnerBlock.includes('FIREBASE_CONFIG_SCRIPT_ID')) {
+          return runnerBlock; // 既に追加済み
+        }
+        return runnerBlock.replace(
+          /buildPhases = \(/,
+          'buildPhases = (\n\t\t\t\tFIREBASE_CONFIG_SCRIPT_ID /* Firebase Config Script */,'
+        );
+      }
+    );
+    projectContent = projectContent.replace(
+      nativeTargetSectionRegex,
+      updatedNativeSection
     );
   }
 
@@ -216,11 +232,11 @@ function createIOSConfigs(
     );
     const releaseConfigPath = path.join(projectPath, 'ios', 'Release.xcconfig');
 
-    // Debug.xcconfig
+    // Debug.xcconfig (開発中は staging として扱う)
     const debugConfig = `#include "Generated.xcconfig"
-PRODUCT_BUNDLE_IDENTIFIER = ${bundleId}
-PRODUCT_NAME = ${appName}
-ENVIRONMENT = debug`;
+PRODUCT_BUNDLE_IDENTIFIER = ${bundleId}.staging
+PRODUCT_NAME = ${appName} (Dev)
+ENVIRONMENT = staging`;
 
     // Staging.xcconfig
     const stagingConfig = `#include "Generated.xcconfig"
