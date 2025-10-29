@@ -44,16 +44,16 @@ export function runTodoGeneration({
       APPLE_SIGNIN: advancedFeatures.includes('apple-signin'),
       ANALYTICS_ENABLED: advancedFeatures.includes('analytics'),
       CRASHLYTICS_ENABLED: advancedFeatures.includes('crashlytics'),
-      PUSH_NOTIFICATIONS_ENABLED: advancedFeatures.includes('push-notifications'),
+      PUSH_NOTIFICATIONS_ENABLED:
+        advancedFeatures.includes('push-notifications'),
       FIREBASE_STORAGE_ENABLED: useFirebase, // Firebaseを使う場合は基本的にStorage有効
       REMOTE_CONFIG_ENABLED:
         advancedFeatures.includes('forced-update') ||
         advancedFeatures.includes('recommended-update') ||
         advancedFeatures.includes('maintenance-mode'),
       FORCED_UPDATE_ENABLED: advancedFeatures.includes('forced-update'),
-      RECOMMENDED_UPDATE_ENABLED: advancedFeatures.includes(
-        'recommended-update'
-      ),
+      RECOMMENDED_UPDATE_ENABLED:
+        advancedFeatures.includes('recommended-update'),
       MAINTENANCE_MODE_ENABLED: advancedFeatures.includes('maintenance-mode'),
       APP_RATING_ENABLED: advancedFeatures.includes('app-rating'),
       ONBOARDING_ENABLED: advancedFeatures.includes('onboarding'),
@@ -81,14 +81,9 @@ export function runTodoGeneration({
       'セットアップ手順を確認してください'
     );
 
-    recordStepResult(
-      'todo-generation',
-      'success',
-      'TODO.mdを生成しました',
-      {
-        files: [todoEnPath, todoJaPath],
-      }
-    );
+    recordStepResult('todo-generation', 'success', 'TODO.mdを生成しました', {
+      files: [todoEnPath, todoJaPath],
+    });
 
     console.log('✅ TODO.md を生成しました');
     return todoPath;
@@ -112,4 +107,3 @@ export function runTodoGeneration({
     return null;
   }
 }
-

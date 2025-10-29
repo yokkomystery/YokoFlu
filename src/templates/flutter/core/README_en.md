@@ -3,15 +3,16 @@
 A new Flutter project.
 
 > ## ⚡ Quick Start
-> 
+>
 > Check [`TODO.md`](TODO.md) for setup steps. Japanese version: [`TODO_ja.md`](TODO_ja.md)
-> 
+>
 > It includes:
+>
 > - ✅ Firebase setup (enable Firestore, security rules, auth)
 > - ✅ App configuration (links, store IDs, content updates)
 > - ✅ Test & build verification
 > - ✅ Store submission prep
-> 
+>
 > Once all checkboxes are done, you're ready for production!
 
 ## Getting Started
@@ -91,7 +92,7 @@ Added automatically by this tool. Make sure the "Firebase Config Script" build p
 ### Environment variables
 
 - `ENVIRONMENT=staging|production` - used to switch Firebase environments
-{{/FIREBASE_ENABLED}}
+  {{/FIREBASE_ENABLED}}
 
 ## Development Guide
 
