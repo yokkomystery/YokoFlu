@@ -100,11 +100,13 @@ flutter build ipa --release
 ### Why Android and iOS Commands Differ
 
 **Android**:
+
 - Uses **Product Flavors** (fully supported by Flutter)
 - `--flavor staging|production` → switches Bundle ID and app name
 - `--dart-define=ENVIRONMENT=xxx` → tells Firebase config script which files to use
 
 **iOS**:
+
 - Uses **Build Configurations** (Flutter doesn't support `--flavor` for iOS)
 - Build mode (Debug/Release) → automatically applies different `.xcconfig` files
 - `.xcconfig` files contain all settings (Bundle ID, app name, Firebase environment)
