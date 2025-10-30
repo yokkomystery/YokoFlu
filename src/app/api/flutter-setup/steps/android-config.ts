@@ -14,43 +14,115 @@ function createAndroidConfigs(
     'app',
     'build.gradle'
   );
+  const buildGradleKtsPath = path.join(
+    projectPath,
+    'android',
+    'app',
+    'build.gradle.kts'
+  );
   const createdFiles: string[] = [];
 
-  if (fs.existsSync(buildGradlePath)) {
+  // build.gradle.kts (Kotlin DSL) の処理
+  if (fs.existsSync(buildGradleKtsPath)) {
+    let buildGradleContent = fs.readFileSync(buildGradleKtsPath, 'utf8');
+
+    // namespaceを正しいpackageNameに修正
+    buildGradleContent = buildGradleContent.replace(
+      /namespace\s*=\s*"[^"]+"/,
+      `namespace = "${packageName}"`
+    );
+
+    // applicationIdを正しいpackageNameに修正
+    buildGradleContent = buildGradleContent.replace(
+      /applicationId\s*=\s*"[^"]+"/,
+      `applicationId = "${packageName}"`
+    );
+
+    // 環境分離が有効な場合のみflavor設定を追加
+    if (separateEnvironments) {
+      // flavorDimensionsの追加（Kotlin DSL形式）
+      if (!buildGradleContent.includes('flavorDimensions')) {
+        buildGradleContent = buildGradleContent.replace(
+          /defaultConfig\s*{/,
+          `flavorDimensions += "environment"\n\n    defaultConfig {`
+        );
+      }
+
+      // productFlavorsの追加（buildTypesセクションの後に追加）
+      if (!buildGradleContent.includes('productFlavors')) {
+        // buildTypesセクションを探して、その後に追加
+        const buildTypesRegex = /(buildTypes\s*\{[\s\S]*?\n    \})/;
+        if (buildTypesRegex.test(buildGradleContent)) {
+          buildGradleContent = buildGradleContent.replace(
+            buildTypesRegex,
+            `$1
+
+    productFlavors {
+        create("staging") {
+            dimension = "environment"
+            applicationIdSuffix = ".staging"
+            resValue("string", "app_name", "${appName} (Staging)")
+        }
+        create("production") {
+            dimension = "environment"
+            resValue("string", "app_name", "${appName}")
+        }
+    }`
+          );
+        }
+      }
+    }
+
+    fs.writeFileSync(buildGradleKtsPath, buildGradleContent);
+    createdFiles.push(buildGradleKtsPath);
+  }
+  // build.gradle (Groovy) の処理
+  else if (fs.existsSync(buildGradlePath)) {
     let buildGradleContent = fs.readFileSync(buildGradlePath, 'utf8');
+
+    // namespaceを正しいpackageNameに修正
+    buildGradleContent = buildGradleContent.replace(
+      /namespace\s+["']([^"']+)["']/,
+      `namespace "${packageName}"`
+    );
+
+    // applicationIdを正しいpackageNameに修正
+    buildGradleContent = buildGradleContent.replace(
+      /applicationId\s+["']([^"']+)["']/,
+      `applicationId "${packageName}"`
+    );
 
     // 環境分離が有効な場合のみflavor設定を追加
     if (separateEnvironments) {
       // flavorDimensionsの追加
       if (!buildGradleContent.includes('flavorDimensions')) {
         buildGradleContent = buildGradleContent.replace(
-          /android\s*{/,
-          `android {
-    flavorDimensions "environment"`
+          /defaultConfig\s*{/,
+          `flavorDimensions "environment"\n\n    defaultConfig {`
         );
       }
 
-      // productFlavorsの追加
+      // productFlavorsの追加（buildTypesセクションの後に追加）
       if (!buildGradleContent.includes('productFlavors')) {
-        buildGradleContent = buildGradleContent.replace(
-          /buildTypes\s*{/,
-          `buildTypes {
+        const buildTypesRegex = /(buildTypes\s*\{[\s\S]*?\n    \})/;
+        if (buildTypesRegex.test(buildGradleContent)) {
+          buildGradleContent = buildGradleContent.replace(
+            buildTypesRegex,
+            `$1
+
+    productFlavors {
+        staging {
+            dimension "environment"
+            applicationIdSuffix ".staging"
+            resValue "string", "app_name", "${appName} (Staging)"
         }
-        
-        productFlavors {
-            staging {
-                dimension "environment"
-                applicationIdSuffix ".staging"
-                resValue "string", "app_name", "${appName} (Staging)"
-                buildConfigField "String", "ENVIRONMENT", '"staging"'
-            }
-            production {
-                dimension "environment"
-                resValue "string", "app_name", "${appName}"
-                buildConfigField "String", "ENVIRONMENT", '"production"'
-            }
-        }`
-        );
+        production {
+            dimension "environment"
+            resValue "string", "app_name", "${appName}"
+        }
+    }`
+          );
+        }
       }
     }
 
