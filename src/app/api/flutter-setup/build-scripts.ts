@@ -2,10 +2,6 @@ import fs from 'fs';
 import path from 'path';
 import { copyTemplateFile, getTemplatePath } from './template-utils';
 import {
-  getFirebaseServiceDescription,
-  getFirebaseServiceLabel,
-} from './service-guides';
-import {
   PackageVersionSet,
   formatDependencyVersions,
 } from './package-versions';
@@ -15,8 +11,7 @@ export function createBuildScripts(
   appName: string,
   projectPath: string,
   useFirebase: boolean,
-  separateEnvironments: boolean,
-  selectedServices: string[] = []
+  separateEnvironments: boolean
 ) {
   const createdFiles: string[] = [];
 
@@ -51,36 +46,6 @@ export function createBuildScripts(
       FIREBASE_ENABLED: useFirebase,
     }
   );
-
-  if (useFirebase && selectedServices && selectedServices.length > 0) {
-    const uniqueServices = Array.from(
-      new Set(
-        selectedServices.filter(
-          (serviceId) => typeof serviceId === 'string' && serviceId.trim()
-        )
-      )
-    );
-
-    if (uniqueServices.length > 0) {
-      const serviceList = uniqueServices
-        .map((serviceId) => {
-          const label = getFirebaseServiceLabel(serviceId) ?? serviceId;
-          const description = getFirebaseServiceDescription(serviceId);
-          return description ? `- ${label}（${description}）` : `- ${label}`;
-        })
-        .join('\n');
-
-      const servicesSection = [
-        '',
-        '## 選択した Firebase サービス',
-        '',
-        serviceList,
-        '',
-      ].join('\n');
-
-      fs.appendFileSync(readmePath, servicesSection);
-    }
-  }
 
   createdFiles.push(readmePath);
   createdFiles.push(readmeJaPath);

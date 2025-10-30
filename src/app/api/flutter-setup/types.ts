@@ -31,7 +31,6 @@ export interface FlutterSetupRequest {
   existingStagingProjectId?: string;
   existingProductionProjectId?: string;
   singleProjectId?: string;
-  selectedServices?: string[];
   useFirebase: boolean;
   templateFeatures?: string[];
   localizationLanguages?: string[];
