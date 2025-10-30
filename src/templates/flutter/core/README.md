@@ -3,15 +3,16 @@
 A new Flutter project.
 
 > ## ⚡ クイックスタート
-> 
+>
 > **セットアップを完了するには [`TODO.md`](TODO.md) を確認してください！**
-> 
+>
 > このファイルには以下が含まれます：
-> - ✅ Firebase設定（Firestore有効化、セキュリティルール、認証設定）
-> - ✅ アプリ設定（利用規約リンク、ストアID、コンテンツ更新）
+>
+> - ✅ Firebase 設定（Firestore 有効化、セキュリティルール、認証設定）
+> - ✅ アプリ設定（利用規約リンク、ストア ID、コンテンツ更新）
 > - ✅ テスト・ビルド確認手順
 > - ✅ ストア公開準備
-> 
+>
 > すべてのチェックボックスを完了させれば、本番デプロイ準備完了です！
 
 ## Getting Started
@@ -43,33 +44,55 @@ flutter build ios --release
 
 {{#ENVIRONMENT_SEPARATION}}
 
-### 環境別ビルド（環境分離を有効にした場合）
+### Environment-specific Builds (When environment separation is enabled)
+
+#### Android
 
 ```bash
-# Staging環境
-flutter build apk --flavor staging --debug
+# Staging Environment (Development/Testing)
+flutter run --flavor staging
 flutter build apk --flavor staging --release
-{{#FIREBASE_ENABLED}}
-flutter build ios --debug --dart-define=ENVIRONMENT=staging
-flutter build ios --release --dart-define=ENVIRONMENT=staging
-{{/FIREBASE_ENABLED}}
-{{^FIREBASE_ENABLED}}
-flutter build ios --debug
-flutter build ios --release
-{{/FIREBASE_ENABLED}}
 
-# Production環境
-flutter build apk --flavor production --debug
+# Production Environment (Release)
+flutter run --flavor production
 flutter build apk --flavor production --release
-{{#FIREBASE_ENABLED}}
-flutter build ios --debug --dart-define=ENVIRONMENT=production
-flutter build ios --release --dart-define=ENVIRONMENT=production
-{{/FIREBASE_ENABLED}}
-{{^FIREBASE_ENABLED}}
-flutter build ios --debug
-flutter build ios --release
-{{/FIREBASE_ENABLED}}
 ```
+
+#### iOS
+
+```bash
+# Staging Environment (Development)
+flutter run
+
+# Production Environment (Release build)
+flutter build ipa --release
+```
+
+**How iOS environments work:**
+
+- **Debug mode** (`flutter run`) → **Staging** environment
+  - Uses `Debug.xcconfig` → Bundle ID: `xxx.staging`, App: `AppName-STG`
+  - Automatically uses `GoogleService-Info-staging.plist`
+- **Release mode** (`flutter run --release`, `flutter build ipa --release`) → **Production** environment
+  - Uses `Release.xcconfig` → Bundle ID: `xxx`, App: `AppName`
+  - Automatically uses `GoogleService-Info-production.plist`
+
+{{#FIREBASE_ENABLED}}
+**Note**: The environment is determined by Xcode build configuration (Debug/Release), not by `--dart-define` flags.
+
+**Advanced: Test Production environment on Simulator**
+
+```bash
+# Temporarily modify Debug.xcconfig for production testing
+# 1. Edit ios/Debug.xcconfig:
+#    PRODUCT_BUNDLE_IDENTIFIER = xxx (remove .staging)
+#    PRODUCT_NAME = AppName (remove -STG)
+#    ENVIRONMENT = production
+# 2. flutter run
+# 3. Revert ios/Debug.xcconfig after testing
+```
+
+{{/FIREBASE_ENABLED}}
 
 {{/ENVIRONMENT_SEPARATION}}
 
@@ -90,7 +113,7 @@ flutter build ios --release
 
 ### 環境変数
 
-- `ENVIRONMENT=staging|production` - Firebase環境の切り替えに使用
+- `ENVIRONMENT=staging|production` - Firebase 環境の切り替えに使用
   {{/FIREBASE_ENABLED}}
 
 ## 開発ガイド
