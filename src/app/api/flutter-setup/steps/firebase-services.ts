@@ -92,15 +92,7 @@ export async function runFirebaseServices(params: FirebaseServicesStepParams) {
       }
     );
   } else {
-    updateProgress(
-      'firebase-services',
-      '⏭️ Firebaseサービスの追加設定はありません',
-      'Firebaseサービスが選択されていないためスキップします'
-    );
-    recordStepResult(
-      'firebase-services',
-      'skipped',
-      'Firebaseサービスが選択されていません'
-    );
+    // Firebaseサービスが選択されていない場合は静かに終了（メッセージ不要）
+    return;
   }
 }
