@@ -8,7 +8,8 @@ export async function runMainDartUpdate(
   appName: string,
   useFirebase: boolean,
   localizationLanguages: string[],
-  advancedFeatures: AdvancedFeatureId[]
+  advancedFeatures: AdvancedFeatureId[],
+  settingsEnabled: boolean = true
 ) {
   updateProgress('main-dart-update', 'main.dartの更新', 'main.dartを更新中...');
   try {
@@ -17,7 +18,8 @@ export async function runMainDartUpdate(
       appName,
       useFirebase,
       localizationLanguages,
-      advancedFeatures
+      advancedFeatures,
+      settingsEnabled
     );
     updateProgress(
       'main-dart-update',

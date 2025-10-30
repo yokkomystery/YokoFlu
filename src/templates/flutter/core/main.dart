@@ -4,7 +4,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:{{APP_NAME}}/l10n/app_localizations.dart';
 import 'package:{{APP_NAME}}/core/providers/theme_provider.dart';
 import 'package:{{APP_NAME}}/core/providers/locale_provider.dart';
-import 'package:{{APP_NAME}}/features/settings/settings_screen.dart';
+{{#SETTINGS_ENABLED}}import 'package:{{APP_NAME}}/features/settings/settings_screen.dart';
+{{/SETTINGS_ENABLED}}
 {{#ONBOARDING_ENABLED}}import 'package:{{APP_NAME}}/features/onboarding/onboarding_screen.dart';
 import 'package:{{APP_NAME}}/features/onboarding/onboarding_state.dart';
 {{/ONBOARDING_ENABLED}}{{#FIREBASE_ENABLED}}import 'package:{{APP_NAME}}/core/firebase_config.dart';
@@ -168,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(l10n.homeTabLabel),
-        actions: [
+        {{#SETTINGS_ENABLED}}actions: [
           IconButton(
             icon: const Icon(Icons.settings),
             tooltip: l10n.settingsScreenTitle,
@@ -182,6 +183,7 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ),
         ],
+        {{/SETTINGS_ENABLED}}
       ),
       body: const HomeTabPlaceholder(),
     );

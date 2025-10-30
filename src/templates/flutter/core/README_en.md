@@ -64,6 +64,9 @@ flutter build apk --flavor production --release
 # Staging Environment (Development)
 flutter run
 
+# Production Environment (Device testing - Physical device only)
+flutter run --release
+
 # Production Environment (Release build)
 flutter build ipa --release
 ```
@@ -93,6 +96,23 @@ flutter build ipa --release
 ```
 
 {{/FIREBASE_ENABLED}}
+
+### Why Android and iOS Commands Differ
+
+**Android**:
+
+- Uses **Product Flavors** (fully supported by Flutter)
+- `--flavor staging|production` → switches Bundle ID and app name
+- `--dart-define=ENVIRONMENT=xxx` → tells Firebase config script which files to use
+
+**iOS**:
+
+- Uses **Build Configurations** (Flutter doesn't support `--flavor` for iOS)
+- Build mode (Debug/Release) → automatically applies different `.xcconfig` files
+- `.xcconfig` files contain all settings (Bundle ID, app name, Firebase environment)
+- No `--dart-define` needed → everything is determined by xcconfig
+
+**Result**: Both achieve the same goal (environment separation), but use platform-specific best practices.
 
 {{/ENVIRONMENT_SEPARATION}}
 

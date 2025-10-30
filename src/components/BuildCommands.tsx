@@ -78,14 +78,22 @@ export function BuildCommands({ useFirebase }: BuildCommandsProps) {
           <div className="text-gray-300">flutter run</div>
           <div className="text-green-400 mt-2">
             # {t.build.production}（
+            {locale === 'ja'
+              ? '実機テスト - 実機のみ'
+              : 'Device testing - Physical device only'}
+            ）
+          </div>
+          <div className="text-gray-300">flutter run --release</div>
+          <div className="text-green-400 mt-2">
+            # {t.build.production}（
             {locale === 'ja' ? '本番リリース' : 'Production release'}）
           </div>
           <div className="text-gray-300">flutter build ipa --release</div>
         </div>
         <div className="mt-2 bg-blue-900/30 border border-blue-700 text-blue-200 px-3 py-2 rounded text-xs whitespace-pre-line">
           {locale === 'ja'
-            ? 'iOS環境の仕組み:\n• Debugモード (flutter run) → Staging環境\n  - Debug.xcconfig → Bundle ID: xxx.staging、App: AppName-STG\n  - GoogleService-Info-staging.plistを使用\n• Releaseモード (flutter build ipa --release) → Production環境\n  - Release.xcconfig → Bundle ID: xxx、App: AppName\n  - GoogleService-Info-production.plistを使用\n\n注意: 環境はxcconfigファイルで決まります。--dart-defineは不要です。\n\n【応用】シミュレーターでProduction環境をテスト:\n1. ios/Debug.xcconfigを編集（.stagingを削除、-STGを削除、ENVIRONMENT=production）\n2. flutter run\n3. テスト後、Debug.xcconfigを元に戻す'
-            : 'How iOS environments work:\n• Debug mode (flutter run) → Staging environment\n  - Debug.xcconfig → Bundle ID: xxx.staging, App: AppName-STG\n  - Uses GoogleService-Info-staging.plist\n• Release mode (flutter build ipa --release) → Production environment\n  - Release.xcconfig → Bundle ID: xxx, App: AppName\n  - Uses GoogleService-Info-production.plist\n\nNote: Environment is determined by xcconfig files. --dart-define is not needed.\n\n[Advanced] Test Production on Simulator:\n1. Edit ios/Debug.xcconfig (remove .staging, remove -STG, ENVIRONMENT=production)\n2. flutter run\n3. Revert Debug.xcconfig after testing'}
+            ? 'iOS環境の仕組み:\n• Debugモード (flutter run) → Staging環境\n  - Debug.xcconfig → Bundle ID: xxx.staging、App: AppName-STG\n  - GoogleService-Info-staging.plistを使用\n• Releaseモード (flutter run --release, flutter build ipa --release) → Production環境\n  - Release.xcconfig → Bundle ID: xxx、App: AppName\n  - GoogleService-Info-production.plistを使用\n\n注意: 環境はxcconfigファイルで決まります。--dart-defineは不要です。\nRelease実行は実機のみ対応（シミュレーター不可）\n\n【応用】シミュレーターでProduction環境をテスト:\n1. ios/Debug.xcconfigを編集（.stagingを削除、-STGを削除、ENVIRONMENT=production）\n2. flutter run\n3. テスト後、Debug.xcconfigを元に戻す'
+            : 'How iOS environments work:\n• Debug mode (flutter run) → Staging environment\n  - Debug.xcconfig → Bundle ID: xxx.staging, App: AppName-STG\n  - Uses GoogleService-Info-staging.plist\n• Release mode (flutter run --release, flutter build ipa --release) → Production environment\n  - Release.xcconfig → Bundle ID: xxx, App: AppName\n  - Uses GoogleService-Info-production.plist\n\nNote: Environment is determined by xcconfig files. --dart-define is not needed.\nRelease mode only works on physical devices (not simulators)\n\n[Advanced] Test Production on Simulator:\n1. Edit ios/Debug.xcconfig (remove .staging, remove -STG, ENVIRONMENT=production)\n2. flutter run\n3. Revert Debug.xcconfig after testing'}
         </div>
       </div>
 

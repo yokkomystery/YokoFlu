@@ -338,19 +338,19 @@ function createIOSConfigs(
     const profileConfigPath = path.join(projectPath, 'ios', 'Profile.xcconfig');
 
     // Debug.xcconfig (開発用 - Staging)
-    const debugConfig = `#include "Generated.xcconfig"
+    const debugConfig = `#include "Flutter/Generated.xcconfig"
 PRODUCT_BUNDLE_IDENTIFIER = ${bundleId}.staging
 PRODUCT_NAME = ${appName}-STG
 ENVIRONMENT = staging`;
 
     // Release.xcconfig (本番環境 - Production)
-    const releaseConfig = `#include "Generated.xcconfig"
+    const releaseConfig = `#include "Flutter/Generated.xcconfig"
 PRODUCT_BUNDLE_IDENTIFIER = ${bundleId}
 PRODUCT_NAME = ${appName}
 ENVIRONMENT = production`;
 
     // Profile.xcconfig (本番リリース用 - Production)
-    const profileConfig = `#include "Generated.xcconfig"
+    const profileConfig = `#include "Flutter/Generated.xcconfig"
 PRODUCT_BUNDLE_IDENTIFIER = ${bundleId}
 PRODUCT_NAME = ${appName}
 ENVIRONMENT = production`;
@@ -411,7 +411,7 @@ ENVIRONMENT = production`;
       'Flutter',
       'Profile.xcconfig'
     );
-    
+
     if (!fs.existsSync(flutterProfileConfigPath)) {
       // Profile.xcconfigを新規作成
       const flutterProfileContent = `#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"
@@ -423,12 +423,17 @@ ENVIRONMENT = production`;
       console.log('✅ Created Flutter/Profile.xcconfig with Production config');
     } else {
       // 既存のProfile.xcconfigを更新
-      let flutterProfileContent = fs.readFileSync(flutterProfileConfigPath, 'utf8');
+      let flutterProfileContent = fs.readFileSync(
+        flutterProfileConfigPath,
+        'utf8'
+      );
       if (!flutterProfileContent.includes('../Profile.xcconfig')) {
         flutterProfileContent += '\n#include "../Profile.xcconfig"\n';
         fs.writeFileSync(flutterProfileConfigPath, flutterProfileContent);
         createdFiles.push(flutterProfileConfigPath);
-        console.log('✅ Updated Flutter/Profile.xcconfig to include Production config');
+        console.log(
+          '✅ Updated Flutter/Profile.xcconfig to include Production config'
+        );
       }
     }
 
@@ -477,12 +482,12 @@ ENVIRONMENT = production`;
     const releaseConfigPath = path.join(projectPath, 'ios', 'Release.xcconfig');
 
     // Debug.xcconfig
-    const debugConfig = `#include "Generated.xcconfig"
+    const debugConfig = `#include "Flutter/Generated.xcconfig"
 PRODUCT_BUNDLE_IDENTIFIER = ${bundleId}
 PRODUCT_NAME = ${appName}`;
 
     // Release.xcconfig
-    const releaseConfig = `#include "Generated.xcconfig"
+    const releaseConfig = `#include "Flutter/Generated.xcconfig"
 PRODUCT_BUNDLE_IDENTIFIER = ${bundleId}
 PRODUCT_NAME = ${appName}`;
 
