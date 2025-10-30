@@ -150,63 +150,6 @@ export function BuildCommands({ useFirebase }: BuildCommandsProps) {
           </li>
         </ul>
       </div>
-
-      <div className="mt-4 p-3 bg-purple-900/30 border border-purple-700 rounded">
-        <p className="text-sm text-purple-200 font-semibold mb-2">
-          {locale === 'ja'
-            ? '💡 Android と iOS でコマンドが異なる理由'
-            : '💡 Why Android and iOS Commands Differ'}
-        </p>
-        <div className="text-xs text-purple-300 space-y-2">
-          <div>
-            <strong>Android:</strong>{' '}
-            {locale === 'ja'
-              ? 'Product Flavors を使用（Flutter で完全サポート）'
-              : 'Uses Product Flavors (fully supported by Flutter)'}
-          </div>
-          <ul className="list-disc list-inside ml-2 space-y-1">
-            <li>
-              <code className="bg-purple-950 px-1">--flavor</code>{' '}
-              {locale === 'ja'
-                ? '→ Bundle ID とアプリ名を切り替え'
-                : '→ switches Bundle ID and app name'}
-            </li>
-            <li>
-              <code className="bg-purple-950 px-1">--dart-define=ENVIRONMENT=xxx</code>{' '}
-              {locale === 'ja'
-                ? '→ Firebase 設定ファイルを指定'
-                : '→ specifies Firebase config files'}
-            </li>
-          </ul>
-          <div className="mt-2">
-            <strong>iOS:</strong>{' '}
-            {locale === 'ja'
-              ? 'Build Configurations を使用（Flutter は --flavor 非対応）'
-              : 'Uses Build Configurations (Flutter doesn\'t support --flavor)'}
-          </div>
-          <ul className="list-disc list-inside ml-2 space-y-1">
-            <li>
-              {locale === 'ja'
-                ? 'ビルドモード（Debug/Release）→ xcconfig ファイルを自動適用'
-                : 'Build mode (Debug/Release) → automatically applies xcconfig files'}
-            </li>
-            <li>
-              {locale === 'ja'
-                ? 'xcconfig にすべての設定が含まれる（Bundle ID、アプリ名、Firebase 環境）'
-                : 'xcconfig contains all settings (Bundle ID, app name, Firebase environment)'}
-            </li>
-            <li>
-              <code className="bg-purple-950 px-1">--dart-define</code>{' '}
-              {locale === 'ja' ? '不要' : 'not needed'}
-            </li>
-          </ul>
-          <div className="mt-2 text-purple-400">
-            {locale === 'ja'
-              ? '✓ どちらも同じ目的（環境分離）を実現していますが、プラットフォーム固有のベストプラクティスを使用しています。'
-              : '✓ Both achieve the same goal (environment separation) using platform-specific best practices.'}
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
