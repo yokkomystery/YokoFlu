@@ -497,6 +497,14 @@ PRODUCT_NAME = ${appName}`;
     createdFiles.push(debugConfigPath, releaseConfigPath);
   }
 
+  // Info.plistをテンプレートからコピー（$(PRODUCT_NAME)を使用）
+  const infoPlistPath = path.join(projectPath, 'ios', 'Runner', 'Info.plist');
+  const infoPlistTemplatePath = getTemplatePath('ios/Info.plist');
+  if (fs.existsSync(infoPlistTemplatePath)) {
+    copyTemplateFile(infoPlistTemplatePath, infoPlistPath, {});
+    createdFiles.push(infoPlistPath);
+  }
+
   console.log('✅ iOS configuration files created');
   return createdFiles;
 }
