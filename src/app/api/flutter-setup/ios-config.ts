@@ -496,56 +496,8 @@ PRODUCT_NAME = ${appName}`;
   return createdFiles;
 }
 
-// Xcodeビルドスクリプトの作成
-function createXcodeBuildScripts(projectPath: string, appName: string) {
-  const iosPath = path.join(projectPath, 'ios');
-  const runnerPath = path.join(iosPath, 'Runner');
-
-  // ビルドスクリプトの内容（Qiita記事の設定に準拠）
-  const buildScript =
-    '#!/bin/bash\n\n' +
-    '# 環境に応じてGoogleService-Info.plistをコピー\n' +
-    'if [ "${CONFIGURATION}" = "Debug-Staging" ] || [ "${CONFIGURATION}" = "Release-Staging" ]; then\n' +
-    '    echo "Using staging Firebase configuration"\n' +
-    '    cp "${SRCROOT}/Runner/GoogleService-Info-staging.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"\n' +
-    'elif [ "${CONFIGURATION}" = "Debug-Production" ] || [ "${CONFIGURATION}" = "Release-Production" ]; then\n' +
-    '    echo "Using production Firebase configuration"\n' +
-    '    cp "${SRCROOT}/Runner/GoogleService-Info-production.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"\n' +
-    'else\n' +
-    '    echo "Using default Firebase configuration"\n' +
-    '    cp "${SRCROOT}/Runner/GoogleService-Info-production.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"\n' +
-    'fi\n\n' +
-    'echo "Firebase configuration copied for ${CONFIGURATION}"';
-
-  const scriptPath = path.join(runnerPath, 'firebase_config_script.sh');
-  fs.writeFileSync(scriptPath, buildScript);
-  fs.chmodSync(scriptPath, 0o755); // 実行権限を付与
-
-  console.log('✅ Xcode build script created: firebase_config_script.sh');
-
-  // スクリプトの使用方法をREADMEに追加するための情報を返す
-  return {
-    scriptPath,
-    instructions: `
-## Xcodeビルドスクリプトの設定
-
-1. Xcodeでプロジェクトを開く: \`open ios/Runner.xcworkspace\`
-2. 「Target」→「Runner」→「Build Phases」を選択
-3. 「+」ボタン→「New Run Script Phase」を追加
-4. スクリプトに以下を入力:
-   \`\`\`bash
-   ${scriptPath}
-   \`\`\`
-5. 「Input Files」に以下を追加:
-   - \`\${SRCROOT}/Runner/GoogleService-Info-staging.plist\`
-   - \`\${SRCROOT}/Runner/GoogleService-Info-production.plist\`
-`,
-  };
-}
-
 export {
   createIOSConfigs,
-  createXcodeBuildScripts,
   updatePodfile,
   updateXcodeProjectDeploymentTarget,
   removeHardcodedBundleIdFromXcodeProject,
