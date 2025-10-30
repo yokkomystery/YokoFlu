@@ -46,31 +46,53 @@ flutter build ios --release
 
 ### Environment-specific builds (when separation is enabled)
 
-```bash
-# Staging
-flutter build apk --flavor staging --debug
-flutter build apk --flavor staging --release
-{{#FIREBASE_ENABLED}}
-flutter build ios --debug --dart-define=ENVIRONMENT=staging
-flutter build ios --release --dart-define=ENVIRONMENT=staging
-{{/FIREBASE_ENABLED}}
-{{^FIREBASE_ENABLED}}
-flutter build ios --debug
-flutter build ios --release
-{{/FIREBASE_ENABLED}}
+#### Android
 
-# Production
-flutter build apk --flavor production --debug
+```bash
+# Staging Environment (Development/Testing)
+flutter run --flavor staging
+flutter build apk --flavor staging --release
+
+# Production Environment (Release)
+flutter run --flavor production
 flutter build apk --flavor production --release
-{{#FIREBASE_ENABLED}}
-flutter build ios --debug --dart-define=ENVIRONMENT=production
-flutter build ios --release --dart-define=ENVIRONMENT=production
-{{/FIREBASE_ENABLED}}
-{{^FIREBASE_ENABLED}}
-flutter build ios --debug
-flutter build ios --release
-{{/FIREBASE_ENABLED}}
 ```
+
+#### iOS
+
+```bash
+# Staging Environment (Development)
+flutter run
+
+# Production Environment (Release build)
+flutter build ipa --release
+```
+
+**How iOS environments work:**
+
+- **Debug mode** (`flutter run`) → **Staging** environment
+  - Uses `Debug.xcconfig` → Bundle ID: `xxx.staging`, App: `AppName-STG`
+  - Automatically uses `GoogleService-Info-staging.plist`
+- **Release mode** (`flutter run --release`, `flutter build ipa --release`) → **Production** environment
+  - Uses `Release.xcconfig` → Bundle ID: `xxx`, App: `AppName`
+  - Automatically uses `GoogleService-Info-production.plist`
+
+{{#FIREBASE_ENABLED}}
+**Note**: The environment is determined by Xcode build configuration (Debug/Release), not by `--dart-define` flags.
+
+**Advanced: Test Production environment on Simulator**
+
+```bash
+# Temporarily modify Debug.xcconfig for production testing
+# 1. Edit ios/Debug.xcconfig:
+#    PRODUCT_BUNDLE_IDENTIFIER = xxx (remove .staging)
+#    PRODUCT_NAME = AppName (remove -STG)
+#    ENVIRONMENT = production
+# 2. flutter run
+# 3. Revert ios/Debug.xcconfig after testing
+```
+
+{{/FIREBASE_ENABLED}}
 
 {{/ENVIRONMENT_SEPARATION}}
 

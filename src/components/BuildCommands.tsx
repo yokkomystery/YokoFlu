@@ -75,52 +75,17 @@ export function BuildCommands({ useFirebase }: BuildCommandsProps) {
           <div className="text-green-400">
             # {t.build.staging}（{locale === 'ja' ? '開発' : 'Development'}）
           </div>
-          <div className="text-gray-300">
-            {useFirebase
-              ? 'flutter run --dart-define=ENVIRONMENT=staging'
-              : 'flutter run'}
-          </div>
+          <div className="text-gray-300">flutter run</div>
           <div className="text-green-400 mt-2">
-            # {t.build.staging}（{t.build.release}）
+            # {t.build.production}（
+            {locale === 'ja' ? '本番リリース' : 'Production release'}）
           </div>
-          <div className="text-gray-300">
-            {useFirebase
-              ? 'flutter build ios --dart-define=ENVIRONMENT=staging --release'
-              : 'flutter build ios --release'}
-          </div>
-          <div className="text-green-400 mt-2"># {t.build.staging} IPA</div>
-          <div className="text-gray-300">
-            {useFirebase
-              ? 'flutter build ipa --dart-define=ENVIRONMENT=staging --release'
-              : 'flutter build ipa --release'}
-          </div>
-          <div className="text-green-400 mt-2">
-            # {t.build.production}（{locale === 'ja' ? '開発' : 'Development'}）
-          </div>
-          <div className="text-gray-300">
-            {useFirebase
-              ? 'flutter run --dart-define=ENVIRONMENT=production'
-              : 'flutter run'}
-          </div>
-          <div className="text-green-400 mt-2">
-            # {t.build.production}（{t.build.release}）
-          </div>
-          <div className="text-gray-300">
-            {useFirebase
-              ? 'flutter build ios --dart-define=ENVIRONMENT=production --release'
-              : 'flutter build ios --release'}
-          </div>
-          <div className="text-green-400 mt-2"># {t.build.production} IPA</div>
-          <div className="text-gray-300">
-            {useFirebase
-              ? 'flutter build ipa --dart-define=ENVIRONMENT=production --release'
-              : 'flutter build ipa --release'}
-          </div>
+          <div className="text-gray-300">flutter build ipa --release</div>
         </div>
-        <div className="mt-2 bg-yellow-900/30 border border-yellow-700 text-yellow-200 px-3 py-2 rounded text-xs">
+        <div className="mt-2 bg-blue-900/30 border border-blue-700 text-blue-200 px-3 py-2 rounded text-xs whitespace-pre-line">
           {locale === 'ja'
-            ? 'iOSは`--flavor`は使用できません。Xcodeでビルド構成（Staging/Production）を選択してください。\n`flutter build ipa`は自動的にアーカイブしてIPAファイルを生成します（`build/ios/ipa/`）。'
-            : 'iOS does not support `--flavor`. Select build configuration (Staging/Production) in Xcode.\n`flutter build ipa` automatically creates an archive and IPA file in `build/ios/ipa/`.'}
+            ? 'iOS環境の仕組み:\n• Debugモード (flutter run) → Staging環境\n  - Debug.xcconfig → Bundle ID: xxx.staging、App: AppName-STG\n  - GoogleService-Info-staging.plistを使用\n• Releaseモード (flutter build ipa --release) → Production環境\n  - Release.xcconfig → Bundle ID: xxx、App: AppName\n  - GoogleService-Info-production.plistを使用\n\n注意: 環境はxcconfigファイルで決まります。--dart-defineは不要です。\n\n【応用】シミュレーターでProduction環境をテスト:\n1. ios/Debug.xcconfigを編集（.stagingを削除、-STGを削除、ENVIRONMENT=production）\n2. flutter run\n3. テスト後、Debug.xcconfigを元に戻す'
+            : 'How iOS environments work:\n• Debug mode (flutter run) → Staging environment\n  - Debug.xcconfig → Bundle ID: xxx.staging, App: AppName-STG\n  - Uses GoogleService-Info-staging.plist\n• Release mode (flutter build ipa --release) → Production environment\n  - Release.xcconfig → Bundle ID: xxx, App: AppName\n  - Uses GoogleService-Info-production.plist\n\nNote: Environment is determined by xcconfig files. --dart-define is not needed.\n\n[Advanced] Test Production on Simulator:\n1. Edit ios/Debug.xcconfig (remove .staging, remove -STG, ENVIRONMENT=production)\n2. flutter run\n3. Revert Debug.xcconfig after testing'}
         </div>
       </div>
 
@@ -141,15 +106,11 @@ export function BuildCommands({ useFirebase }: BuildCommandsProps) {
               : 'flutter build apk --flavor production --debug'}
           </div>
           <div className="text-green-400 mt-2"># {t.build.ios}</div>
-          <div className="text-gray-300">
-            {useFirebase
-              ? 'flutter build ios --dart-define=ENVIRONMENT=staging --debug'
-              : 'flutter build ios --debug'}
-          </div>
-          <div className="text-gray-300">
-            {useFirebase
-              ? 'flutter build ios --dart-define=ENVIRONMENT=production --debug'
-              : 'flutter build ios --debug'}
+          <div className="text-gray-300">flutter build ios --debug</div>
+          <div className="text-gray-300 text-xs mt-1">
+            {locale === 'ja'
+              ? '※ iOSは常にDebug.xcconfig（Staging）を使用'
+              : '※ iOS always uses Debug.xcconfig (Staging)'}
           </div>
         </div>
       </div>
@@ -171,13 +132,13 @@ export function BuildCommands({ useFirebase }: BuildCommandsProps) {
           </li>
           <li>
             {locale === 'ja'
-              ? 'デバッグビルド: `--debug`フラグを追加'
-              : 'Debug Build: Add `--debug` flag'}
+              ? 'Android環境切り替え: `--flavor`と`--dart-define=ENVIRONMENT=xxx`を指定'
+              : 'Android environment switching: Specify `--flavor` and `--dart-define=ENVIRONMENT=xxx`'}
           </li>
           <li>
             {locale === 'ja'
-              ? 'Firebase環境切り替え: `--dart-define=ENVIRONMENT=staging`または`production`を指定'
-              : 'Firebase environment switching: Specify `--dart-define=ENVIRONMENT=staging` or `production`'}
+              ? 'iOS環境切り替え: Debugモード→Staging、Releaseモード→Production（自動）'
+              : 'iOS environment switching: Debug mode→Staging, Release mode→Production (automatic)'}
           </li>
         </ul>
       </div>

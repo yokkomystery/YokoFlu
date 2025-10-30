@@ -84,6 +84,106 @@ function updateXcodeProjectDeploymentTarget(projectPath: string) {
   }
 }
 
+// XcodeプロジェクトファイルからハードコードされたバンドルIDとプロダクト名を削除
+function removeHardcodedBundleIdFromXcodeProject(projectPath: string) {
+  const projectPbxprojPath = path.join(
+    projectPath,
+    'ios',
+    'Runner.xcodeproj',
+    'project.pbxproj'
+  );
+
+  if (fs.existsSync(projectPbxprojPath)) {
+    let projectContent = fs.readFileSync(projectPbxprojPath, 'utf8');
+
+    // Runner ターゲットのビルド設定内のPRODUCT_BUNDLE_IDENTIFIERとPRODUCT_NAMEを削除
+    // RunnerTests以外のセクションで削除（RunnerTestsは維持）
+    projectContent = projectContent.replace(
+      /(97C147061CF9000F007C117D \/\* Debug \*\/ = \{[^}]*buildSettings = \{[^}]*)\n\s*PRODUCT_BUNDLE_IDENTIFIER = [^;]+;/g,
+      '$1'
+    );
+    projectContent = projectContent.replace(
+      /(97C147071CF9000F007C117D \/\* Release \*\/ = \{[^}]*buildSettings = \{[^}]*)\n\s*PRODUCT_BUNDLE_IDENTIFIER = [^;]+;/g,
+      '$1'
+    );
+    projectContent = projectContent.replace(
+      /(249021D4217E4FDB00AE95B9 \/\* Profile \*\/ = \{[^}]*buildSettings = \{[^}]*)\n\s*PRODUCT_BUNDLE_IDENTIFIER = [^;]+;/g,
+      '$1'
+    );
+
+    // PRODUCT_NAMEも削除（xcconfigで設定するため）
+    projectContent = projectContent.replace(
+      /(97C147061CF9000F007C117D \/\* Debug \*\/ = \{[^}]*buildSettings = \{[^}]*)\n\s*PRODUCT_NAME = [^;]+;/g,
+      '$1'
+    );
+    projectContent = projectContent.replace(
+      /(97C147071CF9000F007C117D \/\* Release \*\/ = \{[^}]*buildSettings = \{[^}]*)\n\s*PRODUCT_NAME = [^;]+;/g,
+      '$1'
+    );
+    projectContent = projectContent.replace(
+      /(249021D4217E4FDB00AE95B9 \/\* Profile \*\/ = \{[^}]*buildSettings = \{[^}]*)\n\s*PRODUCT_NAME = [^;]+;/g,
+      '$1'
+    );
+
+    fs.writeFileSync(projectPbxprojPath, projectContent);
+    console.log(
+      '✅ Removed hardcoded PRODUCT_BUNDLE_IDENTIFIER and PRODUCT_NAME from project.pbxproj'
+    );
+    return projectPbxprojPath;
+  } else {
+    console.log('⚠️ Xcode project.pbxproj not found, skipping update');
+    return null;
+  }
+}
+
+// XcodeプロジェクトファイルからGoogleService-Info.plistへの直接参照を削除
+function removeGoogleServiceInfoPlistReference(projectPath: string) {
+  const projectPbxprojPath = path.join(
+    projectPath,
+    'ios',
+    'Runner.xcodeproj',
+    'project.pbxproj'
+  );
+
+  if (fs.existsSync(projectPbxprojPath)) {
+    let projectContent = fs.readFileSync(projectPbxprojPath, 'utf8');
+
+    // GoogleService-Info.plistへのすべての参照を削除
+    // PBXBuildFile section
+    projectContent = projectContent.replace(
+      /\t\t[0-9A-F]{24} \/\* GoogleService-Info\.plist in Resources \*\/ = \{isa = PBXBuildFile; fileRef = [0-9A-F]{24} \/\* GoogleService-Info\.plist \*\/; \};\n/g,
+      ''
+    );
+
+    // PBXFileReference section
+    projectContent = projectContent.replace(
+      /\t\t[0-9A-F]{24} \/\* GoogleService-Info\.plist \*\/ = \{isa = PBXFileReference; [^}]+\};\n/g,
+      ''
+    );
+
+    // グループ内の参照
+    projectContent = projectContent.replace(
+      /\t\t\t\t[0-9A-F]{24} \/\* GoogleService-Info\.plist \*\/,\n/g,
+      ''
+    );
+
+    // Resourcesフェーズ内の参照
+    projectContent = projectContent.replace(
+      /\t\t\t\t[0-9A-F]{24} \/\* GoogleService-Info\.plist in Resources \*\/,\n/g,
+      ''
+    );
+
+    fs.writeFileSync(projectPbxprojPath, projectContent);
+    console.log(
+      '✅ Removed GoogleService-Info.plist references from project.pbxproj'
+    );
+    return projectPbxprojPath;
+  } else {
+    console.log('⚠️ Xcode project.pbxproj not found, skipping update');
+    return null;
+  }
+}
+
 // Xcodeプロジェクトにビルドスクリプトを自動追加
 function addBuildScriptToXcodeProject(projectPath: string) {
   const projectPbxprojPath = path.join(
@@ -221,53 +321,116 @@ function createIOSConfigs(
     createdFiles.push(projectPbxprojPath);
   }
 
+  // project.pbxprojからハードコードされたバンドルIDとプロダクト名を削除
+  const cleanedProjectPath =
+    removeHardcodedBundleIdFromXcodeProject(projectPath);
+  if (cleanedProjectPath && !createdFiles.includes(cleanedProjectPath)) {
+    createdFiles.push(cleanedProjectPath);
+  }
+
   // 環境分離が有効な場合のみ環境別設定ファイルを作成
   if (separateEnvironments) {
-    // 環境別のxcconfigファイルを作成
+    // シンプルで安全なアプローチ:
+    // Debug/Release = Staging（開発・テスト用）
+    // Profile = Production（本番リリース用）
     const debugConfigPath = path.join(projectPath, 'ios', 'Debug.xcconfig');
-    const stagingConfigPath = path.join(projectPath, 'ios', 'Staging.xcconfig');
-    const productionConfigPath = path.join(
-      projectPath,
-      'ios',
-      'Production.xcconfig'
-    );
     const releaseConfigPath = path.join(projectPath, 'ios', 'Release.xcconfig');
+    const profileConfigPath = path.join(projectPath, 'ios', 'Profile.xcconfig');
 
-    // Debug.xcconfig (開発中は staging として扱う)
+    // Debug.xcconfig (開発用 - Staging)
     const debugConfig = `#include "Generated.xcconfig"
 PRODUCT_BUNDLE_IDENTIFIER = ${bundleId}.staging
 PRODUCT_NAME = ${appName}-STG
 ENVIRONMENT = staging`;
 
-    // Staging.xcconfig
-    const stagingConfig = `#include "Generated.xcconfig"
-PRODUCT_BUNDLE_IDENTIFIER = ${bundleId}.staging
-PRODUCT_NAME = ${appName}-STG
-ENVIRONMENT = staging`;
-
-    // Production.xcconfig
-    const productionConfig = `#include "Generated.xcconfig"
+    // Release.xcconfig (本番環境 - Production)
+    const releaseConfig = `#include "Generated.xcconfig"
 PRODUCT_BUNDLE_IDENTIFIER = ${bundleId}
 PRODUCT_NAME = ${appName}
 ENVIRONMENT = production`;
 
-    // Release.xcconfig
-    const releaseConfig = `#include "Generated.xcconfig"
+    // Profile.xcconfig (本番リリース用 - Production)
+    const profileConfig = `#include "Generated.xcconfig"
 PRODUCT_BUNDLE_IDENTIFIER = ${bundleId}
 PRODUCT_NAME = ${appName}
-ENVIRONMENT = release`;
+ENVIRONMENT = production`;
 
     fs.writeFileSync(debugConfigPath, debugConfig);
-    fs.writeFileSync(stagingConfigPath, stagingConfig);
-    fs.writeFileSync(productionConfigPath, productionConfig);
     fs.writeFileSync(releaseConfigPath, releaseConfig);
+    fs.writeFileSync(profileConfigPath, profileConfig);
 
-    createdFiles.push(
-      debugConfigPath,
-      stagingConfigPath,
-      productionConfigPath,
-      releaseConfigPath
+    createdFiles.push(debugConfigPath, releaseConfigPath, profileConfigPath);
+
+    // Flutter配下のxcconfigファイルにカスタム設定をinclude
+    const flutterDebugConfigPath = path.join(
+      projectPath,
+      'ios',
+      'Flutter',
+      'Debug.xcconfig'
     );
+    const flutterReleaseConfigPath = path.join(
+      projectPath,
+      'ios',
+      'Flutter',
+      'Release.xcconfig'
+    );
+
+    // Flutter/Debug.xcconfigを更新
+    if (fs.existsSync(flutterDebugConfigPath)) {
+      let flutterDebugContent = fs.readFileSync(flutterDebugConfigPath, 'utf8');
+      if (!flutterDebugContent.includes('../Debug.xcconfig')) {
+        flutterDebugContent += '\n#include "../Debug.xcconfig"\n';
+        fs.writeFileSync(flutterDebugConfigPath, flutterDebugContent);
+        createdFiles.push(flutterDebugConfigPath);
+        console.log(
+          '✅ Updated Flutter/Debug.xcconfig to include custom config'
+        );
+      }
+    }
+
+    // Flutter/Release.xcconfigを更新（Staging設定を読み込む）
+    if (fs.existsSync(flutterReleaseConfigPath)) {
+      let flutterReleaseContent = fs.readFileSync(
+        flutterReleaseConfigPath,
+        'utf8'
+      );
+      if (!flutterReleaseContent.includes('../Release.xcconfig')) {
+        flutterReleaseContent += '\n#include "../Release.xcconfig"\n';
+        fs.writeFileSync(flutterReleaseConfigPath, flutterReleaseContent);
+        createdFiles.push(flutterReleaseConfigPath);
+        console.log(
+          '✅ Updated Flutter/Release.xcconfig to include custom config'
+        );
+      }
+    }
+
+    // Flutter/Profile.xcconfigを作成または更新（Production設定を読み込む）
+    const flutterProfileConfigPath = path.join(
+      projectPath,
+      'ios',
+      'Flutter',
+      'Profile.xcconfig'
+    );
+    
+    if (!fs.existsSync(flutterProfileConfigPath)) {
+      // Profile.xcconfigを新規作成
+      const flutterProfileContent = `#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"
+#include "Generated.xcconfig"
+#include "../Profile.xcconfig"
+`;
+      fs.writeFileSync(flutterProfileConfigPath, flutterProfileContent);
+      createdFiles.push(flutterProfileConfigPath);
+      console.log('✅ Created Flutter/Profile.xcconfig with Production config');
+    } else {
+      // 既存のProfile.xcconfigを更新
+      let flutterProfileContent = fs.readFileSync(flutterProfileConfigPath, 'utf8');
+      if (!flutterProfileContent.includes('../Profile.xcconfig')) {
+        flutterProfileContent += '\n#include "../Profile.xcconfig"\n';
+        fs.writeFileSync(flutterProfileConfigPath, flutterProfileContent);
+        createdFiles.push(flutterProfileConfigPath);
+        console.log('✅ Updated Flutter/Profile.xcconfig to include Production config');
+      }
+    }
 
     // Firebaseを使用している場合のみ設定スクリプトを追加
     if (useFirebase) {
@@ -298,6 +461,14 @@ ENVIRONMENT = release`;
       const updatedProjectPath = addBuildScriptToXcodeProject(projectPath);
       if (updatedProjectPath) {
         createdFiles.push(updatedProjectPath);
+      }
+
+      // GoogleService-Info.plistへの直接参照を削除
+      // （ビルドスクリプトで動的に生成するため、静的な参照は不要）
+      const cleanedPlistRefPath =
+        removeGoogleServiceInfoPlistReference(projectPath);
+      if (cleanedPlistRefPath && !createdFiles.includes(cleanedPlistRefPath)) {
+        createdFiles.push(cleanedPlistRefPath);
       }
     }
   } else {
@@ -377,5 +548,7 @@ export {
   createXcodeBuildScripts,
   updatePodfile,
   updateXcodeProjectDeploymentTarget,
+  removeHardcodedBundleIdFromXcodeProject,
+  removeGoogleServiceInfoPlistReference,
   addBuildScriptToXcodeProject,
 };
