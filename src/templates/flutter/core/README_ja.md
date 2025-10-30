@@ -63,6 +63,9 @@ flutter build apk --flavor production --release
 # Staging環境（開発用）
 flutter run
 
+# Production環境（実機テスト - 実機のみ）
+flutter run --release
+
 # Production環境（本番リリース）
 flutter build ipa --release
 ```

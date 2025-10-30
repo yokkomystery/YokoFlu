@@ -64,6 +64,9 @@ flutter build apk --flavor production --release
 # Staging Environment (Development)
 flutter run
 
+# Production Environment (Device testing - Physical device only)
+flutter run --release
+
 # Production Environment (Release build)
 flutter build ipa --release
 ```
