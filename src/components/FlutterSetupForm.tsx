@@ -193,12 +193,6 @@ export default function FlutterSetupForm() {
       }
     }
 
-    steps.push({
-      id: 'firebase-services',
-      title: 'Firebaseサービスの確認',
-      status: 'pending',
-    });
-
     steps.push(
       {
         id: 'pubspec-update',

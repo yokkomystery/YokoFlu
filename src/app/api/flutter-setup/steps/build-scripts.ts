@@ -5,8 +5,7 @@ export async function runBuildScripts(
   appName: string,
   fullOutputPath: string,
   useFirebase: boolean,
-  separateEnvironments: boolean,
-  selectedServices: string[] = []
+  separateEnvironments: boolean
 ) {
   updateProgress('build-scripts', 'ビルドスクリプトの作成', 'ビルドスクリプトを作成中...');
   try {
@@ -14,8 +13,7 @@ export async function runBuildScripts(
       appName,
       fullOutputPath,
       useFirebase,
-      separateEnvironments,
-      selectedServices
+      separateEnvironments
     );
     if (Array.isArray(file)) {
       file.forEach((f) => addCreatedFile(f));
