@@ -60,12 +60,18 @@ export async function runFlutterCreate(
   try {
     const projectName = appName.toLowerCase().replace(/[^a-z0-9_]/g, '_');
     const bundleIdParts = bundleId.split('.');
+    
+    // Bundle IDの最後の部分を除いてorg IDを計算
+    // 例: com.example.app → org: com.example
+    // 例: com.app → org: com
     const orgId =
-      bundleIdParts.length > 2
+      bundleIdParts.length >= 2
         ? bundleIdParts.slice(0, -1).join('.')
-        : bundleId;
+        : 'com.example';  // デフォルト値（通常は起こらない）
 
     console.log(`📝 Organization ID: ${orgId}, Project Name: ${projectName}`);
+    console.log(`📝 Expected package: ${bundleId} (will be ${orgId}.${projectName} by Flutter)`);
+    
     const createCommand = `flutter create --org ${orgId} --project-name ${projectName} ${fullOutputPath}`;
     await execAsync(createCommand);
 
