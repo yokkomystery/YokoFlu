@@ -25,7 +25,6 @@ import { runAppIcon } from './steps/app-icon';
 import { runBuildScripts } from './steps/build-scripts';
 import { runAppTemplate } from './steps/app-template';
 import { runAdvancedFeatures } from './steps/advanced-features';
-import { runFirebaseServices } from './steps/firebase-services';
 import { normalizeParameters } from './helpers/parameter-normalizer';
 import { addPostSetupSteps, finalizeSetup } from './helpers/completion-helpers';
 import { runTodoGeneration } from './steps/todo-generation';
@@ -42,7 +41,6 @@ export async function POST(request: NextRequest) {
       projectId,
       outputPath,
       separateEnvironments = true,
-      selectedServices = [],
       existingStagingProjectId,
       existingProductionProjectId,
       singleProjectId,
@@ -62,7 +60,6 @@ export async function POST(request: NextRequest) {
       projectId,
       outputPath,
       separateEnvironments,
-      selectedServices,
       existingStagingProjectId,
       existingProductionProjectId,
       singleProjectId,
@@ -162,19 +159,7 @@ export async function POST(request: NextRequest) {
       useFirebase,
     });
 
-    // Step 4: Firebaseサービスの処理（Firebaseを使用する場合のみ）
-    if (useFirebase) {
-      await runFirebaseServices({
-        useFirebase,
-        selectedServices,
-        resolvedStagingProjectId,
-        resolvedProductionProjectId,
-        resolvedSingleProjectId,
-        separateEnvironments,
-      });
-    }
-
-    // Step 5: pubspec.yamlの更新（分割）
+    // Step 4: pubspec.yamlの更新（分割）
     await runPubspecUpdate(
       fullOutputPath,
       useFirebase,
@@ -244,8 +229,7 @@ export async function POST(request: NextRequest) {
       appName,
       fullOutputPath,
       useFirebase,
-      separateEnvironments,
-      selectedServices
+      separateEnvironments
     );
 
     // localizationファイルの最終確認・不足時の再生成（ステップへ委譲）
