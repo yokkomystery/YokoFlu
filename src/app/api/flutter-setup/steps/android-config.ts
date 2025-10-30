@@ -1,4 +1,5 @@
 import { updateProgress, recordStepResult, addCreatedFile } from '../utils';
+import { copyTemplateFile, getTemplatePath } from '../template-utils';
 import fs from 'fs';
 import path from 'path';
 
@@ -195,6 +196,21 @@ function createAndroidConfigs(
       productionStrings
     );
     createdFiles.push(path.join(productionStringsPath, 'strings.xml'));
+  }
+
+  // AndroidManifest.xmlをテンプレートからコピー（@string/app_nameを使用）
+  const androidManifestPath = path.join(
+    projectPath,
+    'android',
+    'app',
+    'src',
+    'main',
+    'AndroidManifest.xml'
+  );
+  const androidManifestTemplatePath = getTemplatePath('android/AndroidManifest.xml');
+  if (fs.existsSync(androidManifestTemplatePath)) {
+    copyTemplateFile(androidManifestTemplatePath, androidManifestPath, {});
+    createdFiles.push(androidManifestPath);
   }
 
   return createdFiles;
