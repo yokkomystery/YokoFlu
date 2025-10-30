@@ -162,17 +162,19 @@ export async function POST(request: NextRequest) {
       useFirebase,
     });
 
-    // Step 4: Firebaseサービスの処理（分割）
-    await runFirebaseServices({
-      useFirebase,
-      selectedServices,
-      resolvedStagingProjectId,
-      resolvedProductionProjectId,
-      resolvedSingleProjectId,
-      separateEnvironments,
-    });
+    // Step 4: Firebaseサービスの処理（Firebaseを使用する場合のみ）
+    if (useFirebase) {
+      await runFirebaseServices({
+        useFirebase,
+        selectedServices,
+        resolvedStagingProjectId,
+        resolvedProductionProjectId,
+        resolvedSingleProjectId,
+        separateEnvironments,
+      });
+    }
 
-    // Step 4: pubspec.yamlの更新（分割）
+    // Step 5: pubspec.yamlの更新（分割）
     await runPubspecUpdate(
       fullOutputPath,
       useFirebase,
@@ -180,10 +182,16 @@ export async function POST(request: NextRequest) {
       effectiveTemplateFeatures
     );
 
-    // Step 5: iOS設定ファイルの作成（分割）
-    await runIOSConfig(bundleId, appName, fullOutputPath, separateEnvironments, useFirebase);
+    // Step 6: iOS設定ファイルの作成（分割）
+    await runIOSConfig(
+      bundleId,
+      appName,
+      fullOutputPath,
+      separateEnvironments,
+      useFirebase
+    );
 
-    // Step 6: Android設定ファイルの作成（分割）
+    // Step 7: Android設定ファイルの作成（分割）
     await runAndroidConfig(
       packageName,
       appName,
@@ -191,17 +199,17 @@ export async function POST(request: NextRequest) {
       separateEnvironments
     );
 
-    // Step 7: 多言語対応の設定（分割）
+    // Step 8: 多言語対応の設定（分割）
     await runLocalization(
       appName,
       fullOutputPath,
       normalizedLocalizationLanguages
     );
 
-    // Step 8: プロバイダーファイルの作成（分割）
+    // Step 9: プロバイダーファイルの作成（分割）
     await runProviderFiles(fullOutputPath, normalizedLocalizationLanguages);
 
-    // Step 9: 設定画面の作成（分割）
+    // Step 10: 設定画面の作成（分割）
     await runSettingsScreen(
       appName,
       fullOutputPath,
@@ -209,7 +217,7 @@ export async function POST(request: NextRequest) {
       shouldCreateSettingsScreen
     );
 
-    // Step 10: main.dartの更新（分割）
+    // Step 11: main.dartの更新（分割）
     await runMainDartUpdate(
       fullOutputPath,
       appName,
@@ -219,19 +227,19 @@ export async function POST(request: NextRequest) {
       shouldCreateSettingsScreen
     );
 
-    // Step 10.5: アプリテンプレートの適用（分割）
+    // Step 12: アプリテンプレートの適用（分割）
     await runAppTemplate(appTemplate, appName, fullOutputPath, {
       settingsEnabled: shouldCreateSettingsScreen,
     });
 
-    // Step 10.6: 高度な機能の適用（分割）
+    // Step 13: 高度な機能の適用（分割）
     await runAdvancedFeatures(
       normalizedAdvancedFeatures,
       appName,
       fullOutputPath
     );
 
-    // Step 11: ビルドスクリプトの作成（分割）
+    // Step 14: ビルドスクリプトの作成（分割）
     await runBuildScripts(
       appName,
       fullOutputPath,
@@ -250,10 +258,10 @@ export async function POST(request: NextRequest) {
       regenerated.forEach((file) => addCreatedFile(file));
     }
 
-    // Step 12: 依存関係のインストール（分割）
+    // Step 15: 依存関係のインストール（分割）
     await runDependenciesInstall(fullOutputPath);
 
-    // Step 13: アプリアイコン生成（分割）
+    // Step 16: アプリアイコン生成（分割）
     await runAppIcon(fullOutputPath, appName, appIcon);
 
     // セットアップ完了
@@ -261,7 +269,7 @@ export async function POST(request: NextRequest) {
     setupResult.appName = appName;
     setupResult.outputPath = fullOutputPath;
 
-    // Step 13: TODO.mdの生成
+    // Step 17: TODO.mdの生成
     runTodoGeneration({
       fullOutputPath,
       appName,
