@@ -56,10 +56,8 @@ export function normalizeParameters(
   ).filter((featureId): featureId is TemplateFeatureId =>
     availableFeatureIds.has(featureId as TemplateFeatureId)
   );
-  const effectiveTemplateFeatures =
-    normalizedTemplateFeatures.length > 0
-      ? normalizedTemplateFeatures
-      : DEFAULT_TEMPLATE_FEATURE_IDS;
+  // ユーザーが明示的にすべてのチェックを外した場合は空配列を尊重
+  const effectiveTemplateFeatures = normalizedTemplateFeatures;
 
   // ローカライズ言語の正規化
   const availableLanguageIds = new Set(

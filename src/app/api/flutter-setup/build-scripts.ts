@@ -258,7 +258,8 @@ export function updateMainDart(
   appName: string,
   useFirebase: boolean,
   selectedLanguages: string[] = ['ja', 'en'],
-  advancedFeatures: string[] = []
+  advancedFeatures: string[] = [],
+  settingsEnabled: boolean = true
 ): string | null {
   // 正規化されたプロジェクト名（小文字、ハイフンをアンダースコアに）
   const normalizedAppName = path
@@ -301,6 +302,7 @@ export function updateMainDart(
     },
     {
       FIREBASE_ENABLED: useFirebase,
+      SETTINGS_ENABLED: settingsEnabled,
       ONBOARDING_ENABLED: onboardingEnabled,
       PUSH_NOTIFICATIONS_ENABLED: pushNotificationsEnabled,
       ANALYTICS_ENABLED: analyticsEnabled,
