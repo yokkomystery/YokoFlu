@@ -215,7 +215,8 @@ export async function POST(request: NextRequest) {
       appName,
       useFirebase,
       normalizedLocalizationLanguages,
-      normalizedAdvancedFeatures
+      normalizedAdvancedFeatures,
+      shouldCreateSettingsScreen
     );
 
     // Step 10.5: アプリテンプレートの適用（分割）
