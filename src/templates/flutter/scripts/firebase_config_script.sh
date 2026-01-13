@@ -9,18 +9,37 @@ echo "CONFIGURATION: ${CONFIGURATION}"
 echo "SRCROOT: ${SRCROOT}"
 echo "BUILT_PRODUCTS_DIR: ${BUILT_PRODUCTS_DIR}"
 echo "PRODUCT_NAME: ${PRODUCT_NAME}"
-echo "DART_DEFINES: ${DART_DEFINES}"
+echo "DART_DEFINES (env): ${DART_DEFINES}"
+echo "DART_DEFINES length (env): ${#DART_DEFINES}"
+if [ -n "${DART_DEFINES}" ]; then
+    echo "DART_DEFINES first 200 chars (env): ${DART_DEFINES:0:200}"
+fi
+GENERATED_XCCONFIG="${SRCROOT}/../Flutter/Generated.xcconfig"
+if [ -f "${GENERATED_XCCONFIG}" ]; then
+    GENERATED_DART_DEFINES=$(grep "^DART_DEFINES=" "${GENERATED_XCCONFIG}" | cut -d'=' -f2- | tr -d '\n' || echo "")
+    echo "DART_DEFINES (from Generated.xcconfig): ${GENERATED_DART_DEFINES:0:200}"
+fi
 echo "========================================"
 
 resolve_environment() {
     local environment_from_defines
+    local generated_xcconfig="${SRCROOT}/../Flutter/Generated.xcconfig"
+    local dart_defines_value=""
 
-    environment_from_defines="$(python3 <<'PY'
+    if [ -n "${DART_DEFINES}" ]; then
+        dart_defines_value="${DART_DEFINES}"
+        echo "DEBUG: DART_DEFINES from environment variable" >&2
+    elif [ -f "${generated_xcconfig}" ]; then
+        dart_defines_value=$(grep "^DART_DEFINES=" "${generated_xcconfig}" | cut -d'=' -f2- | tr -d '\n' || echo "")
+        echo "DEBUG: DART_DEFINES from Generated.xcconfig" >&2
+    fi
+
+    if [ -n "${dart_defines_value}" ]; then
+        environment_from_defines="$(python3 <<PY
 import base64
-import os
 import sys
 
-dart_defines = os.environ.get("DART_DEFINES", "")
+dart_defines = "${dart_defines_value}"
 environment = ""
 
 if dart_defines:
@@ -33,6 +52,11 @@ if dart_defines:
                 environment = decoded.split("=", 1)[1]
                 print(f"DEBUG: Found ENVIRONMENT={environment}", file=sys.stderr, flush=True)
                 break
+            elif decoded.startswith("PRODUCTION="):
+                production_value = decoded.split("=", 1)[1]
+                environment = "production" if production_value.lower() == "true" else "staging"
+                print(f"DEBUG: Found PRODUCTION={production_value}, using environment={environment}", file=sys.stderr, flush=True)
+                break
         except Exception as e:
             print(f"DEBUG: Failed to decode entry: {e}", file=sys.stderr, flush=True)
             continue
@@ -42,6 +66,10 @@ else:
 print(environment, flush=True)
 PY
 )"
+    else
+        echo "DEBUG: No DART_DEFINES found in environment or Generated.xcconfig" >&2
+        environment_from_defines=""
+    fi
 
     echo "DEBUG: environment_from_defines='${environment_from_defines}'" >&2
 
@@ -51,8 +79,8 @@ PY
         return
     fi
 
-    # DART_DEFINESが無い場合はXcode設定から判定
-    echo "DEBUG: No DART_DEFINES, using CONFIGURATION: ${CONFIGURATION}" >&2
+    echo "DEBUG: No DART_DEFINES found or empty, using CONFIGURATION: ${CONFIGURATION}" >&2
+    echo "DEBUG: CONFIGURATION value: '${CONFIGURATION}'" >&2
     case "${CONFIGURATION}" in
         *Release*)
             echo "DEBUG: CONFIGURATION contains 'Release', using production" >&2
@@ -62,8 +90,12 @@ PY
             echo "DEBUG: CONFIGURATION contains 'Production', using production" >&2
             echo "production"
             ;;
+        Debug)
+            echo "DEBUG: CONFIGURATION is 'Debug', using staging (default for debug builds)" >&2
+            echo "staging"
+            ;;
         *)
-            echo "DEBUG: Default case, using staging" >&2
+            echo "DEBUG: Default case (CONFIGURATION='${CONFIGURATION}'), using staging" >&2
             echo "staging"
             ;;
     esac
@@ -77,13 +109,17 @@ copy_config() {
     echo "DEBUG: Destination: ${destination_file}"
 
     if [ ! -f "${source_file}" ]; then
-        echo "⚠️  Firebase config file not found: ${source_file}"
+        echo "Error: Firebase config file not found: ${source_file}"
         echo "DEBUG: Available files in Runner directory:"
         ls -la "${SRCROOT}/Runner/" | grep -i "googleservice" || echo "No GoogleService files found"
-        return 1
+        exit 1
     fi
 
     cp "${source_file}" "${destination_file}"
+    if [ ! -f "${destination_file}" ]; then
+        echo "Error: Failed to copy Firebase config to: ${destination_file}"
+        exit 1
+    fi
     echo "✅ Successfully copied config file"
 }
 
