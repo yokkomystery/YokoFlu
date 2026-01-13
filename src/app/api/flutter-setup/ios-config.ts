@@ -2,6 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import { copyTemplateFile, getTemplatePath } from './template-utils';
 
+const IOS_DEPLOYMENT_TARGET = '14.0';
+
 // Podfileの更新（iOSデプロイメントターゲットを13.0以上に設定）
 function updatePodfile(projectPath: string) {
   const podfilePath = path.join(projectPath, 'ios', 'Podfile');
@@ -9,10 +11,10 @@ function updatePodfile(projectPath: string) {
   if (fs.existsSync(podfilePath)) {
     let podfileContent = fs.readFileSync(podfilePath, 'utf8');
 
-    // プラットフォーム設定を13.0に更新
+    // プラットフォーム設定を最新ターゲットに更新
     podfileContent = podfileContent.replace(
       /platform :ios, ['"]?\d+\.\d+['"]?/,
-      "platform :ios, '13.0'"
+      `platform :ios, '${IOS_DEPLOYMENT_TARGET}'`
     );
 
     // post_installブロックを追加または更新
@@ -21,9 +23,9 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
     
-    # iOS deployment targetを13.0以上に設定
+    # iOS deployment targetを${IOS_DEPLOYMENT_TARGET}以上に設定
     target.build_configurations.each do |config|
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '${IOS_DEPLOYMENT_TARGET}'
     end
   end
 end`;
@@ -40,7 +42,9 @@ end`;
     }
 
     fs.writeFileSync(podfilePath, podfileContent);
-    console.log('✅ Podfile updated with iOS deployment target 13.0');
+    console.log(
+      `✅ Podfile updated with iOS deployment target ${IOS_DEPLOYMENT_TARGET}`
+    );
     return podfilePath;
   } else {
     console.log('⚠️ Podfile not found, skipping update');
@@ -64,18 +68,12 @@ function updateXcodeProjectDeploymentTarget(projectPath: string) {
     // 3つの設定箇所をすべて更新
     projectContent = projectContent.replace(
       /IPHONEOS_DEPLOYMENT_TARGET = \d+\.\d+;/g,
-      'IPHONEOS_DEPLOYMENT_TARGET = 13.0;'
-    );
-
-    // より具体的な設定箇所も更新
-    projectContent = projectContent.replace(
-      /IPHONEOS_DEPLOYMENT_TARGET = 12\.0;/g,
-      'IPHONEOS_DEPLOYMENT_TARGET = 13.0;'
+      `IPHONEOS_DEPLOYMENT_TARGET = ${IOS_DEPLOYMENT_TARGET};`
     );
 
     fs.writeFileSync(projectPbxprojPath, projectContent);
     console.log(
-      '✅ Xcode project.pbxproj updated with iOS deployment target 13.0'
+      `✅ Xcode project.pbxproj updated with iOS deployment target ${IOS_DEPLOYMENT_TARGET}`
     );
     return projectPbxprojPath;
   } else {
@@ -185,7 +183,13 @@ function removeGoogleServiceInfoPlistReference(projectPath: string) {
 }
 
 // Xcodeプロジェクトにビルドスクリプトを自動追加
-function addBuildScriptToXcodeProject(projectPath: string) {
+function addBuildScriptToXcodeProject(
+  projectPath: string,
+  {
+    includeReleaseSetup,
+    includeFirebaseScript,
+  }: { includeReleaseSetup: boolean; includeFirebaseScript: boolean }
+) {
   const projectPbxprojPath = path.join(
     projectPath,
     'ios',
@@ -202,100 +206,43 @@ function addBuildScriptToXcodeProject(projectPath: string) {
 
   let projectContent = fs.readFileSync(projectPbxprojPath, 'utf8');
 
-  // 既にFirebaseビルドスクリプトが追加されているかチェック
-  if (projectContent.includes('Firebase Config Script')) {
-    console.log('✅ Firebase build script already exists in Xcode project');
-    return projectPbxprojPath;
+  // RunnerターゲットのRun Scriptフェーズを上書きする
+  const runScriptRegex =
+    /(\/\* Run Script \*\/ = \{[\s\S]*?shellScript = ")([\s\S]*?)(";\n)/;
+
+  const commands: string[] = [
+    includeReleaseSetup
+      ? 'bash "${SRCROOT}/Runner/setup_release_config.sh"'
+      : null,
+    '/bin/sh "$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh" build',
+    includeFirebaseScript
+      ? 'bash "${SRCROOT}/Runner/firebase_config_script.sh"'
+      : null,
+  ].filter(Boolean) as string[];
+
+  if (!runScriptRegex.test(projectContent)) {
+    console.log(
+      '⚠️ Unable to locate Run Script phase in project.pbxproj, skipping update'
+    );
+    return null;
   }
 
-  // ビルドスクリプトフェーズを追加
-  const buildScriptPhase = `
-		/* Begin PBXShellScriptBuildPhase section */
-		/* Firebase Config Script */
-		FIREBASE_CONFIG_SCRIPT_ID /* Firebase Config Script */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"\\"\\$(SRCROOT)/Runner/GoogleService-Info-staging.plist\\"",
-				"\\"\\$(SRCROOT)/Runner/GoogleService-Info-production.plist\\"",
-			);
-			name = "Firebase Config Script";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"\\"\\$(BUILT_PRODUCTS_DIR)/\\$(PRODUCT_NAME).app/GoogleService-Info.plist\\"",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "bash \\"\\$\\{SRCROOT\\}/Runner/firebase_config_script.sh\\"\\n";
-		};
-		/* End PBXShellScriptBuildPhase section */`;
+  const encodedScript =
+    commands
+      .map((cmd) => cmd.replace(/"/g, '\\"'))
+      .join('\\n') + '\\n';
 
-  // 既存のビルドスクリプトフェーズセクションを探す
-  const buildPhaseSectionRegex =
-    /(\/\* Begin PBXShellScriptBuildPhase section \*\/[\s\S]*?\/\* End PBXShellScriptBuildPhase section \*\/)/;
+  projectContent = projectContent.replace(
+    runScriptRegex,
+    `$1${encodedScript}$3`
+  );
 
-  if (buildPhaseSectionRegex.test(projectContent)) {
-    // 既存のビルドスクリプトフェーズセクションがある場合、その前に追加
-    projectContent = projectContent.replace(
-      buildPhaseSectionRegex,
-      (match) => `${buildScriptPhase}\n\t\t${match}`
-    );
-  } else {
-    // ビルドスクリプトフェーズセクションがない場合、適切な場所に追加
-    const targetSectionRegex = /(\/\* Begin PBXNativeTarget section \*\/)/;
-    if (targetSectionRegex.test(projectContent)) {
-      projectContent = projectContent.replace(
-        targetSectionRegex,
-        `${buildScriptPhase}\n\n\t\t$1`
-      );
-    }
-  }
-
-  // RunnerターゲットのbuildPhasesにスクリプトを追加（RunnerTestsではなくRunner）
-  const nativeTargetSectionRegex =
-    /\/\* Begin PBXNativeTarget section \*\/[\s\S]*?\/\* End PBXNativeTarget section \*\//;
-  const runnerTargetRegex =
-    /(\b[0-9A-F]{24}\b \/\* Runner \*\/ = \{[\s\S]*?buildPhases = \([\s\S]*?\);[\s\S]*?\};)/;
-
-  const nativeSectionMatch = projectContent.match(nativeTargetSectionRegex);
-  if (nativeSectionMatch) {
-    const nativeSection = nativeSectionMatch[0];
-    const updatedNativeSection = nativeSection.replace(
-      runnerTargetRegex,
-      (runnerBlock) => {
-        if (runnerBlock.includes('FIREBASE_CONFIG_SCRIPT_ID')) {
-          return runnerBlock; // 既に追加済み
-        }
-        return runnerBlock.replace(
-          /buildPhases = \(/,
-          'buildPhases = (\n\t\t\t\tFIREBASE_CONFIG_SCRIPT_ID /* Firebase Config Script */,'
-        );
-      }
-    );
-    projectContent = projectContent.replace(
-      nativeTargetSectionRegex,
-      updatedNativeSection
-    );
-  }
-
-  // ファイル参照を追加
-  const fileRefSectionRegex = /(\/\* Begin PBXFileReference section \*\/)/;
-  if (fileRefSectionRegex.test(projectContent)) {
-    const fileRef = `
-		FIREBASE_CONFIG_SCRIPT_ID /* firebase_config_script.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = firebase_config_script.sh; sourceTree = "<group>"; };`;
-    projectContent = projectContent.replace(
-      fileRefSectionRegex,
-      `${fileRef}\n\n\t\t$1`
-    );
+  if (projectContent.includes(encodedScript)) {
+    console.log('✅ Updated Run Script phase for iOS project');
   }
 
   fs.writeFileSync(projectPbxprojPath, projectContent);
-  console.log('✅ Firebase build script added to Xcode project');
+  console.log('✅ Firebase/Release config scripts wired into Run Script phase');
   return projectPbxprojPath;
 }
 
@@ -308,201 +255,165 @@ function createIOSConfigs(
   useFirebase: boolean = false
 ) {
   const createdFiles: string[] = [];
+  const replacements = {
+    BUNDLE_ID: bundleId,
+    APP_NAME: appName,
+    APP_NAME_STG: `${appName} STG`,
+  };
+
+  const recordCreatedFile = (filePath: string | null) => {
+    if (filePath && !createdFiles.includes(filePath)) {
+      createdFiles.push(filePath);
+    }
+  };
+
+  const writeAndTrackFile = (filePath: string, content: string) => {
+    fs.writeFileSync(filePath, content);
+    recordCreatedFile(filePath);
+  };
 
   // Podfileの更新
-  const podfilePath = updatePodfile(projectPath);
-  if (podfilePath) {
-    createdFiles.push(podfilePath);
-  }
+  recordCreatedFile(updatePodfile(projectPath));
 
   // Xcodeプロジェクトファイルの更新
-  const projectPbxprojPath = updateXcodeProjectDeploymentTarget(projectPath);
-  if (projectPbxprojPath) {
-    createdFiles.push(projectPbxprojPath);
-  }
+  recordCreatedFile(updateXcodeProjectDeploymentTarget(projectPath));
 
   // project.pbxprojからハードコードされたバンドルIDとプロダクト名を削除
-  const cleanedProjectPath =
-    removeHardcodedBundleIdFromXcodeProject(projectPath);
-  if (cleanedProjectPath && !createdFiles.includes(cleanedProjectPath)) {
-    createdFiles.push(cleanedProjectPath);
-  }
+  recordCreatedFile(removeHardcodedBundleIdFromXcodeProject(projectPath));
 
-  // 環境分離が有効な場合のみ環境別設定ファイルを作成
+  const iosDir = path.join(projectPath, 'ios');
+  const flutterDir = path.join(iosDir, 'Flutter');
+  const runnerDir = path.join(iosDir, 'Runner');
+
   if (separateEnvironments) {
-    // シンプルで安全なアプローチ:
-    // Debug/Release = Staging（開発・テスト用）
-    // Profile = Production（本番リリース用）
-    const debugConfigPath = path.join(projectPath, 'ios', 'Debug.xcconfig');
-    const releaseConfigPath = path.join(projectPath, 'ios', 'Release.xcconfig');
-    const profileConfigPath = path.join(projectPath, 'ios', 'Profile.xcconfig');
-
-    // Debug.xcconfig (開発用 - Staging)
-    const debugConfig = `#include "Flutter/Generated.xcconfig"
-PRODUCT_BUNDLE_IDENTIFIER = ${bundleId}.staging
-PRODUCT_NAME = ${appName}-STG
-ENVIRONMENT = staging`;
-
-    // Release.xcconfig (本番環境 - Production)
-    const releaseConfig = `#include "Flutter/Generated.xcconfig"
-PRODUCT_BUNDLE_IDENTIFIER = ${bundleId}
-PRODUCT_NAME = ${appName}
-ENVIRONMENT = production`;
-
-    // Profile.xcconfig (本番リリース用 - Production)
-    const profileConfig = `#include "Flutter/Generated.xcconfig"
-PRODUCT_BUNDLE_IDENTIFIER = ${bundleId}
-PRODUCT_NAME = ${appName}
-ENVIRONMENT = production`;
-
-    fs.writeFileSync(debugConfigPath, debugConfig);
-    fs.writeFileSync(releaseConfigPath, releaseConfig);
-    fs.writeFileSync(profileConfigPath, profileConfig);
-
-    createdFiles.push(debugConfigPath, releaseConfigPath, profileConfigPath);
-
-    // Flutter配下のxcconfigファイルにカスタム設定をinclude
-    const flutterDebugConfigPath = path.join(
-      projectPath,
-      'ios',
-      'Flutter',
-      'Debug.xcconfig'
-    );
-    const flutterReleaseConfigPath = path.join(
-      projectPath,
-      'ios',
-      'Flutter',
-      'Release.xcconfig'
-    );
-
-    // Flutter/Debug.xcconfigを更新
-    if (fs.existsSync(flutterDebugConfigPath)) {
-      let flutterDebugContent = fs.readFileSync(flutterDebugConfigPath, 'utf8');
-      if (!flutterDebugContent.includes('../Debug.xcconfig')) {
-        flutterDebugContent += '\n#include "../Debug.xcconfig"\n';
-        fs.writeFileSync(flutterDebugConfigPath, flutterDebugContent);
-        createdFiles.push(flutterDebugConfigPath);
-        console.log(
-          '✅ Updated Flutter/Debug.xcconfig to include custom config'
-        );
+    // HimaLinkと同様のStaging/Production設定ファイルを生成
+    ['Staging.xcconfig', 'Production.xcconfig', 'Profile.xcconfig'].forEach(
+      (fileName) => {
+        const templatePath = getTemplatePath(`ios/${fileName}`);
+        const targetPath = path.join(iosDir, fileName);
+        copyTemplateFile(templatePath, targetPath, replacements);
+        recordCreatedFile(targetPath);
       }
-    }
+    );
 
-    // Flutter/Release.xcconfigを更新（Staging設定を読み込む）
-    if (fs.existsSync(flutterReleaseConfigPath)) {
-      let flutterReleaseContent = fs.readFileSync(
-        flutterReleaseConfigPath,
-        'utf8'
+    const flutterDebugConfigPath = path.join(flutterDir, 'Debug.xcconfig');
+    const flutterReleaseConfigPath = path.join(flutterDir, 'Release.xcconfig');
+    const flutterProfileConfigPath = path.join(flutterDir, 'Profile.xcconfig');
+
+    const flutterDebugContent = `#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"
+#include "Generated.xcconfig"
+#include "../Staging.xcconfig"
+
+CODE_SIGN_STYLE = Automatic
+CODE_SIGN_IDENTITY = iPhone Developer
+`;
+    writeAndTrackFile(flutterDebugConfigPath, flutterDebugContent);
+
+    const flutterReleaseContent = `#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"
+#include "Generated.xcconfig"
+// Default to Staging. setup_release_config.sh rewrites this for production when PRODUCTION=true
+#include "../Staging.xcconfig"
+`;
+    writeAndTrackFile(flutterReleaseConfigPath, flutterReleaseContent);
+
+    const flutterProfileContent = `#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"
+#include "Generated.xcconfig"
+// Default to Staging. setup_release_config.sh rewrites this for production when PRODUCTION=true
+#include "../Staging.xcconfig"
+`;
+    writeAndTrackFile(flutterProfileConfigPath, flutterProfileContent);
+
+    // Release設定スクリプトを追加
+    const releaseScriptTemplatePath = getTemplatePath(
+      'scripts/setup_release_config.sh'
+    );
+    const releaseScriptPath = path.join(
+      runnerDir,
+      'setup_release_config.sh'
+    );
+    if (fs.existsSync(releaseScriptTemplatePath)) {
+      copyTemplateFile(
+        releaseScriptTemplatePath,
+        releaseScriptPath,
+        {}
       );
-      if (!flutterReleaseContent.includes('../Release.xcconfig')) {
-        flutterReleaseContent += '\n#include "../Release.xcconfig"\n';
-        fs.writeFileSync(flutterReleaseConfigPath, flutterReleaseContent);
-        createdFiles.push(flutterReleaseConfigPath);
-        console.log(
-          '✅ Updated Flutter/Release.xcconfig to include custom config'
-        );
-      }
+      fs.chmodSync(releaseScriptPath, 0o755);
+      recordCreatedFile(releaseScriptPath);
     }
+  } else {
+    // 単一環境の場合はDebug/Release設定を生成
+    ['Debug.xcconfig', 'Release.xcconfig'].forEach((fileName) => {
+      const templatePath = getTemplatePath(`ios/${fileName}`);
+      const targetPath = path.join(iosDir, fileName);
+      copyTemplateFile(templatePath, targetPath, replacements);
+      recordCreatedFile(targetPath);
+    });
 
-    // Flutter/Profile.xcconfigを作成または更新（Production設定を読み込む）
-    const flutterProfileConfigPath = path.join(
-      projectPath,
-      'ios',
-      'Flutter',
-      'Profile.xcconfig'
+    const profileConfigPath = path.join(iosDir, 'Profile.xcconfig');
+    copyTemplateFile(
+      getTemplatePath('ios/Release.xcconfig'),
+      profileConfigPath,
+      replacements
     );
+    recordCreatedFile(profileConfigPath);
 
-    if (!fs.existsSync(flutterProfileConfigPath)) {
-      // Profile.xcconfigを新規作成
-      const flutterProfileContent = `#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"
+    const flutterDebugConfigPath = path.join(flutterDir, 'Debug.xcconfig');
+    const flutterReleaseConfigPath = path.join(flutterDir, 'Release.xcconfig');
+    const flutterProfileConfigPath = path.join(flutterDir, 'Profile.xcconfig');
+
+    const flutterSingleDebug = `#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"
+#include "Generated.xcconfig"
+#include "../Debug.xcconfig"
+`;
+    writeAndTrackFile(flutterDebugConfigPath, flutterSingleDebug);
+
+    const flutterSingleRelease = `#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"
+#include "Generated.xcconfig"
+#include "../Release.xcconfig"
+`;
+    writeAndTrackFile(flutterReleaseConfigPath, flutterSingleRelease);
+
+    const flutterSingleProfile = `#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"
 #include "Generated.xcconfig"
 #include "../Profile.xcconfig"
 `;
-      fs.writeFileSync(flutterProfileConfigPath, flutterProfileContent);
-      createdFiles.push(flutterProfileConfigPath);
-      console.log('✅ Created Flutter/Profile.xcconfig with Production config');
-    } else {
-      // 既存のProfile.xcconfigを更新
-      let flutterProfileContent = fs.readFileSync(
-        flutterProfileConfigPath,
-        'utf8'
-      );
-      if (!flutterProfileContent.includes('../Profile.xcconfig')) {
-        flutterProfileContent += '\n#include "../Profile.xcconfig"\n';
-        fs.writeFileSync(flutterProfileConfigPath, flutterProfileContent);
-        createdFiles.push(flutterProfileConfigPath);
-        console.log(
-          '✅ Updated Flutter/Profile.xcconfig to include Production config'
-        );
-      }
-    }
-
-    // Firebaseを使用している場合のみ設定スクリプトを追加
-    if (useFirebase) {
-      // Firebase設定スクリプトの作成
-      const firebaseConfigScriptPath = path.join(
-        projectPath,
-        'ios',
-        'Runner',
-        'firebase_config_script.sh'
-      );
-      const firebaseConfigScriptTemplatePath = getTemplatePath(
-        'scripts/firebase_config_script.sh'
-      );
-
-      copyTemplateFile(
-        firebaseConfigScriptTemplatePath,
-        firebaseConfigScriptPath,
-        {
-          APP_NAME: appName,
-        }
-      );
-
-      // スクリプトに実行権限を付与
-      fs.chmodSync(firebaseConfigScriptPath, 0o755);
-      createdFiles.push(firebaseConfigScriptPath);
-
-      // Xcodeプロジェクトにビルドスクリプトを追加
-      const updatedProjectPath = addBuildScriptToXcodeProject(projectPath);
-      if (updatedProjectPath) {
-        createdFiles.push(updatedProjectPath);
-      }
-
-      // GoogleService-Info.plistへの直接参照を削除
-      // （ビルドスクリプトで動的に生成するため、静的な参照は不要）
-      const cleanedPlistRefPath =
-        removeGoogleServiceInfoPlistReference(projectPath);
-      if (cleanedPlistRefPath && !createdFiles.includes(cleanedPlistRefPath)) {
-        createdFiles.push(cleanedPlistRefPath);
-      }
-    }
-  } else {
-    // 単一環境の場合、基本的な設定ファイルのみ作成
-    const debugConfigPath = path.join(projectPath, 'ios', 'Debug.xcconfig');
-    const releaseConfigPath = path.join(projectPath, 'ios', 'Release.xcconfig');
-
-    // Debug.xcconfig
-    const debugConfig = `#include "Flutter/Generated.xcconfig"
-PRODUCT_BUNDLE_IDENTIFIER = ${bundleId}
-PRODUCT_NAME = ${appName}`;
-
-    // Release.xcconfig
-    const releaseConfig = `#include "Flutter/Generated.xcconfig"
-PRODUCT_BUNDLE_IDENTIFIER = ${bundleId}
-PRODUCT_NAME = ${appName}`;
-
-    fs.writeFileSync(debugConfigPath, debugConfig);
-    fs.writeFileSync(releaseConfigPath, releaseConfig);
-
-    createdFiles.push(debugConfigPath, releaseConfigPath);
+    writeAndTrackFile(flutterProfileConfigPath, flutterSingleProfile);
   }
 
-  // Info.plistをテンプレートからコピー（$(PRODUCT_NAME)を使用）
-  const infoPlistPath = path.join(projectPath, 'ios', 'Runner', 'Info.plist');
+  if (useFirebase) {
+    const firebaseConfigScriptPath = path.join(
+      runnerDir,
+      'firebase_config_script.sh'
+    );
+    copyTemplateFile(
+      getTemplatePath('scripts/firebase_config_script.sh'),
+      firebaseConfigScriptPath,
+      {
+        APP_NAME: appName,
+      }
+    );
+    fs.chmodSync(firebaseConfigScriptPath, 0o755);
+    recordCreatedFile(firebaseConfigScriptPath);
+
+    // GoogleService-Info.plistへの静的参照を削除（スクリプトで配置するため）
+    recordCreatedFile(removeGoogleServiceInfoPlistReference(projectPath));
+  }
+
+  if (separateEnvironments || useFirebase) {
+    recordCreatedFile(
+      addBuildScriptToXcodeProject(projectPath, {
+        includeReleaseSetup: separateEnvironments,
+        includeFirebaseScript: useFirebase,
+      })
+    );
+  }
+
+  // Info.plistをテンプレートからコピー（$(DISPLAY_NAME)を使用）
+  const infoPlistPath = path.join(runnerDir, 'Info.plist');
   const infoPlistTemplatePath = getTemplatePath('ios/Info.plist');
   if (fs.existsSync(infoPlistTemplatePath)) {
-    copyTemplateFile(infoPlistTemplatePath, infoPlistPath, {});
-    createdFiles.push(infoPlistPath);
+    copyTemplateFile(infoPlistTemplatePath, infoPlistPath, replacements);
+    recordCreatedFile(infoPlistPath);
   }
 
   console.log('✅ iOS configuration files created');

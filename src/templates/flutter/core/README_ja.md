@@ -117,7 +117,12 @@ flutter build ipa --release
 
 ## Xcode ビルドスクリプトの設定
 
-このツールで自動的に追加されます。ビルドフェーズに「Firebase Config Script」が入っているかを確認してください。
+このツールで自動的に追加されます。ビルドフェーズには以下の2本のスクリプトが組み込まれ（HimaLinkのiOS構成と同じです）、Release ビルドでの環境切り替えを担います。
+
+1. `setup_release_config.sh` — `--dart-define=PRODUCTION=true|false` をもとに `Release/Profile.xcconfig` が `Production.xcconfig` / `Staging.xcconfig` を include するよう書き換えます
+2. `firebase_config_script.sh` — `ENVIRONMENT` あるいは `PRODUCTION` の Dart define を解釈し、対応する `GoogleService-Info-*.plist` をアプリにコピーします
+
+CI で本番ビルドを行う際は `--dart-define=PRODUCTION=true` を付与してください。
 
 ## 環境設定
 
