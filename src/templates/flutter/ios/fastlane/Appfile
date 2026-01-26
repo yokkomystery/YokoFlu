@@ -1,0 +1,6 @@
+app_identifier("{{APP_PACKAGE}}")
+
+# Optional when using API key auth
+apple_id(ENV["APP_STORE_CONNECT_USER"])
+itc_team_id(ENV["APP_STORE_CONNECT_TEAM_ID"])
+team_id(ENV["APPLE_TEAM_ID"])
