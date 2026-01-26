@@ -1,0 +1,28 @@
+# Maestro 設定ファイル
+# https://maestro.mobile.dev/reference/configuration
+
+# アプリID（環境に応じて変更）
+# ステージング: {{APP_PACKAGE_STG}}
+# 本番: {{APP_PACKAGE}}
+appId: {{APP_PACKAGE_STG}}
+
+# デフォルトのタイムアウト（ミリ秒）
+# アニメーションや遷移の待機時間
+defaultTimeout: 10000
+
+# スクリーンショットの出力先
+screenshotPath: ./screenshots
+
+# テスト失敗時にスクリーンショットを撮る
+screenshotOnFailure: true
+
+# ログレベル
+logLevel: info
+
+# テスト実行前のフック
+# onFlowStart:
+#   - clearState
+
+# テスト実行後のフック
+# onFlowComplete:
+#   - takeScreenshot: "final_state"
