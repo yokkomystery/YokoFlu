@@ -5,7 +5,6 @@ import {
   ADVANCED_FEATURE_OPTIONS,
   DEFAULT_ADVANCED_FEATURE_IDS,
   AdvancedFeatureCategory,
-  ADVANCED_FEATURE_CATEGORY_LABELS,
 } from '../config/templateOptions';
 import { useLocale } from '../context/LocaleContext';
 
@@ -20,7 +19,7 @@ const AdvancedFeaturesSelector: React.FC<Props> = ({
   selected,
   onChange,
 }) => {
-  const { t, locale } = useLocale();
+  const { t } = useLocale();
   const toggle = (id: string, checked: boolean) => {
     const current = selected ?? [];
     if (checked) {
