@@ -13,7 +13,8 @@ import { AdvancedFeatureId } from '../../../../config/templateOptions';
 export async function runAdvancedFeatures(
   features: AdvancedFeatureId[],
   appName: string,
-  fullOutputPath: string
+  fullOutputPath: string,
+  packageName?: string
 ) {
   if (!features || features.length === 0) {
     updateProgress(
@@ -35,7 +36,7 @@ export async function runAdvancedFeatures(
     `選択された機能を適用中... (${features.length}件)`
   );
   try {
-    const files = createAdvancedFeatures(features, appName, fullOutputPath);
+    const files = createAdvancedFeatures(features, appName, fullOutputPath, packageName);
     files.forEach((f) => addCreatedFile(f));
 
     const todoNotes = getAdvancedFeatureTodoNotes(features);

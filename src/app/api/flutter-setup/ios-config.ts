@@ -4,8 +4,387 @@ import { copyTemplateFile, getTemplatePath } from './template-utils';
 
 const IOS_DEPLOYMENT_TARGET = '14.0';
 
-// Podfileの更新（iOSデプロイメントターゲットを13.0以上に設定）
-function updatePodfile(projectPath: string) {
+// ユニークなXcode用IDを生成（24文字の16進数）
+function generateXcodeId(): string {
+  const chars = '0123456789ABCDEF';
+  let result = '';
+  for (let i = 0; i < 24; i++) {
+    result += chars[Math.floor(Math.random() * 16)];
+  }
+  return result;
+}
+
+// Flavor用のBuild Configurationsを追加
+function addFlavorBuildConfigurations(projectPath: string): boolean {
+  const projectPbxprojPath = path.join(
+    projectPath,
+    'ios',
+    'Runner.xcodeproj',
+    'project.pbxproj'
+  );
+
+  if (!fs.existsSync(projectPbxprojPath)) {
+    console.log('⚠️ project.pbxproj not found');
+    return false;
+  }
+
+  let content = fs.readFileSync(projectPbxprojPath, 'utf8');
+
+  // すでにFlavor設定がある場合はスキップ
+  if (content.includes('Debug-staging') || content.includes('Debug-production')) {
+    console.log('ℹ️ Flavor configurations already exist');
+    return true;
+  }
+
+  const flavors = ['staging', 'production'];
+  const baseConfigs = ['Debug', 'Release', 'Profile'];
+
+  // 既存のConfiguration IDを取得
+  const projectConfigListMatch = content.match(
+    /97C146E91CF9000F007C117D \/\* Build configuration list for PBXProject "Runner" \*\/ = \{[\s\S]*?buildConfigurations = \(([\s\S]*?)\);/
+  );
+  const runnerConfigListMatch = content.match(
+    /97C147051CF9000F007C117D \/\* Build configuration list for PBXNativeTarget "Runner" \*\/ = \{[\s\S]*?buildConfigurations = \(([\s\S]*?)\);/
+  );
+  const testsConfigListMatch = content.match(
+    /331C8087294A63A400263BE5 \/\* Build configuration list for PBXNativeTarget "RunnerTests" \*\/ = \{[\s\S]*?buildConfigurations = \(([\s\S]*?)\);/
+  );
+
+  if (!projectConfigListMatch || !runnerConfigListMatch) {
+    console.log('⚠️ Could not find configuration lists');
+    return false;
+  }
+
+  // 新しいxcconfigファイル用のIDを生成
+  const xcconfigFileIds: { [key: string]: string } = {};
+  for (const flavor of flavors) {
+    for (const base of baseConfigs) {
+      const configName = `${base}-${flavor}`;
+      xcconfigFileIds[configName] = generateXcodeId();
+    }
+  }
+
+  // PBXFileReferenceセクションに新しいxcconfigファイルを追加
+  let fileReferences = '';
+  for (const flavor of flavors) {
+    for (const base of baseConfigs) {
+      const configName = `${base}-${flavor}`;
+      const id = xcconfigFileIds[configName];
+      fileReferences += `\t\t${id} /* ${configName}.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "${configName}.xcconfig"; path = "Flutter/${configName}.xcconfig"; sourceTree = "<group>"; };\n`;
+    }
+  }
+
+  // PBXFileReferenceセクションの末尾に追加
+  content = content.replace(
+    '/* End PBXFileReference section */',
+    fileReferences + '/* End PBXFileReference section */'
+  );
+
+  // Flutterグループにファイル参照を追加
+  const flutterGroupMatch = content.match(
+    /(9740EEB11CF90186004384FC \/\* Flutter \*\/ = \{[\s\S]*?children = \()([\s\S]*?)(\);[\s\S]*?name = Flutter;)/
+  );
+  if (flutterGroupMatch) {
+    let newChildren = flutterGroupMatch[2];
+    for (const flavor of flavors) {
+      for (const base of baseConfigs) {
+        const configName = `${base}-${flavor}`;
+        const id = xcconfigFileIds[configName];
+        newChildren += `\n\t\t\t\t${id} /* ${configName}.xcconfig */,`;
+      }
+    }
+    content = content.replace(
+      flutterGroupMatch[0],
+      flutterGroupMatch[1] + newChildren + flutterGroupMatch[3]
+    );
+  }
+
+  // 新しいConfiguration IDを生成
+  const newConfigIds: {
+    [key: string]: { project: string; runner: string; tests: string };
+  } = {};
+
+  for (const flavor of flavors) {
+    for (const base of baseConfigs) {
+      const configName = `${base}-${flavor}`;
+      newConfigIds[configName] = {
+        project: generateXcodeId(),
+        runner: generateXcodeId(),
+        tests: generateXcodeId(),
+      };
+    }
+  }
+
+  // 既存のDebug/Release/Profile設定を参照して新しい設定を生成
+  const projectDebugMatch = content.match(
+    /(97C147031CF9000F007C117D \/\* Debug \*\/ = \{[\s\S]*?isa = XCBuildConfiguration;[\s\S]*?buildSettings = \{[\s\S]*?\};[\s\S]*?name = Debug;[\s\S]*?\};)/
+  );
+  const projectReleaseMatch = content.match(
+    /(97C147041CF9000F007C117D \/\* Release \*\/ = \{[\s\S]*?isa = XCBuildConfiguration;[\s\S]*?buildSettings = \{[\s\S]*?\};[\s\S]*?name = Release;[\s\S]*?\};)/
+  );
+  const projectProfileMatch = content.match(
+    /(249021D3217E4FDB00AE95B9 \/\* Profile \*\/ = \{[\s\S]*?isa = XCBuildConfiguration;[\s\S]*?buildSettings = \{[\s\S]*?\};[\s\S]*?name = Profile;[\s\S]*?\};)/
+  );
+
+  const runnerDebugMatch = content.match(
+    /(97C147061CF9000F007C117D \/\* Debug \*\/ = \{[\s\S]*?isa = XCBuildConfiguration;[\s\S]*?baseConfigurationReference[\s\S]*?buildSettings = \{[\s\S]*?\};[\s\S]*?name = Debug;[\s\S]*?\};)/
+  );
+  const runnerReleaseMatch = content.match(
+    /(97C147071CF9000F007C117D \/\* Release \*\/ = \{[\s\S]*?isa = XCBuildConfiguration;[\s\S]*?baseConfigurationReference[\s\S]*?buildSettings = \{[\s\S]*?\};[\s\S]*?name = Release;[\s\S]*?\};)/
+  );
+  const runnerProfileMatch = content.match(
+    /(249021D4217E4FDB00AE95B9 \/\* Profile \*\/ = \{[\s\S]*?isa = XCBuildConfiguration;[\s\S]*?baseConfigurationReference[\s\S]*?buildSettings = \{[\s\S]*?\};[\s\S]*?name = Profile;[\s\S]*?\};)/
+  );
+
+  if (!projectDebugMatch || !projectReleaseMatch || !runnerDebugMatch || !runnerReleaseMatch) {
+    console.log('⚠️ Could not find base configuration sections');
+    return false;
+  }
+
+  // 新しいXCBuildConfiguration entriesを生成
+  let newConfigurations = '';
+
+  for (const flavor of flavors) {
+    for (const base of baseConfigs) {
+      const configName = `${base}-${flavor}`;
+      const ids = newConfigIds[configName];
+      const xcconfigId = xcconfigFileIds[configName];
+
+      // Project level config
+      let projectBase = '';
+      if (base === 'Debug' && projectDebugMatch) {
+        projectBase = projectDebugMatch[1];
+      } else if (base === 'Release' && projectReleaseMatch) {
+        projectBase = projectReleaseMatch[1];
+      } else if (base === 'Profile' && projectProfileMatch) {
+        projectBase = projectProfileMatch[1];
+      }
+
+      if (projectBase) {
+        const projectConfig = projectBase
+          .replace(/[0-9A-F]{24} \/\* \w+ \*\//, `${ids.project} /* ${configName} */`)
+          .replace(/name = \w+;/, `name = "${configName}";`);
+        newConfigurations += '\t\t' + projectConfig + '\n';
+      }
+
+      // Runner target config (with xcconfig reference pointing to flavor-specific file)
+      let runnerBase = '';
+      if (base === 'Debug' && runnerDebugMatch) {
+        runnerBase = runnerDebugMatch[1];
+      } else if (base === 'Release' && runnerReleaseMatch) {
+        runnerBase = runnerReleaseMatch[1];
+      } else if (base === 'Profile' && runnerProfileMatch) {
+        runnerBase = runnerProfileMatch[1];
+      }
+
+      if (runnerBase) {
+        // Update baseConfigurationReference to point to flavor-specific xcconfig
+        let runnerConfig = runnerBase
+          .replace(/[0-9A-F]{24} \/\* \w+ \*\//, `${ids.runner} /* ${configName} */`)
+          .replace(/name = \w+;/, `name = "${configName}";`)
+          .replace(
+            /baseConfigurationReference = [0-9A-F]{24} \/\* \w+\.xcconfig \*\/;/,
+            `baseConfigurationReference = ${xcconfigId} /* ${configName}.xcconfig */;`
+          );
+        newConfigurations += '\t\t' + runnerConfig + '\n';
+      }
+
+      // RunnerTests config
+      const testsConfig = `${ids.tests} /* ${configName} */ = {
+\t\t\tisa = XCBuildConfiguration;
+\t\t\tbuildSettings = {
+\t\t\t\tBUNDLE_LOADER = "$(TEST_HOST)";
+\t\t\t\tCODE_SIGN_STYLE = Automatic;
+\t\t\t\tCURRENT_PROJECT_VERSION = 1;
+\t\t\t\tGENERATE_INFOPLIST_FILE = YES;
+\t\t\t\tMARKETING_VERSION = 1.0;
+\t\t\t\tPRODUCT_BUNDLE_IDENTIFIER = com.example.sampleapp.RunnerTests;
+\t\t\t\tPRODUCT_NAME = "$(TARGET_NAME)";
+\t\t\t\tSWIFT_VERSION = 5.0;
+\t\t\t\tTEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
+\t\t\t};
+\t\t\tname = "${configName}";
+\t\t};`;
+      newConfigurations += '\t\t' + testsConfig + '\n';
+    }
+  }
+
+  // XCBuildConfiguration sectionに新しい設定を追加
+  content = content.replace(
+    '/* End XCBuildConfiguration section */',
+    newConfigurations + '/* End XCBuildConfiguration section */'
+  );
+
+  // Build configuration listsを更新
+  const projectConfigList = projectConfigListMatch[1];
+  let newProjectConfigList = projectConfigList;
+  for (const flavor of flavors) {
+    for (const base of baseConfigs) {
+      const configName = `${base}-${flavor}`;
+      const id = newConfigIds[configName].project;
+      newProjectConfigList += `\n\t\t\t\t${id} /* ${configName} */,`;
+    }
+  }
+  content = content.replace(projectConfigList, newProjectConfigList);
+
+  const runnerConfigList = runnerConfigListMatch[1];
+  let newRunnerConfigList = runnerConfigList;
+  for (const flavor of flavors) {
+    for (const base of baseConfigs) {
+      const configName = `${base}-${flavor}`;
+      const id = newConfigIds[configName].runner;
+      newRunnerConfigList += `\n\t\t\t\t${id} /* ${configName} */,`;
+    }
+  }
+  content = content.replace(runnerConfigList, newRunnerConfigList);
+
+  if (testsConfigListMatch) {
+    const testsConfigList = testsConfigListMatch[1];
+    let newTestsConfigList = testsConfigList;
+    for (const flavor of flavors) {
+      for (const base of baseConfigs) {
+        const configName = `${base}-${flavor}`;
+        const id = newConfigIds[configName].tests;
+        newTestsConfigList += `\n\t\t\t\t${id} /* ${configName} */,`;
+      }
+    }
+    content = content.replace(testsConfigList, newTestsConfigList);
+  }
+
+  fs.writeFileSync(projectPbxprojPath, content);
+  console.log('✅ Added flavor build configurations to project.pbxproj');
+  return true;
+}
+
+// Flavor用のXcode Schemeを作成
+function createFlavorSchemes(projectPath: string, appName: string): string[] {
+  const schemesDir = path.join(
+    projectPath,
+    'ios',
+    'Runner.xcodeproj',
+    'xcshareddata',
+    'xcschemes'
+  );
+
+  fs.mkdirSync(schemesDir, { recursive: true });
+
+  const createdFiles: string[] = [];
+  const flavors = ['staging', 'production'];
+
+  for (const flavor of flavors) {
+    const schemeContent = `<?xml version="1.0" encoding="UTF-8"?>
+<Scheme
+   LastUpgradeVersion = "1510"
+   version = "1.3">
+   <BuildAction
+      parallelizeBuildables = "YES"
+      buildImplicitDependencies = "YES">
+      <BuildActionEntries>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "97C146ED1CF9000F007C117D"
+               BuildableName = "Runner.app"
+               BlueprintName = "Runner"
+               ReferencedContainer = "container:Runner.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+      </BuildActionEntries>
+   </BuildAction>
+   <TestAction
+      buildConfiguration = "Debug-${flavor}"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      customLLDBInitFile = "$(SRCROOT)/Flutter/ephemeral/flutter_lldbinit"
+      shouldUseLaunchSchemeArgsEnv = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "97C146ED1CF9000F007C117D"
+            BuildableName = "Runner.app"
+            BlueprintName = "Runner"
+            ReferencedContainer = "container:Runner.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
+      <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "331C8080294A63A400263BE5"
+               BuildableName = "RunnerTests.xctest"
+               BlueprintName = "RunnerTests"
+               ReferencedContainer = "container:Runner.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+      </Testables>
+   </TestAction>
+   <LaunchAction
+      buildConfiguration = "Debug-${flavor}"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      customLLDBInitFile = "$(SRCROOT)/Flutter/ephemeral/flutter_lldbinit"
+      launchStyle = "0"
+      useCustomWorkingDirectory = "NO"
+      ignoresPersistentStateOnLaunch = "NO"
+      debugDocumentVersioning = "YES"
+      debugServiceExtension = "internal"
+      enableGPUValidationMode = "1"
+      allowLocationSimulation = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "97C146ED1CF9000F007C117D"
+            BuildableName = "Runner.app"
+            BlueprintName = "Runner"
+            ReferencedContainer = "container:Runner.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+   </LaunchAction>
+   <ProfileAction
+      buildConfiguration = "Profile-${flavor}"
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      savedToolIdentifier = ""
+      useCustomWorkingDirectory = "NO"
+      debugDocumentVersioning = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "97C146ED1CF9000F007C117D"
+            BuildableName = "Runner.app"
+            BlueprintName = "Runner"
+            ReferencedContainer = "container:Runner.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+   </ProfileAction>
+   <AnalyzeAction
+      buildConfiguration = "Debug-${flavor}">
+   </AnalyzeAction>
+   <ArchiveAction
+      buildConfiguration = "Release-${flavor}"
+      revealArchiveInOrganizer = "YES">
+   </ArchiveAction>
+</Scheme>`;
+
+    const schemePath = path.join(schemesDir, `${flavor}.xcscheme`);
+    fs.writeFileSync(schemePath, schemeContent);
+    createdFiles.push(schemePath);
+    console.log(`✅ Created ${flavor}.xcscheme`);
+  }
+
+  return createdFiles;
+}
+
+// Podfileの更新（iOSデプロイメントターゲットとFlavor設定）
+function updatePodfile(projectPath: string, separateEnvironments: boolean = false) {
   const podfilePath = path.join(projectPath, 'ios', 'Podfile');
 
   if (fs.existsSync(podfilePath)) {
@@ -17,12 +396,34 @@ function updatePodfile(projectPath: string) {
       `platform :ios, '${IOS_DEPLOYMENT_TARGET}'`
     );
 
+    // Flavor用のproject configuration mappingを追加
+    if (separateEnvironments && !podfileContent.includes('Debug-staging')) {
+      const projectConfigMapping = `
+project 'Runner', {
+  'Debug' => :debug,
+  'Debug-staging' => :debug,
+  'Debug-production' => :debug,
+  'Profile' => :release,
+  'Profile-staging' => :release,
+  'Profile-production' => :release,
+  'Release' => :release,
+  'Release-staging' => :release,
+  'Release-production' => :release,
+}
+`;
+      // platform行の後に追加
+      podfileContent = podfileContent.replace(
+        /(platform :ios, '[^']+'\n)/,
+        `$1${projectConfigMapping}`
+      );
+    }
+
     // post_installブロックを追加または更新
     const postInstallBlock = `
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
-    
+
     # iOS deployment targetを${IOS_DEPLOYMENT_TARGET}以上に設定
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '${IOS_DEPLOYMENT_TARGET}'
@@ -272,8 +673,8 @@ function createIOSConfigs(
     recordCreatedFile(filePath);
   };
 
-  // Podfileの更新
-  recordCreatedFile(updatePodfile(projectPath));
+  // Podfileの更新（Flavor設定も含む）
+  recordCreatedFile(updatePodfile(projectPath, separateEnvironments));
 
   // Xcodeプロジェクトファイルの更新
   recordCreatedFile(updateXcodeProjectDeploymentTarget(projectPath));
@@ -286,60 +687,91 @@ function createIOSConfigs(
   const runnerDir = path.join(iosDir, 'Runner');
 
   if (separateEnvironments) {
-    // HimaLinkと同様のStaging/Production設定ファイルを生成
-    ['Staging.xcconfig', 'Production.xcconfig', 'Profile.xcconfig'].forEach(
-      (fileName) => {
-        const templatePath = getTemplatePath(`ios/${fileName}`);
-        const targetPath = path.join(iosDir, fileName);
-        copyTemplateFile(templatePath, targetPath, replacements);
-        recordCreatedFile(targetPath);
-      }
-    );
+    // 標準的なFlutter Flavor方式：Build ConfigurationsとSchemesを使用
+    // 1. Build Configurationsを追加（Debug-staging, Release-staging, etc.）
+    addFlavorBuildConfigurations(projectPath);
 
-    const flutterDebugConfigPath = path.join(flutterDir, 'Debug.xcconfig');
-    const flutterReleaseConfigPath = path.join(flutterDir, 'Release.xcconfig');
-    const flutterProfileConfigPath = path.join(flutterDir, 'Profile.xcconfig');
+    // 2. Xcode Schemesを作成（staging, production）
+    const schemeFiles = createFlavorSchemes(projectPath, appName);
+    schemeFiles.forEach((f) => recordCreatedFile(f));
 
+    // 3. Flavor用のxcconfigファイルを生成
+    // Staging用
+    const stagingConfigPath = path.join(iosDir, 'Staging.xcconfig');
+    const stagingConfigContent = `// Staging configuration
+PRODUCT_BUNDLE_IDENTIFIER = ${bundleId}.staging
+PRODUCT_NAME = ${appName} STG
+DISPLAY_NAME = ${appName} STG
+CODE_SIGN_STYLE = Automatic
+DEVELOPMENT_TEAM =
+PROVISIONING_PROFILE_SPECIFIER =
+CODE_SIGN_IDENTITY = iPhone Developer
+
+// Build settings
+SWIFT_VERSION = 5.0
+IPHONEOS_DEPLOYMENT_TARGET = ${IOS_DEPLOYMENT_TARGET}
+ENABLE_BITCODE = NO
+`;
+    writeAndTrackFile(stagingConfigPath, stagingConfigContent);
+
+    // Production用
+    const productionConfigPath = path.join(iosDir, 'Production.xcconfig');
+    const productionConfigContent = `// Production configuration
+PRODUCT_BUNDLE_IDENTIFIER = ${bundleId}
+PRODUCT_NAME = ${appName}
+DISPLAY_NAME = ${appName}
+CODE_SIGN_STYLE = Automatic
+DEVELOPMENT_TEAM =
+PROVISIONING_PROFILE_SPECIFIER =
+CODE_SIGN_IDENTITY = iPhone Distribution
+
+// Build settings
+SWIFT_VERSION = 5.0
+IPHONEOS_DEPLOYMENT_TARGET = ${IOS_DEPLOYMENT_TARGET}
+ENABLE_BITCODE = NO
+`;
+    writeAndTrackFile(productionConfigPath, productionConfigContent);
+
+    // 4. Flutter xcconfigファイルを更新（各Flavor用）
+    // Debug（デフォルトでStagingを使用）
     const flutterDebugContent = `#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"
 #include "Generated.xcconfig"
 #include "../Staging.xcconfig"
-
-CODE_SIGN_STYLE = Automatic
-CODE_SIGN_IDENTITY = iPhone Developer
 `;
-    writeAndTrackFile(flutterDebugConfigPath, flutterDebugContent);
+    writeAndTrackFile(path.join(flutterDir, 'Debug.xcconfig'), flutterDebugContent);
 
+    // Release（デフォルトでStagingを使用）
     const flutterReleaseContent = `#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"
 #include "Generated.xcconfig"
-// Default to Staging. setup_release_config.sh rewrites this for production when PRODUCTION=true
 #include "../Staging.xcconfig"
 `;
-    writeAndTrackFile(flutterReleaseConfigPath, flutterReleaseContent);
+    writeAndTrackFile(path.join(flutterDir, 'Release.xcconfig'), flutterReleaseContent);
 
+    // Profile
     const flutterProfileContent = `#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"
 #include "Generated.xcconfig"
-// Default to Staging. setup_release_config.sh rewrites this for production when PRODUCTION=true
 #include "../Staging.xcconfig"
 `;
-    writeAndTrackFile(flutterProfileConfigPath, flutterProfileContent);
+    writeAndTrackFile(path.join(flutterDir, 'Profile.xcconfig'), flutterProfileContent);
 
-    // Release設定スクリプトを追加
-    const releaseScriptTemplatePath = getTemplatePath(
-      'scripts/setup_release_config.sh'
-    );
-    const releaseScriptPath = path.join(
-      runnerDir,
-      'setup_release_config.sh'
-    );
-    if (fs.existsSync(releaseScriptTemplatePath)) {
-      copyTemplateFile(
-        releaseScriptTemplatePath,
-        releaseScriptPath,
-        {}
-      );
-      fs.chmodSync(releaseScriptPath, 0o755);
-      recordCreatedFile(releaseScriptPath);
+    // 5. Flavor別のxcconfigファイル（Build Configuration用）
+    const flavors = ['staging', 'production'];
+    const bases = ['Debug', 'Release', 'Profile'];
+
+    for (const flavor of flavors) {
+      const flavorConfig = flavor === 'staging' ? 'Staging.xcconfig' : 'Production.xcconfig';
+      for (const base of bases) {
+        const configName = `${base}-${flavor}`;
+        const podsConfig = base === 'Debug' ? 'debug' : base === 'Release' ? 'release' : 'profile';
+        const content = `#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.${podsConfig}.xcconfig"
+#include "Generated.xcconfig"
+#include "../${flavorConfig}"
+`;
+        writeAndTrackFile(path.join(flutterDir, `${configName}.xcconfig`), content);
+      }
     }
+
+    console.log('✅ Standard Flutter flavor setup complete');
   } else {
     // 単一環境の場合はDebug/Release設定を生成
     ['Debug.xcconfig', 'Release.xcconfig'].forEach((fileName) => {
@@ -397,13 +829,12 @@ CODE_SIGN_IDENTITY = iPhone Developer
 
     // GoogleService-Info.plistへの静的参照を削除（スクリプトで配置するため）
     recordCreatedFile(removeGoogleServiceInfoPlistReference(projectPath));
-  }
 
-  if (separateEnvironments || useFirebase) {
+    // Firebaseスクリプトのみをビルドスクリプトに追加（標準flavor方式ではrelease setupスクリプトは不要）
     recordCreatedFile(
       addBuildScriptToXcodeProject(projectPath, {
-        includeReleaseSetup: separateEnvironments,
-        includeFirebaseScript: useFirebase,
+        includeReleaseSetup: false,
+        includeFirebaseScript: true,
       })
     );
   }
