@@ -1,0 +1,42 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Upload metadata, screenshots, and/or binary to App Store Connect"
+  lane :upload_metadata do
+    api_key = app_store_connect_api_key(
+      key_id: ENV.fetch("ASC_KEY_ID"),
+      issuer_id: ENV.fetch("ASC_ISSUER_ID"),
+      key_filepath: ENV.fetch("ASC_KEY_FILEPATH"),
+      duration: 1200,
+      in_house: false
+    )
+
+    ipa_path = ENV["IPA_PATH"].to_s
+    skip_binary = ipa_path.empty?
+    skip_metadata = ENV.fetch("SKIP_METADATA", "0") == "1"
+    skip_screenshots = ENV.fetch("SKIP_SCREENSHOTS", "0") == "1"
+
+    deliver_options = {
+      api_key: api_key,
+      skip_binary_upload: skip_binary,
+      skip_metadata: skip_metadata,
+      skip_screenshots: skip_screenshots,
+      metadata_path: "fastlane/metadata",
+      screenshots_path: "fastlane/screenshots",
+      force: true,
+      precheck_include_in_app_purchases: false
+    }
+
+    if !ipa_path.empty?
+      deliver_options[:ipa] = ipa_path
+    end
+
+    if ENV["APP_VERSION"].to_s != ""
+      deliver_options[:app_version] = ENV["APP_VERSION"]
+    end
+
+    deliver(
+      **deliver_options
+    )
+  end
+end

@@ -221,7 +221,8 @@ export async function POST(request: NextRequest) {
     await runAdvancedFeatures(
       normalizedAdvancedFeatures,
       appName,
-      fullOutputPath
+      fullOutputPath,
+      packageName
     );
 
     // Step 14: ビルドスクリプトの作成（分割）

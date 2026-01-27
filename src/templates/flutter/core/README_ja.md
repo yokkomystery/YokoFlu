@@ -33,7 +33,7 @@ Flutter 開発の詳細は
 
 ```bash
 # デバッグビルド
-aflutter build apk --debug
+flutter build apk --debug
 flutter build ios --debug
 
 # リリースビルド
@@ -45,71 +45,58 @@ flutter build ios --release
 
 ### 環境別ビルド（環境分離を有効にした場合）
 
-#### Android
+Android と iOS で同じ `--flavor` オプションを使用して環境を切り替えます。
+
+#### 開発・実行（flutter run）
+
+```bash
+# Staging環境
+flutter run --flavor staging              # デバッグモード（デフォルト）
+flutter run --flavor staging --release    # リリースモード
+
+# Production環境
+flutter run --flavor production           # デバッグモード
+flutter run --flavor production --release # リリースモード
+```
+
+#### ビルド（flutter build）
 
 ```bash
 # Staging環境（開発・テスト用）
-flutter run --flavor staging
-flutter build apk --flavor staging --release
+flutter build apk --flavor staging --debug    # Android APK デバッグ
+flutter build apk --flavor staging --release  # Android APK リリース
+flutter build ipa --flavor staging --release  # iOS リリース
 
 # Production環境（本番用）
-flutter run --flavor production
-flutter build apk --flavor production --release
+flutter build apk --flavor production --debug    # Android APK デバッグ
+flutter build apk --flavor production --release  # Android APK リリース
+flutter build ipa --flavor production --release  # iOS リリース
 ```
 
-#### iOS
+#### ストア公開用ビルド
 
 ```bash
-# Staging環境（開発用）
-flutter run
+# Play Store用（AAB）
+flutter build appbundle --flavor production --release
 
-# Production環境（実機テスト - 実機のみ）
-flutter run --release
-
-# Production環境（本番リリース）
-flutter build ipa --release
+# App Store用（IPA）
+flutter build ipa --flavor production --release
 ```
 
-**iOS 環境の仕組み:**
+**環境の仕組み:**
 
-- **Debug モード**（`flutter run`） → **Staging 環境**
-  - `Debug.xcconfig`を使用 → Bundle ID: `xxx.staging`、App: `AppName-STG`
-  - 自動的に`GoogleService-Info-staging.plist`を使用
-- **Release モード**（`flutter run --release`、`flutter build ipa --release`） → **Production 環境**
-  - `Release.xcconfig`を使用 → Bundle ID: `xxx`、App: `AppName`
-  - 自動的に`GoogleService-Info-production.plist`を使用
-
+- **Staging 環境** (`--flavor staging`)
+  - Bundle ID: `xxx.staging`、アプリ名: `AppName STG`
+  - Xcode Scheme: `staging`、Build Configuration: `Debug-staging` / `Release-staging`
 {{#FIREBASE_ENABLED}}
-**注意**: 環境は Xcode のビルド構成（Debug/Release）で決まります。`--dart-define`フラグでは変更できません。
-
-**応用: シミュレーターで Production 環境をテストする**
-
-```bash
-# Debug.xcconfigを一時的に変更してproductionでテスト
-# 1. ios/Debug.xcconfigを編集:
-#    PRODUCT_BUNDLE_IDENTIFIER = xxx （.stagingを削除）
-#    PRODUCT_NAME = AppName （-STGを削除）
-#    ENVIRONMENT = production
-# 2. flutter run
-# 3. テスト後、ios/Debug.xcconfigを元に戻す
-```
-
+  - 自動的に `GoogleService-Info-staging.plist` を使用
 {{/FIREBASE_ENABLED}}
-
-### Android と iOS でコマンドが異なる理由
-
-**Android**:
-- **Product Flavors**を使用（Flutter で完全サポート）
-- `--flavor staging|production` → Bundle ID とアプリ名を切り替え
-- `--dart-define=ENVIRONMENT=xxx` → Firebase 設定スクリプトにどのファイルを使うか指示
-
-**iOS**:
-- **ビルド構成（Build Configurations）**を使用（Flutter は iOS で `--flavor` 非対応）
-- ビルドモード（Debug/Release） → 自動的に異なる `.xcconfig` ファイルを適用
-- `.xcconfig` ファイルにすべての設定が含まれる（Bundle ID、アプリ名、Firebase 環境）
-- `--dart-define` は不要 → すべて xcconfig で決定
-
-**結論**: どちらも同じ目的（環境分離）を実現していますが、プラットフォーム固有のベストプラクティスを使用しています。
+- **Production 環境** (`--flavor production`)
+  - Bundle ID: `xxx`、アプリ名: `AppName`
+  - Xcode Scheme: `production`、Build Configuration: `Debug-production` / `Release-production`
+{{#FIREBASE_ENABLED}}
+  - 自動的に `GoogleService-Info-production.plist` を使用
+{{/FIREBASE_ENABLED}}
 
 {{/ENVIRONMENT_SEPARATION}}
 
@@ -117,7 +104,7 @@ flutter build ipa --release
 
 ## Xcode ビルドスクリプトの設定
 
-このツールで自動的に追加されます。ビルドフェーズに「Firebase Config Script」が入っているかを確認してください。
+このツールで自動的に追加されます。ビルドフェーズには Firebase 設定スクリプト `firebase_config_script.sh` が組み込まれ、`--flavor` オプションで指定された環境に応じて適切な `GoogleService-Info-*.plist` をアプリにコピーします。
 
 ## 環境設定
 

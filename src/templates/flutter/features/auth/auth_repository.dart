@@ -181,7 +181,7 @@ class AuthRepository {
               },
               'attStatus': await _getAttStatusIfAvailable(),
               'userAgent':
-                  '{{APP_NAME}}/${packageInfo.version} (${Platform.operatingSystem}; ${Platform.operatingSystemVersion}; locale:${Platform.localeName}; build:${packageInfo.buildNumber})',
+                  '${packageInfo.packageName}/${packageInfo.version} (${Platform.operatingSystem}; ${Platform.operatingSystemVersion}; build:${packageInfo.buildNumber})',
               'device': deviceMeta,
             };
 
@@ -617,7 +617,7 @@ class AuthRepository {
   Future<String?> _getInstallerStore() async {
     try {
       if (!kIsWeb && Platform.isAndroid) {
-        const channel = MethodChannel('com.{{APP_NAME}}/app');
+        const channel = MethodChannel('{{PACKAGE_NAME}}/app');
         final String? store = await channel.invokeMethod('getInstallerStore');
         return store;
       }
@@ -648,7 +648,7 @@ class AuthRepository {
   Future<String?> _getAttStatusIfAvailable() async {
     try {
       if (!kIsWeb && Platform.isIOS) {
-        const channel = MethodChannel('com.{{APP_NAME}}/att');
+        const channel = MethodChannel('{{PACKAGE_NAME}}/att');
         final String? status = await channel.invokeMethod('getAttStatus');
         return status;
       }

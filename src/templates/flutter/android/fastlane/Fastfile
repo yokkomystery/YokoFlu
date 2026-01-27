@@ -1,0 +1,24 @@
+default_platform(:android)
+
+platform :android do
+  desc "Upload metadata, screenshots, and/or binary to Google Play"
+  lane :upload_metadata do
+    aab_path = ENV["AAB_PATH"].to_s
+    skip_aab = aab_path.empty?
+
+    supply(
+      package_name: "{{APP_PACKAGE}}",
+      json_key: ENV.fetch("GOOGLE_PLAY_JSON_KEY"),
+      track: ENV.fetch("GOOGLE_PLAY_TRACK", "production"),
+      release_status: ENV.fetch("GOOGLE_PLAY_RELEASE_STATUS", "draft"),
+      metadata_path: "fastlane/metadata/android",
+      aab: skip_aab ? nil : aab_path,
+      skip_upload_apk: true,
+      skip_upload_aab: skip_aab,
+      skip_upload_changelogs: ENV.fetch("SKIP_CHANGELOGS", "0") == "1",
+      skip_upload_metadata: ENV.fetch("SKIP_METADATA", "0") == "1",
+      skip_upload_images: ENV.fetch("SKIP_IMAGES", "0") == "1",
+      skip_upload_screenshots: ENV.fetch("SKIP_SCREENSHOTS", "0") == "1"
+    )
+  end
+end
