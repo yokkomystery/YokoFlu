@@ -152,7 +152,8 @@ const FEATURE_IMPLEMENTATIONS: Record<
 export function createAdvancedFeatures(
   selectedFeatures: AdvancedFeatureId[],
   appName: string,
-  projectPath: string
+  projectPath: string,
+  packageName?: string
 ): string[] {
   if (!selectedFeatures || selectedFeatures.length === 0) {
     return [];
@@ -224,6 +225,7 @@ export function createAdvancedFeatures(
         targetFullPath,
         {
           APP_NAME: normalizedAppName,
+          PACKAGE_NAME: packageName || normalizedAppName,
         },
         allConditions
       );

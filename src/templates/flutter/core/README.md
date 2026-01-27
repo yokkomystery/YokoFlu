@@ -46,88 +46,68 @@ flutter build ios --release
 
 ### Environment-specific Builds (When environment separation is enabled)
 
-#### Android
+Both Android and iOS use the same `--flavor` option to switch environments.
+
+#### Development / Run (flutter run)
+
+```bash
+# Staging Environment
+flutter run --flavor staging              # Debug mode (default)
+flutter run --flavor staging --release    # Release mode
+
+# Production Environment
+flutter run --flavor production           # Debug mode
+flutter run --flavor production --release # Release mode
+```
+
+#### Build (flutter build)
 
 ```bash
 # Staging Environment (Development/Testing)
-flutter run --flavor staging
-flutter build apk --flavor staging --release
+flutter build apk --flavor staging --debug    # Android APK Debug
+flutter build apk --flavor staging --release  # Android APK Release
+flutter build ipa --flavor staging --release  # iOS Release
 
 # Production Environment (Release)
-flutter run --flavor production
-flutter build apk --flavor production --release
+flutter build apk --flavor production --debug    # Android APK Debug
+flutter build apk --flavor production --release  # Android APK Release
+flutter build ipa --flavor production --release  # iOS Release
 ```
 
-#### iOS
+#### Store Release Builds
 
 ```bash
-# Staging Environment (Development)
-flutter run
+# Play Store (AAB)
+flutter build appbundle --flavor production --release
 
-# Production Environment (Device testing - Physical device only)
-flutter run --release
-
-# Production Environment (Release build)
-flutter build ipa --release
+# App Store (IPA)
+flutter build ipa --flavor production --release
 ```
 
-**How iOS environments work:**
+**How environments work:**
 
-- **Debug mode** (`flutter run`) → **Staging** environment
-  - Uses `Debug.xcconfig` → Bundle ID: `xxx.staging`, App: `AppName-STG`
-  - Automatically uses `GoogleService-Info-staging.plist`
-- **Release mode** (`flutter run --release`, `flutter build ipa --release`) → **Production** environment
-  - Uses `Release.xcconfig` → Bundle ID: `xxx`, App: `AppName`
-  - Automatically uses `GoogleService-Info-production.plist`
-
+- **Staging Environment** (`--flavor staging`)
+  - Bundle ID: `xxx.staging`, App Name: `AppName STG`
+  - Xcode Scheme: `staging`, Build Configuration: `Debug-staging` / `Release-staging`
 {{#FIREBASE_ENABLED}}
-**Note**: The environment is determined by Xcode build configuration (Debug/Release), not by `--dart-define` flags.
-
-**Advanced: Test Production environment on Simulator**
-
-```bash
-# Temporarily modify Debug.xcconfig for production testing
-# 1. Edit ios/Debug.xcconfig:
-#    PRODUCT_BUNDLE_IDENTIFIER = xxx (remove .staging)
-#    PRODUCT_NAME = AppName (remove -STG)
-#    ENVIRONMENT = production
-# 2. flutter run
-# 3. Revert ios/Debug.xcconfig after testing
-```
-
+  - Automatically uses `GoogleService-Info-staging.plist`
 {{/FIREBASE_ENABLED}}
-
-### Why Android and iOS Commands Differ
-
-**Android**:
-
-- Uses **Product Flavors** (fully supported by Flutter)
-- `--flavor staging|production` → switches Bundle ID and app name
-- `--dart-define=ENVIRONMENT=xxx` → tells Firebase config script which files to use
-
-**iOS**:
-
-- Uses **Build Configurations** (Flutter doesn't support `--flavor` for iOS)
-- Build mode (Debug/Release) → automatically applies different `.xcconfig` files
-- `.xcconfig` files contain all settings (Bundle ID, app name, Firebase environment)
-- No `--dart-define` needed → everything is determined by xcconfig
-
-**Result**: Both achieve the same goal (environment separation), but use platform-specific best practices.
+- **Production Environment** (`--flavor production`)
+  - Bundle ID: `xxx`, App Name: `AppName`
+  - Xcode Scheme: `production`, Build Configuration: `Debug-production` / `Release-production`
+{{#FIREBASE_ENABLED}}
+  - Automatically uses `GoogleService-Info-production.plist`
+{{/FIREBASE_ENABLED}}
 
 {{/ENVIRONMENT_SEPARATION}}
 
 {{#FIREBASE_ENABLED}}
 
-## Xcode ビルドスクリプトの設定
+## Xcode Build Script Configuration
 
-このツールで自動的に追加されます。ビルドフェーズには以下の2本のスクリプトが挿入されます（HimaLinkのiOSプロジェクトと同一構成）:
+This is automatically added by the tool. The build phase includes the Firebase configuration script `firebase_config_script.sh`, which copies the appropriate `GoogleService-Info-*.plist` to the app based on the environment specified by the `--flavor` option.
 
-1. `setup_release_config.sh` — `--dart-define=PRODUCTION=true|false` を読み取り、`Release/Profile.xcconfig` が `Production.xcconfig` / `Staging.xcconfig` を動的に include するように切り替えます
-2. `firebase_config_script.sh` — `ENVIRONMENT` または `PRODUCTION` の Dart define を解釈して、適切な `GoogleService-Info-*.plist` をアプリにコピーします
-
-CI/CD で Release ビルドを行う場合は `--dart-define=PRODUCTION=true` を付与すると、本番用 Bundle ID / Firebase 設定が適用されます。
-
-## 環境設定
+## Environment Configuration
 
 ### Firebase 設定ファイル
 

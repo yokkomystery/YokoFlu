@@ -39,6 +39,28 @@ function createAndroidConfigs(
       `applicationId = "${packageName}"`
     );
 
+    // Java/Kotlinのバージョンを17に更新
+    buildGradleContent = buildGradleContent.replace(
+      /sourceCompatibility\s*=\s*JavaVersion\.VERSION_\d+/,
+      'sourceCompatibility = JavaVersion.VERSION_17'
+    );
+    buildGradleContent = buildGradleContent.replace(
+      /targetCompatibility\s*=\s*JavaVersion\.VERSION_\d+/,
+      'targetCompatibility = JavaVersion.VERSION_17'
+    );
+    buildGradleContent = buildGradleContent.replace(
+      /jvmTarget\s*=\s*JavaVersion\.VERSION_\d+\.toString\(\)/,
+      'jvmTarget = JavaVersion.VERSION_17.toString()'
+    );
+
+    // versionNameの後にresValueでapp_nameを追加（環境分離がない場合も必要）
+    if (!buildGradleContent.includes('resValue')) {
+      buildGradleContent = buildGradleContent.replace(
+        /(versionName\s*=\s*flutter\.versionName)/,
+        `$1\n        resValue("string", "app_name", "${appName}")`
+      );
+    }
+
     // 環境分離が有効な場合のみflavor設定を追加
     if (separateEnvironments) {
       // flavorDimensionsの追加（Kotlin DSL形式）
@@ -92,6 +114,28 @@ function createAndroidConfigs(
       /applicationId\s+["']([^"']+)["']/,
       `applicationId "${packageName}"`
     );
+
+    // Java/Kotlinのバージョンを17に更新
+    buildGradleContent = buildGradleContent.replace(
+      /sourceCompatibility\s+JavaVersion\.VERSION_\d+/,
+      'sourceCompatibility JavaVersion.VERSION_17'
+    );
+    buildGradleContent = buildGradleContent.replace(
+      /targetCompatibility\s+JavaVersion\.VERSION_\d+/,
+      'targetCompatibility JavaVersion.VERSION_17'
+    );
+    buildGradleContent = buildGradleContent.replace(
+      /jvmTarget\s*=\s*["']\d+["']/,
+      `jvmTarget = '17'`
+    );
+
+    // versionNameの後にresValueでapp_nameを追加（環境分離がない場合も必要）
+    if (!buildGradleContent.includes('resValue')) {
+      buildGradleContent = buildGradleContent.replace(
+        /(versionName\s+flutterVersionName)/,
+        `$1\n        resValue "string", "app_name", "${appName}"`
+      );
+    }
 
     // 環境分離が有効な場合のみflavor設定を追加
     if (separateEnvironments) {
