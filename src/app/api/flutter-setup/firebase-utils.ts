@@ -118,7 +118,7 @@ export const runFlutterfireConfigure = async (
       --android-package-name=${packageName}${packageNameSuffix}`;
 
     console.log(`🔄 Running flutterfire configure for ${environment}...`);
-    const { stdout, stderr } = await execAsync(command);
+    const { stderr } = await execAsync(command);
 
     if (stderr) {
       console.log(`⚠️ flutterfire configure warnings: ${stderr}`);
@@ -179,7 +179,8 @@ export async function getLatestFirebaseVersions(): Promise<FirebaseVersions> {
     const response = await fetch(
       'https://raw.githubusercontent.com/firebase/flutterfire/master/packages/firebase_core/firebase_core/pubspec.yaml'
     );
-    const text = await response.text();
+    // TODO: Parse the fetched pubspec.yaml to extract versions
+    await response.text();
 
     // バージョン情報を抽出（簡易的な実装）
     const versions: FirebaseVersions = {
