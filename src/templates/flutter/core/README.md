@@ -123,6 +123,16 @@ This is automatically added by the tool. The build phase includes the Firebase c
 
 ## 開発ガイド
 
+### 初期セットアップ
+
+```bash
+# 依存関係の取得
+flutter pub get
+
+# 環境確認
+flutter doctor
+```
+
 ### 依存関係の追加
 
 ```bash
@@ -135,10 +145,16 @@ flutter pub add <package_name>
 flutter pub upgrade
 ```
 
-### コード生成
+### クリーンビルド
 
 ```bash
-flutter packages pub run build_runner build
+flutter clean && flutter pub get
+```
+
+### コード生成（Freezed等を使用している場合）
+
+```bash
+dart run build_runner build --delete-conflicting-outputs
 ```
 
 ### テスト実行
