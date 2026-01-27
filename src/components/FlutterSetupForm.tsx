@@ -9,6 +9,7 @@ import ProjectSelectorModal from './ProjectSelectorModal';
 import TemplateSelector from './TemplateSelector';
 import LocalizationSelector from './LocalizationSelector';
 import AdvancedFeaturesSelector from './AdvancedFeaturesSelector';
+import { AppIconUploader } from './AppIconUploader';
 import useSetupProgress from '../hooks/useSetupProgress';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -462,163 +463,16 @@ export default function FlutterSetupForm() {
             <p className="text-sm text-gray-400 mb-6">{t.basicInfo.subtitle}</p>
 
             {/* アプリアイコン */}
-            <div className="mb-6 bg-gray-900/40 border border-gray-700 rounded-lg p-4">
-              <label className="block text-sm font-medium mb-2">
-                {t.basicInfo.appIcon}
-              </label>
-              <div className="bg-blue-900/20 border border-blue-700 rounded px-3 py-2 mb-3">
-                <p className="text-xs text-blue-200 mb-1">
-                  <strong>
-                    {locale === 'ja'
-                      ? 'アイコン自動生成機能'
-                      : 'Auto Icon Generation'}
-                  </strong>
-                </p>
-                <ul className="text-xs text-blue-300 space-y-1 list-disc list-inside ml-2">
-                  {t.basicInfo.appIconDescription.map((desc, index) => (
-                    <li key={index}>{desc}</li>
-                  ))}
-                </ul>
-              </div>
-              <div className="bg-gray-900/50 border border-gray-600 rounded px-3 py-2 mb-3">
-                <p className="text-xs text-gray-400">
-                  <strong>{locale === 'ja' ? '注意' : 'Note'}</strong>:
-                  {locale === 'ja'
-                    ? 'アイコンを設定しない場合、Flutterのデフォルトアイコン（青い羽根のロゴ）が使用されます。本番リリース前に必ず独自のアイコンに差し替えることをお勧めします。'
-                    : "If you do not set an icon, Flutter's default icon (blue feather logo) will be used. We recommend replacing it with your own icon before production release."}
-                </p>
-              </div>
-              <p className="text-xs text-yellow-400 mb-3">
-                <strong>{locale === 'ja' ? '必須条件' : 'Requirements'}</strong>
-                :{' '}
-                {locale === 'ja'
-                  ? '正方形の画像（幅 = 高さ）'
-                  : 'Square image (width = height)'}
-                <br />
-                <strong>
-                  {locale === 'ja' ? '推奨サイズ' : 'Recommended Size'}
-                </strong>
-                : 1024x1024px{' '}
-                {locale === 'ja' ? 'または 2048x2048px' : 'or 2048x2048px'}
-                <br />
-                <strong>{locale === 'ja' ? '形式' : 'Format'}</strong>: PNG (
-                {locale === 'ja'
-                  ? '透過なし推奨'
-                  : 'no transparency recommended'}
-                )
-              </p>
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0">
-                  {appIconPreview ? (
-                    <div className="relative">
-                      <img
-                        src={appIconPreview}
-                        alt="App Icon Preview"
-                        className="w-24 h-24 rounded-lg border-2 border-blue-500 object-cover"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setAppIcon(null);
-                          setAppIconPreview(null);
-                          setAppIconFileName(null);
-                        }}
-                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="w-24 h-24 bg-gray-700 rounded-lg border-2 border-dashed border-gray-600 flex items-center justify-center">
-                      <svg
-                        className="w-8 h-8 text-gray-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        />
-                      </svg>
-                    </div>
-                  )}
-                </div>
-                <div className="flex-1">
-                  <div className="relative">
-                    <input
-                      type="file"
-                      id="app-icon-input"
-                      accept="image/png,image/jpeg"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          // 画像の検証
-                          const img = new Image();
-                          const reader = new FileReader();
-
-                          reader.onload = (e) => {
-                            const base64 = e.target?.result as string;
-                            img.src = base64;
-
-                            img.onload = () => {
-                              // 正方形かチェック
-                              if (img.width !== img.height) {
-                                alert(
-                                  t.basicInfo.errorSquareRequired
-                                    .replace('{width}', String(img.width))
-                                    .replace('{height}', String(img.height))
-                                );
-                                return;
-                              }
-
-                              // サイズチェック（最小512x512px）
-                              if (img.width < 512 || img.height < 512) {
-                                alert(
-                                  t.basicInfo.errorSizeTooSmall
-                                    .replace('{width}', String(img.width))
-                                    .replace('{height}', String(img.height))
-                                );
-                                return;
-                              }
-
-                              // すべてOKなら設定
-                              setAppIcon(base64);
-                              setAppIconPreview(base64);
-                              setAppIconFileName(file.name);
-                            };
-                          };
-
-                          reader.readAsDataURL(file);
-                        }
-                      }}
-                      className="hidden"
-                    />
-                    <label
-                      htmlFor="app-icon-input"
-                      className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-md cursor-pointer transition-colors"
-                    >
-                      {t.basicInfo.selectFile}
-                    </label>
-                    <span className="ml-3 text-sm text-gray-400">
-                      {appIconFileName || t.basicInfo.noFileSelected}
-                    </span>
-                  </div>
-                  <div className="text-xs text-gray-500 mt-2 space-y-1">
-                    {t.basicInfo.appIconRequirements.map((req, index) => (
-                      <p key={index}>{req}</p>
-                    ))}
-                  </div>
-                  {appIcon && (
-                    <p className="text-xs text-green-400 mt-1">
-                      {t.basicInfo.appIconSet}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
+            <AppIconUploader
+              appIcon={appIcon}
+              appIconPreview={appIconPreview}
+              appIconFileName={appIconFileName}
+              onIconChange={(icon, preview, fileName) => {
+                setAppIcon(icon);
+                setAppIconPreview(preview);
+                setAppIconFileName(fileName);
+              }}
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>

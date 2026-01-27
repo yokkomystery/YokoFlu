@@ -28,13 +28,18 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 {{#FIREBASE_ENABLED}}
 
+  // Firebase初期化（失敗してもアプリは起動する）
+  bool firebaseInitialized = false;
+  String? firebaseError;
   try {
     await FirebaseConfig.initializeApp();
-    print('[MAIN_DEBUG] Firebase initialized successfully (${FirebaseConfig.currentEnvironment})');
+    firebaseInitialized = true;
+    debugPrint('[App] Firebase initialized (${FirebaseConfig.currentEnvironment})');
   } catch (e, stackTrace) {
-    print('[MAIN_DEBUG] Firebase initialization failed: $e');
-    print('[MAIN_DEBUG] Stack trace: $stackTrace');
-    rethrow;
+    firebaseError = e.toString();
+    debugPrint('[App] Firebase initialization failed: $e');
+    debugPrint('[App] Stack trace: $stackTrace');
+    // Firebaseなしでもアプリを起動させる（オフライン機能のみ）
   }
 {{/FIREBASE_ENABLED}}{{#PUSH_NOTIFICATIONS_ENABLED}}
 
@@ -42,9 +47,9 @@ void main() async {
   // これにより、アプリ起動時に通知許可ダイアログが表示されます
   try {
     await PushNotificationService.initialize();
-    print('[MAIN_DEBUG] 🔔 Push notification initialized successfully');
+    debugPrint('[App] 🔔 Push notification initialized successfully');
   } catch (e) {
-    print('[MAIN_DEBUG] ⚠️ Push notification initialization failed: $e');
+    debugPrint('[App] ⚠️ Push notification initialization failed: $e');
     // エラーでもアプリは起動させる（通知以外の機能に影響なし）
   }
 {{/PUSH_NOTIFICATIONS_ENABLED}}{{#ANALYTICS_ENABLED}}
@@ -52,18 +57,18 @@ void main() async {
   // Firebase Analytics を初期化
   try {
     await AnalyticsService.initialize();
-    print('[MAIN_DEBUG] 📊 Firebase Analytics initialized successfully');
+    debugPrint('[App] 📊 Firebase Analytics initialized successfully');
   } catch (e) {
-    print('[MAIN_DEBUG] ⚠️ Firebase Analytics initialization failed: $e');
+    debugPrint('[App] ⚠️ Firebase Analytics initialization failed: $e');
   }
 {{/ANALYTICS_ENABLED}}{{#CRASHLYTICS_ENABLED}}
 
   // Firebase Crashlytics を初期化
   try {
     await CrashlyticsService.initialize();
-    print('[MAIN_DEBUG] 🐛 Firebase Crashlytics initialized successfully');
+    debugPrint('[App] 🐛 Firebase Crashlytics initialized successfully');
   } catch (e) {
-    print('[MAIN_DEBUG] ⚠️ Firebase Crashlytics initialization failed: $e');
+    debugPrint('[App] ⚠️ Firebase Crashlytics initialization failed: $e');
   }
 {{/CRASHLYTICS_ENABLED}}{{#APP_RATING_ENABLED}}
 
@@ -72,9 +77,9 @@ void main() async {
     // TODO: AppRatingService を初期化して起動をトラッキング
     // final ratingService = await AppRatingService.create();
     // await ratingService.trackAppLaunch();
-    print('[MAIN_DEBUG] ⭐ App rating tracking enabled');
+    debugPrint('[App] ⭐ App rating tracking enabled');
   } catch (e) {
-    print('[MAIN_DEBUG] ⚠️ App rating initialization failed: $e');
+    debugPrint('[App] ⚠️ App rating initialization failed: $e');
   }
 {{/APP_RATING_ENABLED}}
 
