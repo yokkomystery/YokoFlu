@@ -584,7 +584,7 @@ function removeCodeSignIdentityFromXcodeProject(projectPath: string) {
 
     const originalContent = projectContent;
     projectContent = projectContent.replace(
-      /^\s*"CODE_SIGN_IDENTITY\[sdk=iphoneos\*\]" = ".*";\n/gm,
+      /^\s*"?CODE_SIGN_IDENTITY(\[sdk=iphoneos\*\])?"?\s*=\s*".*";\n/gm,
       ''
     );
 
