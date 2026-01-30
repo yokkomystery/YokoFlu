@@ -483,6 +483,41 @@ function updateXcodeProjectDeploymentTarget(projectPath: string) {
   }
 }
 
+// XcodeプロジェクトファイルのターゲットデバイスをiPhoneのみに設定
+function updateTargetedDeviceFamilyToIphoneOnly(projectPath: string) {
+  const projectPbxprojPath = path.join(
+    projectPath,
+    'ios',
+    'Runner.xcodeproj',
+    'project.pbxproj'
+  );
+
+  if (fs.existsSync(projectPbxprojPath)) {
+    let projectContent = fs.readFileSync(projectPbxprojPath, 'utf8');
+
+    const originalContent = projectContent;
+    projectContent = projectContent.replace(
+      /TARGETED_DEVICE_FAMILY = "1,2";/g,
+      'TARGETED_DEVICE_FAMILY = "1";'
+    );
+    projectContent = projectContent.replace(
+      /TARGETED_DEVICE_FAMILY = 1,2;/g,
+      'TARGETED_DEVICE_FAMILY = "1";'
+    );
+
+    if (projectContent !== originalContent) {
+      fs.writeFileSync(projectPbxprojPath, projectContent);
+      console.log('✅ Updated TARGETED_DEVICE_FAMILY to iPhone only');
+    } else {
+      console.log('ℹ️ No TARGETED_DEVICE_FAMILY updates needed');
+    }
+    return projectPbxprojPath;
+  } else {
+    console.log('⚠️ Xcode project.pbxproj not found, skipping update');
+    return null;
+  }
+}
+
 // XcodeプロジェクトファイルからハードコードされたバンドルIDとプロダクト名を削除
 function removeHardcodedBundleIdFromXcodeProject(projectPath: string) {
   const projectPbxprojPath = path.join(
@@ -528,6 +563,37 @@ function removeHardcodedBundleIdFromXcodeProject(projectPath: string) {
     console.log(
       '✅ Removed hardcoded PRODUCT_BUNDLE_IDENTIFIER and PRODUCT_NAME from project.pbxproj'
     );
+    return projectPbxprojPath;
+  } else {
+    console.log('⚠️ Xcode project.pbxproj not found, skipping update');
+    return null;
+  }
+}
+
+// XcodeプロジェクトファイルからCODE_SIGN_IDENTITYの固定値を削除
+function removeCodeSignIdentityFromXcodeProject(projectPath: string) {
+  const projectPbxprojPath = path.join(
+    projectPath,
+    'ios',
+    'Runner.xcodeproj',
+    'project.pbxproj'
+  );
+
+  if (fs.existsSync(projectPbxprojPath)) {
+    let projectContent = fs.readFileSync(projectPbxprojPath, 'utf8');
+
+    const originalContent = projectContent;
+    projectContent = projectContent.replace(
+      /^\s*"CODE_SIGN_IDENTITY\[sdk=iphoneos\*\]" = ".*";\n/gm,
+      ''
+    );
+
+    if (projectContent !== originalContent) {
+      fs.writeFileSync(projectPbxprojPath, projectContent);
+      console.log('✅ Removed CODE_SIGN_IDENTITY overrides from project.pbxproj');
+    } else {
+      console.log('ℹ️ No CODE_SIGN_IDENTITY overrides found in project.pbxproj');
+    }
     return projectPbxprojPath;
   } else {
     console.log('⚠️ Xcode project.pbxproj not found, skipping update');
@@ -678,9 +744,13 @@ function createIOSConfigs(
 
   // Xcodeプロジェクトファイルの更新
   recordCreatedFile(updateXcodeProjectDeploymentTarget(projectPath));
+  // ターゲットデバイスをiPhoneのみに設定
+  recordCreatedFile(updateTargetedDeviceFamilyToIphoneOnly(projectPath));
 
   // project.pbxprojからハードコードされたバンドルIDとプロダクト名を削除
   recordCreatedFile(removeHardcodedBundleIdFromXcodeProject(projectPath));
+  // project.pbxprojからCODE_SIGN_IDENTITYの固定値を削除
+  recordCreatedFile(removeCodeSignIdentityFromXcodeProject(projectPath));
 
   const iosDir = path.join(projectPath, 'ios');
   const flutterDir = path.join(iosDir, 'Flutter');
@@ -705,7 +775,6 @@ DISPLAY_NAME = ${appName} STG
 CODE_SIGN_STYLE = Automatic
 DEVELOPMENT_TEAM =
 PROVISIONING_PROFILE_SPECIFIER =
-CODE_SIGN_IDENTITY = iPhone Developer
 
 // Build settings
 SWIFT_VERSION = 5.0
@@ -723,7 +792,6 @@ DISPLAY_NAME = ${appName}
 CODE_SIGN_STYLE = Automatic
 DEVELOPMENT_TEAM =
 PROVISIONING_PROFILE_SPECIFIER =
-CODE_SIGN_IDENTITY = iPhone Distribution
 
 // Build settings
 SWIFT_VERSION = 5.0
