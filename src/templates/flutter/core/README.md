@@ -52,36 +52,36 @@ Both Android and iOS use the same `--flavor` option to switch environments.
 
 ```bash
 # Staging Environment
-flutter run --flavor staging              # Debug mode (default)
-flutter run --flavor staging --release    # Release mode
+flutter run --flavor staging --dart-define=ENVIRONMENT=staging              # Debug mode (default)
+flutter run --flavor staging --dart-define=ENVIRONMENT=staging --release    # Release mode
 
 # Production Environment
-flutter run --flavor production           # Debug mode
-flutter run --flavor production --release # Release mode
+flutter run --flavor production --dart-define=ENVIRONMENT=production           # Debug mode
+flutter run --flavor production --dart-define=ENVIRONMENT=production --release # Release mode
 ```
 
 #### Build (flutter build)
 
 ```bash
 # Staging Environment (Development/Testing)
-flutter build apk --flavor staging --debug    # Android APK Debug
-flutter build apk --flavor staging --release  # Android APK Release
-flutter build ipa --flavor staging --release  # iOS Release
+flutter build apk --flavor staging --dart-define=ENVIRONMENT=staging --debug    # Android APK Debug
+flutter build apk --flavor staging --dart-define=ENVIRONMENT=staging --release  # Android APK Release
+flutter build ipa --flavor staging --dart-define=ENVIRONMENT=staging --release  # iOS Release
 
 # Production Environment (Release)
-flutter build apk --flavor production --debug    # Android APK Debug
-flutter build apk --flavor production --release  # Android APK Release
-flutter build ipa --flavor production --release  # iOS Release
+flutter build apk --flavor production --dart-define=ENVIRONMENT=production --debug    # Android APK Debug
+flutter build apk --flavor production --dart-define=ENVIRONMENT=production --release  # Android APK Release
+flutter build ipa --flavor production --dart-define=ENVIRONMENT=production --release  # iOS Release
 ```
 
 #### Store Release Builds
 
 ```bash
 # Play Store (AAB)
-flutter build appbundle --flavor production --release
+flutter build appbundle --flavor production --dart-define=ENVIRONMENT=production --release
 
 # App Store (IPA)
-flutter build ipa --flavor production --release
+flutter build ipa --flavor production --dart-define=ENVIRONMENT=production --release
 ```
 
 **How environments work:**

@@ -293,25 +293,25 @@ flutter build appbundle --flavor production --dart-define=ENVIRONMENT=production
 
 ```bash
 # Staging (Development)
-flutter run --dart-define=ENVIRONMENT=staging
+flutter run --flavor staging --dart-define=ENVIRONMENT=staging
 
 # Staging - iOS Build
-flutter build ios --dart-define=ENVIRONMENT=staging --release
+flutter build ios --flavor staging --dart-define=ENVIRONMENT=staging --release
 
 # Staging - IPA File
-flutter build ipa --dart-define=ENVIRONMENT=staging --release
+flutter build ipa --flavor staging --dart-define=ENVIRONMENT=staging --release
 
 # Production (Development)
-flutter run --dart-define=ENVIRONMENT=production
+flutter run --flavor production --dart-define=ENVIRONMENT=production
 
 # Production - iOS Build
-flutter build ios --dart-define=ENVIRONMENT=production --release
+flutter build ios --flavor production --dart-define=ENVIRONMENT=production --release
 
 # Production - IPA File
-flutter build ipa --dart-define=ENVIRONMENT=production --release
+flutter build ipa --flavor production --dart-define=ENVIRONMENT=production --release
 ```
 
-> **Note**: iOS does not support `--flavor` option. You need to manually select build configuration (Staging/Production) in Xcode.  
+> **Note**: iOS uses the Xcode schemes created by this tool (`staging`/`production`). `--flavor` selects the scheme. If you build in Xcode, choose the matching scheme.  
 > **IPA File**: `flutter build ipa` automatically creates an archive and exports an IPA file to `build/ios/ipa/`.
 
 ## Author

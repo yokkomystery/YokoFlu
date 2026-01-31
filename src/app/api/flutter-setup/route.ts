@@ -267,7 +267,7 @@ export async function POST(request: NextRequest) {
     });
 
     // 次のステップの追加
-    addPostSetupSteps(fullOutputPath, useFirebase);
+    addPostSetupSteps(fullOutputPath, useFirebase, separateEnvironments);
 
     // 最終的な結果をグローバルに設定
     setGlobalSetupResult(setupResult);
