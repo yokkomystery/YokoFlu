@@ -917,7 +917,7 @@ export default function FlutterSetupForm() {
               title={t.sections.flutterBuildCommands}
               defaultOpen={false}
             >
-              <BuildCommands useFirebase={useFirebase} />
+              <BuildCommands separateEnvironments={!!separateEnvironments} />
             </CollapsibleSection>
           </div>
 

@@ -181,7 +181,7 @@ Mark completed items with a check (✅).
       {{#ENVIRONMENT_SEPARATION}}
 
   ```bash
-  flutter run --dart-define=ENVIRONMENT=staging
+  flutter run --flavor staging --dart-define=ENVIRONMENT=staging
   ```
 
   {{/ENVIRONMENT_SEPARATION}}
@@ -203,7 +203,7 @@ Mark completed items with a check (✅).
       {{#ENVIRONMENT_SEPARATION}}
   ```bash
   # iOS Staging
-  flutter build ios --dart-define=ENVIRONMENT=staging --release
+  flutter build ios --flavor staging --dart-define=ENVIRONMENT=staging --release
 
   # Android Staging
   flutter build apk --flavor staging --dart-define=ENVIRONMENT=staging --release
