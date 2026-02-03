@@ -42,6 +42,9 @@ next-env.d.ts
 *.swo
 *~
 
+# Claude Code local settings
+.claude/
+
 # OS files
 Thumbs.db
 .DS_Store
