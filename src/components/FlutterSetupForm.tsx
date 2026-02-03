@@ -46,7 +46,7 @@ interface ProgressStep {
 }
 
 export default function FlutterSetupForm() {
-  const { t, locale } = useLocale();
+  const { t } = useLocale();
   const [useFirebase, setUseFirebase] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<AppTemplateId>(
     DEFAULT_APP_TEMPLATE_ID
@@ -67,7 +67,8 @@ export default function FlutterSetupForm() {
   }, [selectedTemplate, useFirebase]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showProgress, setShowProgress] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // TODO: Display this error in the UI
+  const [_error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<{
     result?: {
       appName?: string;

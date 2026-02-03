@@ -114,6 +114,7 @@ export function AppIconUploader({
         <div className="flex-shrink-0">
           {appIconPreview ? (
             <div className="relative">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={appIconPreview}
                 alt="App Icon Preview"

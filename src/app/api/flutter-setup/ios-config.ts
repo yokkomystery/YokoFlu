@@ -179,7 +179,7 @@ function addFlavorBuildConfigurations(projectPath: string): boolean {
 
       if (runnerBase) {
         // Update baseConfigurationReference to point to flavor-specific xcconfig
-        let runnerConfig = runnerBase
+        const runnerConfig = runnerBase
           .replace(/[0-9A-F]{24} \/\* \w+ \*\//, `${ids.runner} /* ${configName} */`)
           .replace(/name = \w+;/, `name = "${configName}";`)
           .replace(
@@ -257,7 +257,7 @@ function addFlavorBuildConfigurations(projectPath: string): boolean {
 }
 
 // Flavor用のXcode Schemeを作成
-function createFlavorSchemes(projectPath: string, appName: string): string[] {
+function createFlavorSchemes(projectPath: string, _appName: string): string[] {
   const schemesDir = path.join(
     projectPath,
     'ios',

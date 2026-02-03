@@ -133,6 +133,16 @@ Added automatically by this tool. Make sure the "Firebase Config Script" build p
 
 ## Development Guide
 
+### Initial Setup
+
+```bash
+# Get dependencies
+flutter pub get
+
+# Check environment
+flutter doctor
+```
+
 ### Add dependencies
 
 ```bash
@@ -145,10 +155,16 @@ flutter pub add <package_name>
 flutter pub upgrade
 ```
 
-### Code generation
+### Clean build
 
 ```bash
-flutter packages pub run build_runner build
+flutter clean && flutter pub get
+```
+
+### Code generation (if using Freezed etc.)
+
+```bash
+dart run build_runner build --delete-conflicting-outputs
 ```
 
 ### Run tests
