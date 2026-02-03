@@ -5,10 +5,15 @@ import { addNextStep, updateProgress } from '../utils';
  */
 export function addPostSetupSteps(
   fullOutputPath: string,
-  useFirebase: boolean
+  useFirebase: boolean,
+  separateEnvironments: boolean
 ) {
   addNextStep('📖 TODO.md を確認してセットアップを完了してください');
   addNextStep('プロジェクトディレクトリに移動: cd ' + fullOutputPath);
+
+  const runCommand = separateEnvironments
+    ? 'flutter run --flavor staging --dart-define=ENVIRONMENT=staging'
+    : 'flutter run';
 
   if (useFirebase) {
     addNextStep(
@@ -17,10 +22,10 @@ export function addPostSetupSteps(
     addNextStep(
       '🔥 重要: Firestoreセキュリティルールを設定してください（TODO.md参照）'
     );
-    addNextStep('アプリを実行: flutter run --dart-define=ENVIRONMENT=staging');
+    addNextStep(`アプリを実行: ${runCommand}`);
     addNextStep('📋 詳細な手順はプロジェクト内の TODO.md を確認してください');
   } else {
-    addNextStep('アプリを実行: flutter run');
+    addNextStep(`アプリを実行: ${runCommand}`);
     addNextStep('📋 詳細な手順はプロジェクト内の TODO.md を確認してください');
   }
 }

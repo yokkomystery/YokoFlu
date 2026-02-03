@@ -51,36 +51,36 @@ Android と iOS で同じ `--flavor` オプションを使用して環境を切�
 
 ```bash
 # Staging環境
-flutter run --flavor staging              # デバッグモード（デフォルト）
-flutter run --flavor staging --release    # リリースモード
+flutter run --flavor staging --dart-define=ENVIRONMENT=staging              # デバッグモード（デフォルト）
+flutter run --flavor staging --dart-define=ENVIRONMENT=staging --release    # リリースモード
 
 # Production環境
-flutter run --flavor production           # デバッグモード
-flutter run --flavor production --release # リリースモード
+flutter run --flavor production --dart-define=ENVIRONMENT=production           # デバッグモード
+flutter run --flavor production --dart-define=ENVIRONMENT=production --release # リリースモード
 ```
 
 #### ビルド（flutter build）
 
 ```bash
 # Staging環境（開発・テスト用）
-flutter build apk --flavor staging --debug    # Android APK デバッグ
-flutter build apk --flavor staging --release  # Android APK リリース
-flutter build ipa --flavor staging --release  # iOS リリース
+flutter build apk --flavor staging --dart-define=ENVIRONMENT=staging --debug    # Android APK デバッグ
+flutter build apk --flavor staging --dart-define=ENVIRONMENT=staging --release  # Android APK リリース
+flutter build ipa --flavor staging --dart-define=ENVIRONMENT=staging --release  # iOS リリース
 
 # Production環境（本番用）
-flutter build apk --flavor production --debug    # Android APK デバッグ
-flutter build apk --flavor production --release  # Android APK リリース
-flutter build ipa --flavor production --release  # iOS リリース
+flutter build apk --flavor production --dart-define=ENVIRONMENT=production --debug    # Android APK デバッグ
+flutter build apk --flavor production --dart-define=ENVIRONMENT=production --release  # Android APK リリース
+flutter build ipa --flavor production --dart-define=ENVIRONMENT=production --release  # iOS リリース
 ```
 
 #### ストア公開用ビルド
 
 ```bash
 # Play Store用（AAB）
-flutter build appbundle --flavor production --release
+flutter build appbundle --flavor production --dart-define=ENVIRONMENT=production --release
 
 # App Store用（IPA）
-flutter build ipa --flavor production --release
+flutter build ipa --flavor production --dart-define=ENVIRONMENT=production --release
 ```
 
 **環境の仕組み:**

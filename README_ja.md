@@ -295,25 +295,25 @@ flutter build appbundle --flavor production --dart-define=ENVIRONMENT=production
 
 ```bash
 # Staging環境（開発）
-flutter run --dart-define=ENVIRONMENT=staging
+flutter run --flavor staging --dart-define=ENVIRONMENT=staging
 
 # Staging環境 - iOSビルド
-flutter build ios --dart-define=ENVIRONMENT=staging --release
+flutter build ios --flavor staging --dart-define=ENVIRONMENT=staging --release
 
 # Staging環境 - IPAファイル
-flutter build ipa --dart-define=ENVIRONMENT=staging --release
+flutter build ipa --flavor staging --dart-define=ENVIRONMENT=staging --release
 
 # Production環境（開発）
-flutter run --dart-define=ENVIRONMENT=production
+flutter run --flavor production --dart-define=ENVIRONMENT=production
 
 # Production環境 - iOSビルド
-flutter build ios --dart-define=ENVIRONMENT=production --release
+flutter build ios --flavor production --dart-define=ENVIRONMENT=production --release
 
 # Production環境 - IPAファイル
-flutter build ipa --dart-define=ENVIRONMENT=production --release
+flutter build ipa --flavor production --dart-define=ENVIRONMENT=production --release
 ```
 
-> **注意**: iOS は`--flavor`オプションが使用できません。Xcode でビルド構成（Staging/Production）を手動で選択する必要があります。  
+> **注意**: iOS は本ツールが作成する Xcode の Scheme（`staging`/`production`）を使います。`--flavor` で Scheme を選択してください。Xcode でビルドする場合も同名の Scheme を選択します。  
 > **IPA ファイル**: `flutter build ipa`は自動的にアーカイブとエクスポートを行い、`build/ios/ipa/`に IPA ファイルを生成します。
 
 ## トラブルシューティング
