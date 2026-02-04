@@ -26,8 +26,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Run type check
+        run: npm run type-check
+
       - name: Run linter
         run: npm run lint
+
+      - name: Run tests
+        run: npm run test:run
+
+      - name: Check for security vulnerabilities
+        run: npm audit --audit-level=high
 
       - name: Build
         run: npm run build
