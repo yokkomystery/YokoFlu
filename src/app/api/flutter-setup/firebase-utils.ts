@@ -177,40 +177,18 @@ export const renameFirebaseConfigFiles = (
   }
 };
 
-// 最新のFirebaseバージョンを取得
-export async function getLatestFirebaseVersions(): Promise<FirebaseVersions> {
-  try {
-    const response = await fetch(
-      'https://raw.githubusercontent.com/firebase/flutterfire/master/packages/firebase_core/firebase_core/pubspec.yaml'
-    );
-    // TODO: Parse the fetched pubspec.yaml to extract versions
-    await response.text();
-
-    // バージョン情報を抽出（簡易的な実装）
-    const versions: FirebaseVersions = {
-      firebase_core: '^3.15.2',
-      firebase_auth: '^5.7.0',
-      cloud_firestore: '^5.6.12',
-      firebase_storage: '^12.4.10',
-      firebase_analytics: '^11.6.0',
-      firebase_crashlytics: '^4.3.10',
-      firebase_messaging: '^15.2.1',
-    };
-
-    return versions;
-  } catch (error) {
-    console.error('Failed to fetch Firebase versions:', error);
-    // フォールバックバージョン
-    return {
-      firebase_core: '^3.15.2',
-      firebase_auth: '^5.7.0',
-      cloud_firestore: '^5.6.12',
-      firebase_storage: '^12.4.10',
-      firebase_analytics: '^11.6.0',
-      firebase_crashlytics: '^4.3.10',
-      firebase_messaging: '^15.2.1',
-    };
-  }
+// Firebaseパッケージの推奨バージョンを取得
+// NOTE: 将来的にはpub.dev APIから動的に取得することも検討
+export function getLatestFirebaseVersions(): FirebaseVersions {
+  return {
+    firebase_core: '^3.15.2',
+    firebase_auth: '^5.7.0',
+    cloud_firestore: '^5.6.12',
+    firebase_storage: '^12.4.10',
+    firebase_analytics: '^11.6.0',
+    firebase_crashlytics: '^4.3.10',
+    firebase_messaging: '^15.2.1',
+  };
 }
 
 // Firebase設定ファイルの作成（改善版）

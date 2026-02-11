@@ -1,25 +1,32 @@
 import { SetupResult } from './types';
 import { updateGlobalProgress } from './progress/progress-manager';
 
-// 進捗管理用のグローバル変数
-let progressComplete = false;
-const progressUpdates: Array<{
-  step: string;
-  status: string;
-  message?: string;
-}> = [];
+export type ProgressStatus =
+  | 'pending'
+  | 'running'
+  | 'completed'
+  | 'error'
+  | 'skipped';
 
-export const setProgressComplete = () => {
-  progressComplete = true;
-};
-
-export const getProgressComplete = () => {
-  return progressComplete;
-};
-
-export const getProgressUpdates = () => {
-  return progressUpdates;
-};
+/**
+ * ステータス文字列から進捗ステータスを判定する
+ * emoji や日本語文字列に依存した判定を型安全なユーティリティに集約
+ */
+export function resolveProgressStatus(status: string): ProgressStatus {
+  if (status.startsWith('✅') || status.includes('完了しました')) {
+    return 'completed';
+  }
+  if (status.startsWith('❌') || status.includes('失敗しました')) {
+    return 'error';
+  }
+  if (status.startsWith('⏭️') || status.includes('スキップ')) {
+    return 'skipped';
+  }
+  if (status.startsWith('⚠️')) {
+    return 'error';
+  }
+  return 'running';
+}
 
 export const updateProgress = (
   step: string,
@@ -32,28 +39,12 @@ export const updateProgress = (
     console.log(`[${timestamp}] ${message}`);
   }
 
-  // グローバル進捗を更新（より明確な判定）
-  let progressStatus: 'pending' | 'running' | 'completed' | 'error' | 'skipped';
-
-  // 明示的な判定（順序が重要：より具体的なものから判定）
-  if (status.startsWith('✅') || status.includes('完了しました')) {
-    progressStatus = 'completed';
-  } else if (status.startsWith('❌') || status.includes('失敗しました')) {
-    progressStatus = 'error';
-  } else if (status.startsWith('⏭️') || status.includes('スキップ')) {
-    progressStatus = 'skipped';
-  } else if (status.startsWith('⚠️')) {
-    progressStatus = 'error'; // 警告も一応エラーとして扱う
-  } else {
-    progressStatus = 'running';
-  }
+  const progressStatus = resolveProgressStatus(status);
 
   console.log(
     `[${timestamp}] Step ${step} -> Status: ${progressStatus} (from: "${status}")`
   );
   updateGlobalProgress(step, progressStatus, message || status);
-
-  progressUpdates.push({ step, status, message });
 };
 
 // グローバルなsetupResultオブジェクト
