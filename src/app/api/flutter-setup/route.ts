@@ -4,12 +4,14 @@ import {
   resetProgress,
 } from './progress/progress-manager';
 
-import { SetupResult, FlutterSetupRequest } from './types';
+import { SetupResult } from './types';
 import {
   initializeSetupResult,
   addCreatedFile,
   setGlobalSetupResult,
 } from './utils';
+import { createSetupSchema } from '@/lib/validation-schema';
+import { validateOutputPath } from '@/lib/sanitize';
 import { runFirebaseEnvironmentCheck } from './steps/firebase-check';
 import { runFlutterCreate } from './steps/flutter-create';
 import { runFirebaseInit } from './steps/firebase-init';
@@ -34,6 +36,39 @@ let setupResult: SetupResult;
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+
+    // サーバー側入力バリデーション
+    const useFirebase = body.useFirebase ?? false;
+    const schema = createSetupSchema(useFirebase);
+    const parseResult = schema.safeParse(body);
+
+    if (!parseResult.success) {
+      const errors = parseResult.error.issues.map(
+        (issue) => `${issue.path.join('.')}: ${issue.message}`
+      );
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'バリデーションエラー',
+          errors,
+        },
+        { status: 400 }
+      );
+    }
+
+    // outputPath のパストラバーサル・シェルメタ文字チェック
+    const outputPathValidation = validateOutputPath(body.outputPath);
+    if (!outputPathValidation.valid) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: outputPathValidation.error,
+          errors: [outputPathValidation.error],
+        },
+        { status: 400 }
+      );
+    }
+
     const {
       appName,
       bundleId,
@@ -44,13 +79,12 @@ export async function POST(request: NextRequest) {
       existingStagingProjectId,
       existingProductionProjectId,
       singleProjectId,
-      useFirebase = false,
       templateFeatures,
       localizationLanguages,
-      appTemplate = 'counter',
       advancedFeatures = [],
-      appIcon = null,
-    }: FlutterSetupRequest = body;
+    } = parseResult.data;
+    const appTemplate = body.appTemplate ?? 'counter';
+    const appIcon = body.appIcon ?? null;
 
     console.log('=== Flutter Setup Process Started ===');
     console.log('Parameters:', {
