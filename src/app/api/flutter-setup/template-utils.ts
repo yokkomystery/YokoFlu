@@ -62,7 +62,8 @@ export function copyTemplateFile(
 export function copyTemplateDirectory(
   templateDir: string,
   targetDir: string,
-  replacements: Record<string, string>
+  replacements: Record<string, string>,
+  conditions?: Record<string, boolean>
 ): string[] {
   const createdFiles: string[] = [];
 
@@ -75,6 +76,9 @@ export function copyTemplateDirectory(
     const items = fs.readdirSync(src);
 
     items.forEach((item) => {
+      // .DS_Store などのシステムファイルをスキップ
+      if (item === '.DS_Store' || item === 'Thumbs.db') return;
+
       const srcPath = path.join(src, item);
       const destPath = path.join(dest, item);
       const stat = fs.statSync(srcPath);
@@ -87,7 +91,7 @@ export function copyTemplateDirectory(
         copyDirectoryRecursive(srcPath, destPath);
       } else {
         // ファイルの場合、テンプレートとしてコピー
-        copyTemplateFile(srcPath, destPath, replacements);
+        copyTemplateFile(srcPath, destPath, replacements, conditions);
         createdFiles.push(destPath);
       }
     });

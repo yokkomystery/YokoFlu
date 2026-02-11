@@ -278,5 +278,81 @@
   "accountExistsWithDifferentCredential": "別のサインイン方法で既にアカウントが存在します",
   "@accountExistsWithDifferentCredential": {
     "description": "異なる認証方法でアカウントが存在する場合のエラーメッセージ"
+  },
+  "notificationSettingsTitle": "通知設定",
+  "@notificationSettingsTitle": {
+    "description": "通知設定画面のタイトル"
+  },
+  "notificationSettingsAllTitle": "すべての通知",
+  "@notificationSettingsAllTitle": {
+    "description": "全通知のトグルタイトル"
+  },
+  "notificationSettingsAllSubtitle": "すべての通知を一括でON/OFFできます",
+  "@notificationSettingsAllSubtitle": {
+    "description": "全通知トグルのサブタイトル"
+  },
+  "notificationSettingsTypeSectionTitle": "通知タイプ",
+  "@notificationSettingsTypeSectionTitle": {
+    "description": "通知タイプセクションのタイトル"
+  },
+  "notificationSettingsMessageTitle": "メッセージ通知",
+  "@notificationSettingsMessageTitle": {
+    "description": "メッセージ通知設定のタイトル"
+  },
+  "notificationSettingsMessageSubtitle": "新しいメッセージを受信したときに通知します",
+  "@notificationSettingsMessageSubtitle": {
+    "description": "メッセージ通知設定のサブタイトル"
+  },
+  "notificationSettingsLikeTitle": "いいね通知",
+  "@notificationSettingsLikeTitle": {
+    "description": "いいね通知設定のタイトル"
+  },
+  "notificationSettingsLikeSubtitle": "投稿にいいねされたときに通知します",
+  "@notificationSettingsLikeSubtitle": {
+    "description": "いいね通知設定のサブタイトル"
+  },
+  "notificationSettingsCommentTitle": "コメント通知",
+  "@notificationSettingsCommentTitle": {
+    "description": "コメント通知設定のタイトル"
+  },
+  "notificationSettingsCommentSubtitle": "投稿にコメントがあったときに通知します",
+  "@notificationSettingsCommentSubtitle": {
+    "description": "コメント通知設定のサブタイトル"
+  },
+  "notificationSettingsFollowTitle": "フォロー通知",
+  "@notificationSettingsFollowTitle": {
+    "description": "フォロー通知設定のタイトル"
+  },
+  "notificationSettingsFollowSubtitle": "新しいフォロワーがいるときに通知します",
+  "@notificationSettingsFollowSubtitle": {
+    "description": "フォロー通知設定のサブタイトル"
+  },
+  "notificationSettingsSystemSectionTitle": "システム",
+  "@notificationSettingsSystemSectionTitle": {
+    "description": "システム通知セクションのタイトル"
+  },
+  "notificationSettingsSystemTitle": "システム通知",
+  "@notificationSettingsSystemTitle": {
+    "description": "システム通知設定のタイトル"
+  },
+  "notificationSettingsSystemSubtitle": "重要なお知らせやアップデート情報を通知します",
+  "@notificationSettingsSystemSubtitle": {
+    "description": "システム通知設定のサブタイトル"
+  },
+  "notificationSettingsUpdateFailed": "設定の更新に失敗しました",
+  "@notificationSettingsUpdateFailed": {
+    "description": "通知設定の更新失敗メッセージ"
+  },
+  "notificationPermissionDeniedTitle": "通知が無効になっています",
+  "@notificationPermissionDeniedTitle": {
+    "description": "通知権限拒否ダイアログのタイトル"
+  },
+  "notificationPermissionDeniedMessage": "通知を受け取るには、デバイスの設定で通知を有効にしてください。",
+  "@notificationPermissionDeniedMessage": {
+    "description": "通知権限拒否ダイアログのメッセージ"
+  },
+  "notificationOpenSettings": "設定を開く",
+  "@notificationOpenSettings": {
+    "description": "設定を開くボタンのラベル"
   }
 }

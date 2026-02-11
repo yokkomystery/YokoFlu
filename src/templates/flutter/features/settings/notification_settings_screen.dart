@@ -1,29 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:{{APP_NAME}}/l10n/app_localizations.dart';
 
 /// 通知設定画面
-/// 
-/// ユーザーが通知の種類ごとにON/OFFを切り替えられる画面
-/// 
+///
+/// ユーザーが通知の種類ごとにON/OFFを切り替えられる画面。
+/// Firestoreの users/{userId}/notificationSettings に設定を保存します。
+///
 /// TODO: 必要に応じて通知タイプを追加・削除してください
-class NotificationSettingsScreen extends StatefulWidget {
+class NotificationSettingsScreen extends ConsumerStatefulWidget {
   const NotificationSettingsScreen({super.key});
 
   @override
-  State<NotificationSettingsScreen> createState() =>
+  ConsumerState<NotificationSettingsScreen> createState() =>
       _NotificationSettingsScreenState();
 }
 
 class _NotificationSettingsScreenState
-    extends State<NotificationSettingsScreen> {
+    extends ConsumerState<NotificationSettingsScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // デフォルトの通知設定
+  // TODO: アプリの通知タイプに合わせてカスタマイズしてください
   final Map<String, bool> _defaultSettings = {
     'allNotificationsEnabled': true,
     'messageNotificationsEnabled': true,
@@ -57,25 +61,25 @@ class _NotificationSettingsScreenState
 
   /// 権限が拒否されている場合のダイアログを表示
   void _showPermissionDeniedDialog() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: const Text('通知が無効になっています'),
-          content: const Text(
-              '通知を受け取るには、デバイスの設定で通知を有効にしてください。\n\n設定アプリを開きますか？'),
+          title: Text(l10n.notificationPermissionDeniedTitle),
+          content: Text(l10n.notificationPermissionDeniedMessage),
           actions: <Widget>[
             TextButton(
-              child: const Text('キャンセル'),
+              child: Text(l10n.cancel),
               onPressed: () => Navigator.of(dialogContext).pop(),
             ),
-              TextButton(
-                child: const Text('設定を開く'),
-                onPressed: () async {
-                  Navigator.of(dialogContext).pop();
-                  await openAppSettings();
-                },
-              ),
+            TextButton(
+              child: Text(l10n.notificationOpenSettings),
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                await openAppSettings();
+              },
+            ),
           ],
         );
       },
@@ -98,19 +102,21 @@ class _NotificationSettingsScreenState
             data?['notificationSettings'] as Map<String, dynamic>?;
         if (settings != null) {
           setState(() {
-            _currentSettings = Map<String, bool>.from(settings);
+            _currentSettings = Map<String, bool>.from(
+              settings.map((key, value) => MapEntry(key, value as bool)),
+            );
             _isLoading = false;
           });
           return;
         }
       }
-      // ドキュメントが存在しない、またはsettingsがない場合はデフォルト設定を使用
+      // ドキュメントが存在しない場合はデフォルト設定を使用
       setState(() {
         _currentSettings = Map<String, bool>.from(_defaultSettings);
         _isLoading = false;
       });
     } catch (e) {
-      debugPrint('通知設定の読み込みに失敗: $e');
+      debugPrint('[NotificationSettings] 設定の読み込みに失敗: $e');
       setState(() {
         _currentSettings = Map<String, bool>.from(_defaultSettings);
         _isLoading = false;
@@ -132,21 +138,21 @@ class _NotificationSettingsScreenState
     HapticFeedback.lightImpact();
 
     try {
-      // ドット記法を使用してネストされたフィールドを更新
-      // これにより他の通知設定が消えることを防ぐ
+      // merge でネストされたフィールドを個別に更新
       await _firestore.collection('users').doc(user.uid).set({
-        'notificationSettings.$key': value
+        'notificationSettings': {key: value}
       }, SetOptions(merge: true));
-      debugPrint('通知設定を更新: $key = $value');
+      debugPrint('[NotificationSettings] 更新: $key = $value');
     } catch (e) {
-      debugPrint('通知設定の更新に失敗: $e');
+      debugPrint('[NotificationSettings] 更新失敗: $e');
       // 失敗した場合は元に戻す
       setState(() {
         _currentSettings[key] = !value;
       });
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('設定の更新に失敗しました')),
+          SnackBar(content: Text(l10n.notificationSettingsUpdateFailed)),
         );
       }
     }
@@ -158,9 +164,11 @@ class _NotificationSettingsScreenState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('通知設定'),
+        title: Text(l10n.notificationSettingsTitle),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -170,11 +178,11 @@ class _NotificationSettingsScreenState
                 Card(
                   margin: const EdgeInsets.all(16),
                   child: SwitchListTile(
-                    title: const Text(
-                      'すべての通知',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    title: Text(
+                      l10n.notificationSettingsAllTitle,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    subtitle: const Text('すべての通知を一括でON/OFFできます'),
+                    subtitle: Text(l10n.notificationSettingsAllSubtitle),
                     value: _getSetting('allNotificationsEnabled'),
                     onChanged: (value) =>
                         _updateSetting('allNotificationsEnabled', value),
@@ -182,11 +190,11 @@ class _NotificationSettingsScreenState
                 ),
 
                 // 通知タイプごとの設定
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                   child: Text(
-                    '通知タイプ',
-                    style: TextStyle(
+                    l10n.notificationSettingsTypeSectionTitle,
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -195,39 +203,39 @@ class _NotificationSettingsScreenState
 
                 _buildNotificationTile(
                   key: 'messageNotificationsEnabled',
-                  title: 'メッセージ通知',
-                  subtitle: '新しいメッセージを受信したときに通知します',
+                  title: l10n.notificationSettingsMessageTitle,
+                  subtitle: l10n.notificationSettingsMessageSubtitle,
                   icon: Icons.message,
                 ),
 
                 _buildNotificationTile(
                   key: 'likeNotificationsEnabled',
-                  title: 'いいね通知',
-                  subtitle: '投稿にいいねされたときに通知します',
+                  title: l10n.notificationSettingsLikeTitle,
+                  subtitle: l10n.notificationSettingsLikeSubtitle,
                   icon: Icons.favorite,
                 ),
 
                 _buildNotificationTile(
                   key: 'commentNotificationsEnabled',
-                  title: 'コメント通知',
-                  subtitle: '投稿にコメントがあったときに通知します',
+                  title: l10n.notificationSettingsCommentTitle,
+                  subtitle: l10n.notificationSettingsCommentSubtitle,
                   icon: Icons.comment,
                 ),
 
                 _buildNotificationTile(
                   key: 'followNotificationsEnabled',
-                  title: 'フォロー通知',
-                  subtitle: '新しいフォロワーがいるときに通知します',
+                  title: l10n.notificationSettingsFollowTitle,
+                  subtitle: l10n.notificationSettingsFollowSubtitle,
                   icon: Icons.person_add,
                 ),
 
                 const Divider(height: 32),
 
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                   child: Text(
-                    'システム',
-                    style: TextStyle(
+                    l10n.notificationSettingsSystemSectionTitle,
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -236,8 +244,8 @@ class _NotificationSettingsScreenState
 
                 _buildNotificationTile(
                   key: 'systemNotificationsEnabled',
-                  title: 'システム通知',
-                  subtitle: '重要なお知らせやアップデート情報を通知します',
+                  title: l10n.notificationSettingsSystemTitle,
+                  subtitle: l10n.notificationSettingsSystemSubtitle,
                   icon: Icons.notifications_active,
                 ),
 
@@ -280,4 +288,3 @@ class _NotificationSettingsScreenState
     );
   }
 }
-

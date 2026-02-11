@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui' as ui;
-
-// SharedPreferencesプロバイダー
-final sharedPreferencesProvider = FutureProvider<SharedPreferences>((ref) async {
-  return await SharedPreferences.getInstance();
-});
+import 'package:{{APP_NAME}}/core/providers/theme_provider.dart';
 
 // ロケールプロバイダー
 final localeProvider = StateNotifierProvider<LocaleNotifier, Locale>((ref) {

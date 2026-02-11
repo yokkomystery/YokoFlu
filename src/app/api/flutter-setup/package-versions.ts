@@ -33,6 +33,19 @@ export interface PackageVersionSet {
   flutter_local_notifications: string;
   permission_handler: string;
 
+  // 収益化
+  purchases_flutter: string;
+  google_mobile_ads: string;
+  app_tracking_transparency: string;
+
+  // AI
+  firebase_vertexai: string;
+
+  // メディア
+  image_picker: string;
+  image_cropper: string;
+  flutter_image_compress: string;
+
   // dev dependencies
   flutter_lints: string;
 }
@@ -61,6 +74,13 @@ const FLUTTER_3_UNIVERSAL: PackageVersionSet = {
   sign_in_with_apple: '^6.1.3',
   flutter_local_notifications: '^18.0.1',
   permission_handler: '^11.3.1',
+  purchases_flutter: '^8.9.0',
+  google_mobile_ads: '^5.3.0',
+  app_tracking_transparency: '^2.0.6',
+  firebase_vertexai: '^1.2.0',
+  image_picker: '^1.1.2',
+  image_cropper: '^9.0.0',
+  flutter_image_compress: '^2.4.0',
   flutter_lints: '^5.0.0',
 };
 

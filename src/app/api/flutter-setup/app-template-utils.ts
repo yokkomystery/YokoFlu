@@ -2,12 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { copyTemplateFile, getTemplatePath } from './template-utils';
 
-export type AppTemplateId =
-  | 'blank'
-  | 'counter'
-  | 'todo'
-  | 'stopwatch'
-  | 'chat';
+export type AppTemplateId = 'blank' | 'counter' | 'todo' | 'stopwatch' | 'chat';
 
 interface AppTemplateConfig {
   id: AppTemplateId;
@@ -163,13 +158,16 @@ export function updateMainDartWithTemplate(
   // home: const MyHomePage(...) をテンプレートのホームに置き換え
   const myHomePattern = /const MyHomePage\(title: '.*?'\)/g;
   if (myHomePattern.test(mainContent)) {
+    myHomePattern.lastIndex = 0; // .test()で進んだlastIndexをリセット
     mainContent = mainContent.replace(myHomePattern, homePage);
   }
 
   const removeClassDefinition = (content: string, className: string) => {
     const classIndex = content.indexOf(className);
     if (classIndex === -1) {
-      console.log(`ℹ️ ${className} が見つかりませんでした（既に削除済みの可能性）`);
+      console.log(
+        `ℹ️ ${className} が見つかりませんでした（既に削除済みの可能性）`
+      );
       return content;
     }
 

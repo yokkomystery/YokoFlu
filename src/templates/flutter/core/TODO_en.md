@@ -12,7 +12,6 @@ Mark completed items with a check (✅).
 {{#FIREBASE_ENABLED}}
 
 - [ ] **Verify Firebase Project**
-
   - Go to Firebase Console (https://console.firebase.google.com/)
   - Ensure the project exists and is correct
     {{#ENVIRONMENT_SEPARATION}}
@@ -24,14 +23,12 @@ Mark completed items with a check (✅).
     {{/ENVIRONMENT_SEPARATION}}
 
 - [ ] **Enable Firestore Database**
-
   - Firebase Console > Build > Firestore Database
   - Click "Create database"
   - Choose a location (e.g., `asia-northeast1` Tokyo)
   - Start in production mode (configure security rules afterward)
 
 - [ ] **Set Firestore Security Rules**
-
   - Firebase Console > Firestore Database > Rules
   - Use a basic rule like below:
 
@@ -102,13 +99,13 @@ Mark completed items with a check (✅).
 
 - [ ] **Configure Cloud Messaging (Push Notifications)**
   - Firebase Console > Engage > Cloud Messaging
-  **iOS:**
+    **iOS:**
   - Obtain APNs auth key (.p8) from Apple Developer Console
   - Firebase Console > Project Settings > Cloud Messaging > Apple app configuration
   - Upload APNs key (enter Key ID and Team ID)
-  **Android:**
+    **Android:**
   - Configured automatically (included in google-services.json)
-  **In-app configuration:**
+    **In-app configuration:**
   - iOS: add the following to `ios/Runner/Info.plist`:
   ```xml
   <key>UIBackgroundModes</key>
@@ -116,6 +113,7 @@ Mark completed items with a check (✅).
     <string>remote-notification</string>
   </array>
   ```
+
   - Android: auto-configured
     {{/PUSH_NOTIFICATIONS_ENABLED}}
 
@@ -158,13 +156,11 @@ Mark completed items with a check (✅).
 {{#ONBOARDING_ENABLED}}
 
 - [ ] **Customize Onboarding Content**
-
   - Edit text in `lib/features/onboarding/onboarding_screen.dart`
   - Add images to `assets/images/` (onboarding1.png, onboarding2.png, onboarding3.png)
     {{/ONBOARDING_ENABLED}}
 
 - [ ] **Implement Home Screen**
-
   - The current home is a placeholder
   - Implement according to your product requirements
 
@@ -194,13 +190,13 @@ Mark completed items with a check (✅).
   {{/ENVIRONMENT_SEPARATION}}
 
 - [ ] **Verify Firebase works**
-
   - Authentication works
   - Firestore writes succeed
   - Check error logs
 
 - [ ] **Test release builds**
       {{#ENVIRONMENT_SEPARATION}}
+
   ```bash
   # iOS Staging
   flutter build ios --flavor staging --dart-define=ENVIRONMENT=staging --release
@@ -208,12 +204,15 @@ Mark completed items with a check (✅).
   # Android Staging
   flutter build apk --flavor staging --dart-define=ENVIRONMENT=staging --release
   ```
+
   {{/ENVIRONMENT_SEPARATION}}
   {{^ENVIRONMENT_SEPARATION}}
+
   ```bash
   flutter build apk --release
   flutter build ios --release
   ```
+
   {{/ENVIRONMENT_SEPARATION}}
 
 {{#PUSH_NOTIFICATIONS_ENABLED}}
@@ -235,12 +234,10 @@ Mark completed items with a check (✅).
 ## 📦 Store Submission Prep
 
 - [ ] **Verify App Icons**
-
   - iOS: `ios/Runner/Assets.xcassets/AppIcon.appiconset/`
   - Android: `android/app/src/main/res/mipmap-*/ic_launcher.png`
 
 - [ ] **Update Version**
-
   - Update `version` in `pubspec.yaml`
 
 - [ ] **Prepare Store Listings**
@@ -250,20 +247,91 @@ Mark completed items with a check (✅).
 
 ---
 
+{{#REVENUECAT_ENABLED}}
+
+## 💰 RevenueCat Subscription Setup
+
+- [ ] **RevenueCat Dashboard Setup**
+  - Create account at RevenueCat (https://app.revenuecat.com/)
+  - Get iOS / Android API keys
+  - Replace `_iosApiKey` / `_androidApiKey` in `lib/core/services/subscription_service.dart`
+
+- [ ] **Offerings / Entitlements Setup**
+  - Create Offering / Package in RevenueCat dashboard
+  - Set Entitlement ID (default: `premium`)
+  - Connect with App Store Connect / Google Play Console
+
+{{/REVENUECAT_ENABLED}}{{#ADMOB_ENABLED}}
+
+## 📢 Google AdMob Ads Setup
+
+- [ ] **AdMob Console Setup**
+  - Register app at AdMob (https://admob.google.com/)
+  - Create ad unit IDs (banner / interstitial / rewarded)
+  - Replace `YOUR_*_AD_UNIT_ID` in `lib/core/services/ad_service.dart`
+
+- [ ] **Platform Configuration**
+  - iOS: Add `GADApplicationIdentifier` to `Info.plist`
+  - Android: Add `com.google.android.gms.ads.APPLICATION_ID` to `AndroidManifest.xml`
+
+{{/ADMOB_ENABLED}}{{#ATT_ENABLED}}
+
+## 🔒 App Tracking Transparency Setup
+
+- [ ] **Info.plist Configuration (iOS required)**
+  - Add `NSUserTrackingUsageDescription` to `ios/Runner/Info.plist`
+  - Set a user-facing description explaining why tracking is needed
+
+{{/ATT_ENABLED}}{{#VERTEX_AI_ENABLED}}
+
+## 🤖 Vertex AI / Gemini Setup
+
+- [ ] **Enable Vertex AI in Firebase Console**
+  - Firebase Console > Build > Vertex AI to enable
+  - Verify model selection (default: `gemini-2.0-flash`)
+
+- [ ] **Region Configuration**
+  - Check `_defaultLocation` in `lib/core/services/ai_service.dart`
+  - Default: `asia-northeast1` (Tokyo)
+
+{{/VERTEX_AI_ENABLED}}{{#IMAGE_PICKER_ENABLED}}
+
+## 📷 Image Picker & Crop Setup
+
+- [ ] **iOS Permission Setup**
+  - Add to `ios/Runner/Info.plist`:
+    - `NSCameraUsageDescription` (camera access reason)
+    - `NSPhotoLibraryUsageDescription` (photo library access reason)
+
+- [ ] **Android Permission Setup**
+  - Add to `android/app/src/main/AndroidManifest.xml`:
+    - `<uses-permission android:name="android.permission.CAMERA" />`
+
+{{/IMAGE_PICKER_ENABLED}}{{#E2E_TESTING_ENABLED}}
+
+## 🧪 Maestro E2E Testing Setup
+
+- [ ] **Install Maestro CLI**
+  - `curl -Ls "https://get.maestro.mobile.dev" | bash`
+  - Verify with `maestro --version`
+
+- [ ] **Create Test Flows**
+  - Create test flows in `maestro/flows/` directory
+  - Verify package name in `maestro/config.yaml`
+
+## {{/E2E_TESTING_ENABLED}}
+
 ## 💡 Recommended (Optional)
 
 - [ ] **Set up CI/CD**
-
   - GitHub Actions / Bitrise / Codemagic
 
 - [ ] **Verify Crash Reporting**
       {{#CRASHLYTICS_ENABLED}}
-
   - Confirm Crashlytics reports appear
     {{/CRASHLYTICS_ENABLED}}
 
 - [ ] **Performance Monitoring**
-
   - Consider enabling Firebase Performance Monitoring
 
 - [ ] **Add Tests**

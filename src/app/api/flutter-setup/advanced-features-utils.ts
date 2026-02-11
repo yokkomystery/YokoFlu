@@ -1,6 +1,10 @@
 import fs from 'fs';
 import path from 'path';
-import { copyTemplateFile, getTemplatePath } from './template-utils';
+import {
+  copyTemplateFile,
+  copyTemplateDirectory,
+  getTemplatePath,
+} from './template-utils';
 import {
   ADVANCED_FEATURE_OPTIONS,
   AdvancedFeatureId,
@@ -11,6 +15,11 @@ interface FeatureImplementation {
     templatePath: string;
     targetPath: string;
   }>;
+  // ディレクトリごとコピーする場合（例: Maestro E2E）
+  directoryTemplate?: {
+    templateDir: string;
+    targetDir: string;
+  };
   conditions?: Record<string, boolean>;
 }
 
@@ -147,6 +156,52 @@ const FEATURE_IMPLEMENTATIONS: Record<
       },
     ],
   },
+  'revenuecat-subscription': {
+    serviceFiles: [
+      {
+        templatePath: 'core/services/subscription_service.dart',
+        targetPath: 'lib/core/services/subscription_service.dart',
+      },
+    ],
+  },
+  'admob-ads': {
+    serviceFiles: [
+      {
+        templatePath: 'core/services/ad_service.dart',
+        targetPath: 'lib/core/services/ad_service.dart',
+      },
+    ],
+  },
+  'att-tracking': {
+    serviceFiles: [
+      {
+        templatePath: 'core/services/att_service.dart',
+        targetPath: 'lib/core/services/att_service.dart',
+      },
+    ],
+  },
+  'vertex-ai': {
+    serviceFiles: [
+      {
+        templatePath: 'core/services/ai_service.dart',
+        targetPath: 'lib/core/services/ai_service.dart',
+      },
+    ],
+  },
+  'image-picker-crop': {
+    serviceFiles: [
+      {
+        templatePath: 'core/services/image_picker_service.dart',
+        targetPath: 'lib/core/services/image_picker_service.dart',
+      },
+    ],
+  },
+  'e2e-testing': {
+    directoryTemplate: {
+      templateDir: 'maestro',
+      targetDir: 'maestro',
+    },
+  },
 };
 
 export function createAdvancedFeatures(
@@ -195,7 +250,38 @@ export function createAdvancedFeatures(
 
     const implementation =
       FEATURE_IMPLEMENTATIONS[featureId as AdvancedFeatureId];
-    if (!implementation || !implementation.serviceFiles) return;
+    if (!implementation) return;
+
+    // ディレクトリテンプレートの処理（例: Maestro E2E）
+    if (implementation.directoryTemplate) {
+      const { templateDir, targetDir } = implementation.directoryTemplate;
+      const templateFullPath = getTemplatePath(templateDir);
+      const targetFullPath = path.join(projectPath, targetDir);
+
+      if (fs.existsSync(templateFullPath)) {
+        const dirFiles = copyTemplateDirectory(
+          templateFullPath,
+          targetFullPath,
+          {
+            APP_NAME: normalizedAppName,
+            PACKAGE_NAME: packageName || normalizedAppName,
+          }
+        );
+        dirFiles.forEach((f) => {
+          createdFiles.push(f);
+          processedFiles.add(f);
+        });
+        console.log(
+          `✅ ${feature.label}のディレクトリを作成しました: ${targetDir}/`
+        );
+      } else {
+        console.warn(
+          `⚠️ テンプレートディレクトリが見つかりません: ${templateFullPath}`
+        );
+      }
+    }
+
+    if (!implementation.serviceFiles) return;
 
     implementation.serviceFiles.forEach((fileConfig) => {
       const targetFullPath = path.join(projectPath, fileConfig.targetPath);
