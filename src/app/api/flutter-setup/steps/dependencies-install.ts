@@ -1,8 +1,8 @@
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 import { updateProgress, recordStepResult } from '../utils';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 export async function runDependenciesInstall(fullOutputPath: string) {
   updateProgress(
@@ -11,7 +11,7 @@ export async function runDependenciesInstall(fullOutputPath: string) {
     '依存関係をインストール中...'
   );
   try {
-    await execAsync(`cd ${fullOutputPath} && flutter pub get`);
+    await execFileAsync('flutter', ['pub', 'get'], { cwd: fullOutputPath });
 
     updateProgress(
       'dependencies-install',

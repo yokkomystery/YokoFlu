@@ -1,12 +1,12 @@
 import fs from 'fs';
 import path from 'path';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 import { moveFirebaseConfigFiles } from '../firebase-utils';
 import { updateProgress, recordStepResult } from '../utils';
 import { copyTemplateFile, getTemplatePath } from '../template-utils';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 function buildErrorMessage(error: unknown, toolLabel: string, hint?: string) {
   if (!error || typeof error !== 'object') {
@@ -139,15 +139,27 @@ export async function runFirebaseInit({
         `テスト環境「${resolvedStagingProjectId}」を設定中...`
       );
 
-      const stagingConfigCommand = `cd ${fullOutputPath} && flutterfire configure --project=${resolvedStagingProjectId} --out=lib/firebase_options_staging.dart --ios-bundle-id=${stagingBundleId} --android-package-name=${stagingPackageName} --yes --platforms=android,ios`;
-      await execAsync(stagingConfigCommand, {
-        timeout: 60000,
-        env: {
-          ...process.env,
-          FLUTTERFIRE_NON_INTERACTIVE: 'true',
-          FLUTTERFIRE_YES: 'true',
-        },
-      });
+      await execFileAsync(
+        'flutterfire',
+        [
+          'configure',
+          `--project=${resolvedStagingProjectId}`,
+          '--out=lib/firebase_options_staging.dart',
+          `--ios-bundle-id=${stagingBundleId}`,
+          `--android-package-name=${stagingPackageName}`,
+          '--yes',
+          '--platforms=android,ios',
+        ],
+        {
+          cwd: fullOutputPath,
+          timeout: 60000,
+          env: {
+            ...process.env,
+            FLUTTERFIRE_NON_INTERACTIVE: 'true',
+            FLUTTERFIRE_YES: 'true',
+          },
+        }
+      );
 
       updateProgress(
         'firebase-config-move-staging',
@@ -178,15 +190,27 @@ export async function runFirebaseInit({
         '本番環境の設定',
         `本番環境「${resolvedProductionProjectId}」を設定中...`
       );
-      const productionConfigCommand = `cd ${fullOutputPath} && flutterfire configure --project=${resolvedProductionProjectId} --out=lib/firebase_options_production.dart --ios-bundle-id=${bundleId} --android-package-name=${packageName} --yes --platforms=android,ios`;
-      await execAsync(productionConfigCommand, {
-        timeout: 60000,
-        env: {
-          ...process.env,
-          FLUTTERFIRE_NON_INTERACTIVE: 'true',
-          FLUTTERFIRE_YES: 'true',
-        },
-      });
+      await execFileAsync(
+        'flutterfire',
+        [
+          'configure',
+          `--project=${resolvedProductionProjectId}`,
+          '--out=lib/firebase_options_production.dart',
+          `--ios-bundle-id=${bundleId}`,
+          `--android-package-name=${packageName}`,
+          '--yes',
+          '--platforms=android,ios',
+        ],
+        {
+          cwd: fullOutputPath,
+          timeout: 60000,
+          env: {
+            ...process.env,
+            FLUTTERFIRE_NON_INTERACTIVE: 'true',
+            FLUTTERFIRE_YES: 'true',
+          },
+        }
+      );
 
       updateProgress(
         'firebase-config-move-production',
@@ -230,15 +254,27 @@ export async function runFirebaseInit({
         }
       }
     } else {
-      const singleConfigCommand = `cd ${fullOutputPath} && flutterfire configure --project=${resolvedSingleProjectId} --out=lib/firebase_options.dart --ios-bundle-id=${bundleId} --android-package-name=${packageName} --yes --platforms=android,ios`;
-      await execAsync(singleConfigCommand, {
-        timeout: 60000,
-        env: {
-          ...process.env,
-          FLUTTERFIRE_NON_INTERACTIVE: 'true',
-          FLUTTERFIRE_YES: 'true',
-        },
-      });
+      await execFileAsync(
+        'flutterfire',
+        [
+          'configure',
+          `--project=${resolvedSingleProjectId}`,
+          '--out=lib/firebase_options.dart',
+          `--ios-bundle-id=${bundleId}`,
+          `--android-package-name=${packageName}`,
+          '--yes',
+          '--platforms=android,ios',
+        ],
+        {
+          cwd: fullOutputPath,
+          timeout: 60000,
+          env: {
+            ...process.env,
+            FLUTTERFIRE_NON_INTERACTIVE: 'true',
+            FLUTTERFIRE_YES: 'true',
+          },
+        }
+      );
       updateProgress(
         'firebase-single',
         '✅ Firebase設定が完了しました',

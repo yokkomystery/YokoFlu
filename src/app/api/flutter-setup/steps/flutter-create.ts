@@ -1,10 +1,15 @@
 import fs from 'fs';
 import path from 'path';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 import { updateProgress, recordStepResult } from '../utils';
+import {
+  validateAppName,
+  validateBundleId,
+  validateOutputPath,
+} from '@/lib/sanitize';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 export async function runFlutterCreate(
   appName: string,
@@ -57,23 +62,45 @@ export async function runFlutterCreate(
     throw new Error(guiMessage);
   }
 
+  // 入力バリデーション
+  const appNameValidation = validateAppName(appName);
+  if (!appNameValidation.valid) {
+    throw new Error(appNameValidation.error);
+  }
+  const bundleIdValidation = validateBundleId(bundleId);
+  if (!bundleIdValidation.valid) {
+    throw new Error(bundleIdValidation.error);
+  }
+  const outputPathValidation = validateOutputPath(outputPath);
+  if (!outputPathValidation.valid) {
+    throw new Error(outputPathValidation.error);
+  }
+
   try {
     const projectName = appName.toLowerCase().replace(/[^a-z0-9_]/g, '_');
     const bundleIdParts = bundleId.split('.');
-    
+
     // Bundle IDの最後の部分を除いてorg IDを計算
     // 例: com.example.app → org: com.example
     // 例: com.app → org: com
     const orgId =
       bundleIdParts.length >= 2
         ? bundleIdParts.slice(0, -1).join('.')
-        : 'com.example';  // デフォルト値（通常は起こらない）
+        : 'com.example'; // デフォルト値（通常は起こらない）
 
     console.log(`📝 Organization ID: ${orgId}, Project Name: ${projectName}`);
-    console.log(`📝 Expected package: ${bundleId} (will be ${orgId}.${projectName} by Flutter)`);
-    
-    const createCommand = `flutter create --org ${orgId} --project-name ${projectName} ${fullOutputPath}`;
-    await execAsync(createCommand);
+    console.log(
+      `📝 Expected package: ${bundleId} (will be ${orgId}.${projectName} by Flutter)`
+    );
+
+    await execFileAsync('flutter', [
+      'create',
+      '--org',
+      orgId,
+      '--project-name',
+      projectName,
+      fullOutputPath,
+    ]);
 
     updateProgress(
       'flutter-create',

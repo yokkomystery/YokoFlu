@@ -2,10 +2,10 @@ import { FirebaseVersions } from './types';
 import fs from 'fs';
 import path from 'path';
 import { copyTemplateFile, getTemplatePath } from './template-utils';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 // Firebase設定ファイルの移動処理（Qiita記事の手順に準拠）
 export const moveFirebaseConfigFiles = async (
@@ -111,14 +111,18 @@ export const runFlutterfireConfigure = async (
     const bundleIdSuffix = isStaging ? '.staging' : '';
     const packageNameSuffix = isStaging ? '.staging' : '';
 
-    const command = `cd ${projectPath} && flutterfire configure \
-      --project=${projectId}-${environment} \
-      --out=${outputFile} \
-      --ios-bundle-id=${bundleId}${bundleIdSuffix} \
-      --android-package-name=${packageName}${packageNameSuffix}`;
-
     console.log(`🔄 Running flutterfire configure for ${environment}...`);
-    const { stderr } = await execAsync(command);
+    const { stderr } = await execFileAsync(
+      'flutterfire',
+      [
+        'configure',
+        `--project=${projectId}-${environment}`,
+        `--out=${outputFile}`,
+        `--ios-bundle-id=${bundleId}${bundleIdSuffix}`,
+        `--android-package-name=${packageName}${packageNameSuffix}`,
+      ],
+      { cwd: projectPath }
+    );
 
     if (stderr) {
       console.log(`⚠️ flutterfire configure warnings: ${stderr}`);

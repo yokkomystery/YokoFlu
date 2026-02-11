@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 interface FirebaseProject {
   projectId: string;
@@ -18,7 +18,7 @@ export async function GET() {
   try {
     // Firebase CLIがインストールされているかチェック
     try {
-      await execAsync('firebase --version');
+      await execFileAsync('firebase', ['--version']);
     } catch {
       return NextResponse.json(
         {
@@ -31,7 +31,7 @@ export async function GET() {
 
     // Firebase CLIにログインしているかチェック
     try {
-      await execAsync('firebase projects:list');
+      await execFileAsync('firebase', ['projects:list']);
     } catch {
       return NextResponse.json(
         { error: 'Firebase CLI is not logged in. Please run: firebase login' },
@@ -40,9 +40,10 @@ export async function GET() {
     }
 
     // プロジェクト一覧を取得
-    const { stdout: projectsOutput } = await execAsync(
-      'firebase projects:list --json'
-    );
+    const { stdout: projectsOutput } = await execFileAsync('firebase', [
+      'projects:list',
+      '--json',
+    ]);
 
     if (!projectsOutput.trim()) {
       return NextResponse.json(
