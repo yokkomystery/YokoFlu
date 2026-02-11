@@ -2,8 +2,14 @@ import { z } from 'zod';
 import {
   DEFAULT_TEMPLATE_FEATURE_IDS,
   DEFAULT_ADVANCED_FEATURE_IDS,
+  ADVANCED_FEATURE_OPTIONS,
   LocalizationLanguageId,
+  AdvancedFeatureId,
 } from '../config/templateOptions';
+
+const VALID_ADVANCED_FEATURE_IDS = ADVANCED_FEATURE_OPTIONS.map(
+  (f) => f.id
+) as [AdvancedFeatureId, ...AdvancedFeatureId[]];
 
 /**
  * Firebaseを使用する場合のバリデーションスキーマ
@@ -54,10 +60,25 @@ export function createSetupSchema(useFirebase: boolean) {
           }
         ),
       advancedFeatures: z
-        .array(z.string())
+        .array(z.enum(VALID_ADVANCED_FEATURE_IDS))
         .default(DEFAULT_ADVANCED_FEATURE_IDS),
     })
     .superRefine((data, ctx) => {
+      // Firebase無効時にFirebase必須機能が選択されていないかチェック
+      if (!useFirebase && data.advancedFeatures.length > 0) {
+        const firebaseRequiredFeatures = data.advancedFeatures.filter((id) => {
+          const feature = ADVANCED_FEATURE_OPTIONS.find((f) => f.id === id);
+          return feature?.requiresFirebase;
+        });
+        if (firebaseRequiredFeatures.length > 0) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: `以下の機能はFirebaseが必要です: ${firebaseRequiredFeatures.join(', ')}`,
+            path: ['advancedFeatures'],
+          });
+        }
+      }
+
       // Firebaseを利用しない場合はFirebase関連のバリデーションをスキップ
       if (!useFirebase) {
         return;

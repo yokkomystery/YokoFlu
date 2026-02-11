@@ -12,7 +12,6 @@
 {{#FIREBASE_ENABLED}}
 
 - [ ] **Firebase プロジェクトの確認**
-
   - Firebase Console (https://console.firebase.google.com/) にアクセス
   - プロジェクトが正しく作成されていることを確認
     {{#ENVIRONMENT_SEPARATION}}
@@ -24,14 +23,12 @@
     {{/ENVIRONMENT_SEPARATION}}
 
 - [ ] **Firestore Database を有効化**
-
   - Firebase Console > ビルド > Firestore Database
   - 「データベースを作成」をクリック
   - ロケーションを選択（例: `asia-northeast1` 東京）
   - 本番環境モードで開始（セキュリティルールは後で設定）
 
 - [ ] **Firestore セキュリティルールを設定**
-
   - Firebase Console > Firestore Database > ルール
   - 以下のような基本ルールを設定:
 
@@ -102,13 +99,13 @@
 
 - [ ] **Cloud Messaging（プッシュ通知）を設定**
   - Firebase Console > エンゲージメント > Messaging
-  **iOS 設定:**
+    **iOS 設定:**
   - Apple Developer Console で APNs 認証キー（.p8 ファイル）を取得
   - Firebase Console > プロジェクト設定 > Cloud Messaging > Apple アプリの構成
   - APNs 認証キーをアップロード（キー ID、チーム ID も入力）
-  **Android 設定:**
+    **Android 設定:**
   - 自動的に設定されます（google-services.json に含まれる）
-  **アプリ側の設定:**
+    **アプリ側の設定:**
   - iOS: `ios/Runner/Info.plist` に以下を追加:
   ```xml
   <key>UIBackgroundModes</key>
@@ -116,6 +113,7 @@
     <string>remote-notification</string>
   </array>
   ```
+
   - Android: 自動設定済み
     {{/PUSH_NOTIFICATIONS_ENABLED}}
 
@@ -158,13 +156,11 @@
 {{#ONBOARDING_ENABLED}}
 
 - [ ] **オンボーディング画面のコンテンツを更新**
-
   - `lib/features/onboarding/onboarding_screen.dart` のテキストを書き換え
   - `assets/images/` にオンボーディング画像を追加（onboarding1.png, onboarding2.png, onboarding3.png）
     {{/ONBOARDING_ENABLED}}
 
 - [ ] **ホーム画面の実装**
-
   - 現在のホーム画面はテンプレートです
   - 実際のアプリの機能に合わせて実装してください
 
@@ -194,13 +190,13 @@
   {{/ENVIRONMENT_SEPARATION}}
 
 - [ ] **Firebase 接続を確認**
-
   - 認証機能が動作するか
   - Firestore へのデータ保存が成功するか
   - エラーログを確認
 
 - [ ] **リリースビルドをテスト**
       {{#ENVIRONMENT_SEPARATION}}
+
   ```bash
   # iOS Staging
   flutter build ios --flavor staging --dart-define=ENVIRONMENT=staging --release
@@ -208,12 +204,15 @@
   # Android Staging
   flutter build apk --flavor staging --dart-define=ENVIRONMENT=staging --release
   ```
+
   {{/ENVIRONMENT_SEPARATION}}
   {{^ENVIRONMENT_SEPARATION}}
+
   ```bash
   flutter build apk --release
   flutter build ios --release
   ```
+
   {{/ENVIRONMENT_SEPARATION}}
 
 {{#PUSH_NOTIFICATIONS_ENABLED}}
@@ -235,12 +234,10 @@
 ## 📦 ストア公開準備
 
 - [ ] **アプリアイコンの確認**
-
   - iOS: `ios/Runner/Assets.xcassets/AppIcon.appiconset/`
   - Android: `android/app/src/main/res/mipmap-*/ic_launcher.png`
 
 - [ ] **バージョン番号の更新**
-
   - `pubspec.yaml` の `version` を更新
 
 - [ ] **App Store Connect / Google Play Console での設定**
@@ -250,20 +247,91 @@
 
 ---
 
+{{#REVENUECAT_ENABLED}}
+
+## 💰 RevenueCat サブスクリプション設定
+
+- [ ] **RevenueCat ダッシュボード設定**
+  - RevenueCat (https://app.revenuecat.com/) でアカウント作成
+  - iOS / Android 用の API キーを取得
+  - `lib/core/services/subscription_service.dart` の `_iosApiKey` / `_androidApiKey` を置き換え
+
+- [ ] **Offerings / Entitlements 設定**
+  - RevenueCat ダッシュボードで Offering / Package を作成
+  - Entitlement ID を設定（デフォルト: `premium`）
+  - App Store Connect / Google Play Console と連携
+
+{{/REVENUECAT_ENABLED}}{{#ADMOB_ENABLED}}
+
+## 📢 Google AdMob 広告設定
+
+- [ ] **AdMob コンソール設定**
+  - AdMob (https://admob.google.com/) でアプリを登録
+  - 広告ユニット ID を作成（バナー / インタースティシャル / リワード）
+  - `lib/core/services/ad_service.dart` の `YOUR_*_AD_UNIT_ID` を実際の ID に置き換え
+
+- [ ] **プラットフォーム設定**
+  - iOS: `Info.plist` に `GADApplicationIdentifier` を追加
+  - Android: `AndroidManifest.xml` に `com.google.android.gms.ads.APPLICATION_ID` を追加
+
+{{/ADMOB_ENABLED}}{{#ATT_ENABLED}}
+
+## 🔒 App Tracking Transparency 設定
+
+- [ ] **Info.plist 設定（iOS必須）**
+  - `ios/Runner/Info.plist` に `NSUserTrackingUsageDescription` を追加
+  - ユーザーに表示するトラッキング理由の説明文を設定
+
+{{/ATT_ENABLED}}{{#VERTEX_AI_ENABLED}}
+
+## 🤖 Vertex AI / Gemini 設定
+
+- [ ] **Firebase Console で Vertex AI を有効化**
+  - Firebase Console > ビルド > Vertex AI でサービスを有効化
+  - 使用するモデルを確認（デフォルト: `gemini-2.0-flash`）
+
+- [ ] **リージョン設定**
+  - `lib/core/services/ai_service.dart` の `_defaultLocation` を確認
+  - デフォルト: `asia-northeast1`（東京）
+
+{{/VERTEX_AI_ENABLED}}{{#IMAGE_PICKER_ENABLED}}
+
+## 📷 画像ピッカー＆クロップ設定
+
+- [ ] **iOS パーミッション設定**
+  - `ios/Runner/Info.plist` に以下を追加:
+    - `NSCameraUsageDescription`（カメラアクセス理由）
+    - `NSPhotoLibraryUsageDescription`（フォトライブラリアクセス理由）
+
+- [ ] **Android パーミッション設定**
+  - `android/app/src/main/AndroidManifest.xml` に以下を追加:
+    - `<uses-permission android:name="android.permission.CAMERA" />`
+
+{{/IMAGE_PICKER_ENABLED}}{{#E2E_TESTING_ENABLED}}
+
+## 🧪 Maestro E2E テスト設定
+
+- [ ] **Maestro CLI インストール**
+  - `curl -Ls "https://get.maestro.mobile.dev" | bash`
+  - `maestro --version` で動作確認
+
+- [ ] **テストフロー作成**
+  - `maestro/flows/` ディレクトリにテストフローを作成
+  - `maestro/config.yaml` のパッケージ名を確認・設定
+
+## {{/E2E_TESTING_ENABLED}}
+
 ## 💡 推奨設定（任意）
 
 - [ ] **CI/CD（継続的インテグレーション）の設定**
-
   - GitHub Actions / Bitrise / Codemagic など
 
 - [ ] **エラートラッキングの確認**
       {{#CRASHLYTICS_ENABLED}}
-
   - Crashlytics でクラッシュレポートが記録されることを確認
     {{/CRASHLYTICS_ENABLED}}
 
 - [ ] **パフォーマンスモニタリング**
-
   - Firebase Performance Monitoring の有効化を検討
 
 - [ ] **テストの追加**

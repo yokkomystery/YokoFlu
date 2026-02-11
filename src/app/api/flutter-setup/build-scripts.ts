@@ -62,8 +62,11 @@ export function updatePubspecYaml(
 ) {
   const pubspecPath = path.join(projectPath, 'pubspec.yaml');
 
-  // プロジェクト名を取得（ディレクトリ名から）
-  const projectName = path.basename(projectPath).toLowerCase();
+  // プロジェクト名を取得（ディレクトリ名から、Dartパッケージ名に正規化）
+  const projectName = path
+    .basename(projectPath)
+    .toLowerCase()
+    .replace(/-/g, '_');
   console.log(`📝 pubspec.yaml更新: プロジェクト名 = ${projectName}`);
   console.log(`📦 SDK制約: ${packageVersions.sdkConstraint}`);
 
@@ -97,6 +100,13 @@ ${formatDependencyVersions(packageVersions, useFirebase).dependencies}`;
       shared_preferences: packageVersions.shared_preferences,
       flutter_local_notifications: packageVersions.flutter_local_notifications,
       permission_handler: packageVersions.permission_handler,
+      purchases_flutter: packageVersions.purchases_flutter,
+      google_mobile_ads: packageVersions.google_mobile_ads,
+      app_tracking_transparency: packageVersions.app_tracking_transparency,
+      firebase_vertexai: packageVersions.firebase_vertexai,
+      image_picker: packageVersions.image_picker,
+      image_cropper: packageVersions.image_cropper,
+      flutter_image_compress: packageVersions.flutter_image_compress,
     };
 
     const basePackages = new Set([
@@ -256,6 +266,11 @@ export function updateMainDart(
   const analyticsEnabled = advancedFeatures.includes('analytics');
   const crashlyticsEnabled = advancedFeatures.includes('crashlytics');
   const appRatingEnabled = advancedFeatures.includes('app-rating');
+  const admobEnabled = advancedFeatures.includes('admob-ads');
+  const attEnabled = advancedFeatures.includes('att-tracking');
+  const revenuecatEnabled = advancedFeatures.includes(
+    'revenuecat-subscription'
+  );
 
   copyTemplateFile(
     templatePath,
@@ -273,6 +288,9 @@ export function updateMainDart(
       ANALYTICS_ENABLED: analyticsEnabled,
       CRASHLYTICS_ENABLED: crashlyticsEnabled,
       APP_RATING_ENABLED: appRatingEnabled,
+      ADMOB_ENABLED: admobEnabled,
+      ATT_ENABLED: attEnabled,
+      REVENUECAT_ENABLED: revenuecatEnabled,
     }
   );
 

@@ -15,17 +15,31 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kDebugMode;
-{{/FIREBASE_ENABLED}}{{#PUSH_NOTIFICATIONS_ENABLED}}import 'package:{{APP_NAME}}/core/services/push_notification_service.dart';
+{{/FIREBASE_ENABLED}}{{#PUSH_NOTIFICATIONS_ENABLED}}import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:{{APP_NAME}}/core/services/push_notification_service.dart';
 {{/PUSH_NOTIFICATIONS_ENABLED}}{{#ANALYTICS_ENABLED}}import 'package:{{APP_NAME}}/core/services/analytics_service.dart';
 {{/ANALYTICS_ENABLED}}{{#CRASHLYTICS_ENABLED}}import 'package:{{APP_NAME}}/core/services/crashlytics_service.dart';
 {{/CRASHLYTICS_ENABLED}}{{#APP_RATING_ENABLED}}import 'package:{{APP_NAME}}/core/services/app_rating_service.dart';
-{{/APP_RATING_ENABLED}}
+{{/APP_RATING_ENABLED}}{{#ADMOB_ENABLED}}import 'package:{{APP_NAME}}/core/services/ad_service.dart';
+{{/ADMOB_ENABLED}}{{#ATT_ENABLED}}import 'package:{{APP_NAME}}/core/services/att_service.dart';
+{{/ATT_ENABLED}}{{#REVENUECAT_ENABLED}}import 'package:{{APP_NAME}}/core/services/subscription_service.dart';
+{{/REVENUECAT_ENABLED}}
 
 // MaterialApp のための GlobalKey
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
+{{#PUSH_NOTIFICATIONS_ENABLED}}
+// PushNotificationService のプロバイダー（navigatorKey を注入）
+final notificationServiceProvider =
+    Provider<PushNotificationService>((ref) {
+  return PushNotificationService(navigatorKey: navigatorKey);
+});
+{{/PUSH_NOTIFICATIONS_ENABLED}}
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+{{#PUSH_NOTIFICATIONS_ENABLED}}
+  // バックグラウンドメッセージハンドラの登録（Firebase初期化前に設定）
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+{{/PUSH_NOTIFICATIONS_ENABLED}}
 {{#FIREBASE_ENABLED}}
 
   // Firebase初期化（失敗してもアプリは起動する）
@@ -44,13 +58,14 @@ void main() async {
 {{/FIREBASE_ENABLED}}{{#PUSH_NOTIFICATIONS_ENABLED}}
 
   // Push通知を初期化（Firebase初期化後に実行）
-  // これにより、アプリ起動時に通知許可ダイアログが表示されます
   try {
-    await PushNotificationService.initialize();
+    final notificationService = PushNotificationService(
+      navigatorKey: navigatorKey,
+    );
+    await notificationService.initialize();
     debugPrint('[App] 🔔 Push notification initialized successfully');
   } catch (e) {
     debugPrint('[App] ⚠️ Push notification initialization failed: $e');
-    // エラーでもアプリは起動させる（通知以外の機能に影響なし）
   }
 {{/PUSH_NOTIFICATIONS_ENABLED}}{{#ANALYTICS_ENABLED}}
 
@@ -74,14 +89,32 @@ void main() async {
 
   // アプリ評価機能の起動回数トラッキング
   try {
-    // TODO: AppRatingService を初期化して起動をトラッキング
-    // final ratingService = await AppRatingService.create();
-    // await ratingService.trackAppLaunch();
+    final ratingService = await AppRatingService.create();
+    await ratingService.trackAppLaunch();
     debugPrint('[App] ⭐ App rating tracking enabled');
   } catch (e) {
     debugPrint('[App] ⚠️ App rating initialization failed: $e');
   }
-{{/APP_RATING_ENABLED}}
+{{/APP_RATING_ENABLED}}{{#ATT_ENABLED}}
+
+  // App Tracking Transparency（iOS 14.5以降で必須）
+  try {
+    final attStatus = await AttService.requestPermission();
+    debugPrint('[App] 🔒 ATT status: $attStatus');
+  } catch (e) {
+    debugPrint('[App] ⚠️ ATT initialization failed: $e');
+  }
+{{/ATT_ENABLED}}{{#ADMOB_ENABLED}}
+
+  // Google AdMob SDKの初期化
+  try {
+    final adService = AdService();
+    await adService.initialize();
+    debugPrint('[App] 📢 AdMob initialized successfully');
+  } catch (e) {
+    debugPrint('[App] ⚠️ AdMob initialization failed: $e');
+  }
+{{/ADMOB_ENABLED}}
 
   runApp(const ProviderScope(child: MyApp()));
 }
@@ -94,7 +127,7 @@ class MyApp extends ConsumerStatefulWidget {
 }
 
 class _MyAppState extends ConsumerState<MyApp> {
-{{#ONBOARDING_ENABLED}}  bool _showOnboarding = true;
+{{#ONBOARDING_ENABLED}}  bool _onboardingDismissed = false;
 
 {{/ONBOARDING_ENABLED}}  @override
   void initState() {
@@ -111,11 +144,13 @@ class _MyAppState extends ConsumerState<MyApp> {
     final currentThemeMode = ref.watch(themeProvider);
     final currentLocale = ref.watch(localeProvider);
 {{#ONBOARDING_ENABLED}}
-    final onboardingCompleted = ref.watch(onboardingCompletedProvider);
+    final onboardingAsync = ref.watch(onboardingCompletedProvider);
+    final isOnboardingCompleted = onboardingAsync.valueOrNull ?? false;
+    final showOnboarding = !isOnboardingCompleted && !_onboardingDismissed;
 {{/ONBOARDING_ENABLED}}
     return MaterialApp(
       navigatorKey: navigatorKey,
-      title: '{{APP_NAME}}',
+      title: '{{APP_DISPLAY_NAME}}',
       debugShowCheckedModeBanner: false,
       locale: currentLocale,
       localizationsDelegates: const [
@@ -142,11 +177,13 @@ class _MyAppState extends ConsumerState<MyApp> {
         useMaterial3: true,
       ),
       themeMode: currentThemeMode,
-{{#ONBOARDING_ENABLED}}      home: _showOnboarding
+{{#ONBOARDING_ENABLED}}      home: showOnboarding
           ? OnboardingScreen(
-              onComplete: () {
+              onComplete: () async {
+                await completeOnboarding();
+                ref.invalidate(onboardingCompletedProvider);
                 setState(() {
-                  _showOnboarding = false;
+                  _onboardingDismissed = true;
                 });
               },
             )

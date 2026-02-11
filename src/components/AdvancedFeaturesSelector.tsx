@@ -34,6 +34,10 @@ const AdvancedFeaturesSelector: React.FC<Props> = ({
     'auth',
     'analytics',
     'ui-ux',
+    'monetization',
+    'ai',
+    'media',
+    'testing',
   ];
 
   return (
@@ -51,13 +55,12 @@ const AdvancedFeaturesSelector: React.FC<Props> = ({
         const featuresInCategory = ADVANCED_FEATURE_OPTIONS.filter(
           (f) => f.category === category
         );
+        const categoryKey = category.replace(/-([a-z])/g, (_, letter: string) =>
+          letter.toUpperCase()
+        );
         const categoryLabel =
           t.advancedFeaturesCategories[
-            category === 'app-management'
-              ? 'appManagement'
-              : category === 'ui-ux'
-              ? 'uiUx'
-              : category
+            categoryKey as keyof typeof t.advancedFeaturesCategories
           ];
         return (
           <div key={category} className="mb-6">

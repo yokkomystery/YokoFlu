@@ -113,10 +113,13 @@ export const DEFAULT_LOCALIZATION_LANGUAGE_IDS =
 export const LOCALIZATION_LANGUAGE_MAP: Record<
   LocalizationLanguageId,
   LocalizationLanguageOption
-> = LOCALIZATION_LANGUAGE_OPTIONS.reduce((acc, option) => {
-  acc[option.id] = option;
-  return acc;
-}, {} as Record<LocalizationLanguageId, LocalizationLanguageOption>);
+> = LOCALIZATION_LANGUAGE_OPTIONS.reduce(
+  (acc, option) => {
+    acc[option.id] = option;
+    return acc;
+  },
+  {} as Record<LocalizationLanguageId, LocalizationLanguageOption>
+);
 
 // 高度な機能
 export type AdvancedFeatureId =
@@ -130,13 +133,23 @@ export type AdvancedFeatureId =
   | 'analytics'
   | 'crashlytics'
   | 'push-notifications'
-  | 'onboarding';
+  | 'onboarding'
+  | 'revenuecat-subscription'
+  | 'admob-ads'
+  | 'att-tracking'
+  | 'vertex-ai'
+  | 'image-picker-crop'
+  | 'e2e-testing';
 
 export type AdvancedFeatureCategory =
   | 'app-management'
   | 'auth'
   | 'analytics'
-  | 'ui-ux';
+  | 'ui-ux'
+  | 'monetization'
+  | 'ai'
+  | 'media'
+  | 'testing';
 
 export interface AdvancedFeatureOption {
   id: AdvancedFeatureId;
@@ -278,7 +291,7 @@ export const ADVANCED_FEATURE_OPTIONS: AdvancedFeatureOption[] = [
     id: 'push-notifications',
     label: 'プッシュ通知',
     description: 'Firebase Cloud Messagingでプッシュ通知を送信',
-    category: 'analytics',
+    category: 'ui-ux',
     requiresFirebase: true,
     dependencies: [
       'firebase_messaging',
@@ -300,6 +313,75 @@ export const ADVANCED_FEATURE_OPTIONS: AdvancedFeatureOption[] = [
     todoNote:
       'assets/images/にオンボーディング画像（onboarding1.png等）を追加してください',
   },
+  // 収益化機能
+  {
+    id: 'revenuecat-subscription',
+    label: 'RevenueCatサブスクリプション',
+    description: 'RevenueCatでアプリ内課金・サブスクリプションを管理',
+    category: 'monetization',
+    requiresFirebase: false,
+    dependencies: ['purchases_flutter'],
+    defaultEnabled: false,
+    todoNote:
+      'RevenueCat DashboardでAPIキーを取得し、Offering/Entitlementを設定してください',
+  },
+  {
+    id: 'admob-ads',
+    label: 'Google AdMob広告',
+    description: 'バナー・インタースティシャル・リワード広告を表示',
+    category: 'monetization',
+    requiresFirebase: false,
+    dependencies: ['google_mobile_ads'],
+    defaultEnabled: false,
+    todoNote:
+      'AdMob Consoleで広告ユニットIDを取得し、AndroidManifest.xmlとInfo.plistにアプリIDを設定してください',
+  },
+  {
+    id: 'att-tracking',
+    label: 'App Tracking Transparency',
+    description: 'iOS 14.5以降必須のトラッキング許可ダイアログ',
+    category: 'monetization',
+    requiresFirebase: false,
+    dependencies: ['app_tracking_transparency'],
+    defaultEnabled: false,
+    todoNote: 'Info.plistにNSUserTrackingUsageDescriptionを追加してください',
+  },
+  // AI機能
+  {
+    id: 'vertex-ai',
+    label: 'Vertex AI / Gemini',
+    description: 'Firebase Vertex AIでテキスト生成・チャット機能を実装',
+    category: 'ai',
+    requiresFirebase: true,
+    dependencies: ['firebase_vertexai'],
+    defaultEnabled: false,
+    todoNote:
+      'Firebase ConsoleでVertex AIを有効化し、使用するモデルを設定してください',
+  },
+  // メディア機能
+  {
+    id: 'image-picker-crop',
+    label: '画像ピッカー＆クロップ',
+    description: 'カメラ・ギャラリーから画像取得、トリミング、圧縮',
+    category: 'media',
+    requiresFirebase: false,
+    dependencies: ['image_picker', 'image_cropper', 'flutter_image_compress'],
+    defaultEnabled: false,
+    todoNote:
+      'Info.plistにカメラ・フォトライブラリ権限、AndroidManifest.xmlにカメラ権限を追加してください',
+  },
+  // テスト機能
+  {
+    id: 'e2e-testing',
+    label: 'Maestro E2Eテスト',
+    description: 'Maestroフレームワークを使ったE2Eテスト環境を構築',
+    category: 'testing',
+    requiresFirebase: false,
+    dependencies: [],
+    defaultEnabled: false,
+    todoNote:
+      'Maestro CLIをインストールしてください: curl -Ls "https://get.maestro.mobile.dev" | bash',
+  },
 ];
 
 export const DEFAULT_ADVANCED_FEATURE_IDS: AdvancedFeatureId[] = [];
@@ -313,4 +395,8 @@ export const ADVANCED_FEATURE_CATEGORY_LABELS: Record<
   auth: '認証機能',
   analytics: '分析・監視',
   'ui-ux': 'UI/UX機能',
+  monetization: '収益化',
+  ai: 'AI機能',
+  media: 'メディア',
+  testing: 'テスト',
 };

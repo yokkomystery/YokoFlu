@@ -22,6 +22,7 @@ import {
   DEFAULT_ADVANCED_FEATURE_IDS,
   TEMPLATE_FEATURE_OPTIONS,
   LocalizationLanguageId,
+  AdvancedFeatureId,
 } from '../config/templateOptions';
 import { createSetupSchema } from '../lib/validation-schema';
 import { useCliStatus } from '../hooks/useCliStatus';
@@ -67,8 +68,7 @@ export default function FlutterSetupForm() {
   }, [selectedTemplate, useFirebase]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showProgress, setShowProgress] = useState(false);
-  // TODO: Display this error in the UI
-  const [_error, setError] = useState<string | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
   const [success, setSuccess] = useState<{
     result?: {
       appName?: string;
@@ -271,7 +271,7 @@ export default function FlutterSetupForm() {
   };
 
   const onSubmit = async (data: SetupFormData) => {
-    setError(null);
+    setApiError(null);
     setSuccess(null);
     setIsSubmitting(true);
     setShowProgress(true);
@@ -325,7 +325,7 @@ export default function FlutterSetupForm() {
         // 進捗ポーリングが完了するまで、isSubmitting は true のまま
         // handleProgressComplete が setIsSubmitting(false) を呼び出す
       } else {
-        setError(result.error || 'エラーが発生しました');
+        setApiError(result.error || 'エラーが発生しました');
 
         // エラー時は進捗状態を一度取得して反映
         try {
@@ -357,7 +357,7 @@ export default function FlutterSetupForm() {
       }
     } catch (err) {
       console.error('Failed to submit setup request', err);
-      setError('ネットワークエラーが発生しました');
+      setApiError('ネットワークエラーが発生しました');
 
       // エラー時は進捗状態を一度取得して反映
       try {
@@ -907,7 +907,9 @@ export default function FlutterSetupForm() {
               <AdvancedFeaturesSelector
                 useFirebase={useFirebase}
                 selected={watch('advancedFeatures') ?? []}
-                onChange={(next) => setValue('advancedFeatures', next)}
+                onChange={(next) =>
+                  setValue('advancedFeatures', next as AdvancedFeatureId[])
+                }
               />
             </CollapsibleSection>
           </div>
@@ -931,11 +933,18 @@ export default function FlutterSetupForm() {
           </button>
         </form>
 
-        {/* エラーダイアログ */}
+        {/* バリデーションエラーダイアログ */}
         <ErrorDialog
           isOpen={showErrorDialog}
           onClose={() => setShowErrorDialog(false)}
           errors={validationErrors}
+        />
+
+        {/* APIエラーダイアログ */}
+        <ErrorDialog
+          isOpen={apiError !== null}
+          onClose={() => setApiError(null)}
+          errors={apiError ? [apiError] : []}
         />
 
         {/* 成功モーダルは廃止。結果は上部に表示済み */}

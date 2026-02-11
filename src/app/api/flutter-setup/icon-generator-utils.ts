@@ -1,9 +1,9 @@
 import fs from 'fs';
 import path from 'path';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 const FLUTTER_LAUNCHER_VERSION = '^0.13.1';
 
@@ -83,8 +83,12 @@ flutter_launcher_icons:
 
 export async function runAppIconGenerator(projectPath: string) {
   console.log('🎨 flutter_launcher_icons を実行中...');
-  const result = await execAsync(
-    `cd ${projectPath} && dart run flutter_launcher_icons`
+  const result = await execFileAsync(
+    'dart',
+    ['run', 'flutter_launcher_icons'],
+    {
+      cwd: projectPath,
+    }
   );
   console.log('✅ アイコン生成完了:', result.stdout);
 }

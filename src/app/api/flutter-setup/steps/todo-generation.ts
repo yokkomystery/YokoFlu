@@ -57,6 +57,12 @@ export function runTodoGeneration({
       MAINTENANCE_MODE_ENABLED: advancedFeatures.includes('maintenance-mode'),
       APP_RATING_ENABLED: advancedFeatures.includes('app-rating'),
       ONBOARDING_ENABLED: advancedFeatures.includes('onboarding'),
+      REVENUECAT_ENABLED: advancedFeatures.includes('revenuecat-subscription'),
+      ADMOB_ENABLED: advancedFeatures.includes('admob-ads'),
+      ATT_ENABLED: advancedFeatures.includes('att-tracking'),
+      VERTEX_AI_ENABLED: advancedFeatures.includes('vertex-ai'),
+      IMAGE_PICKER_ENABLED: advancedFeatures.includes('image-picker-crop'),
+      E2E_TESTING_ENABLED: advancedFeatures.includes('e2e-testing'),
     };
 
     // プレースホルダー置換用のデータ

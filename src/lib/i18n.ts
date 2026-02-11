@@ -226,6 +226,10 @@ export interface Translations {
     auth: string;
     analytics: string;
     uiUx: string;
+    monetization: string;
+    ai: string;
+    media: string;
+    testing: string;
   };
   advancedFeaturesList: {
     forcedUpdate: { label: string; description: string; todoNote: string };
@@ -239,6 +243,16 @@ export interface Translations {
     crashlytics: { label: string; description: string; todoNote: string };
     pushNotifications: { label: string; description: string; todoNote: string };
     onboarding: { label: string; description: string; todoNote: string };
+    revenuecatSubscription: {
+      label: string;
+      description: string;
+      todoNote: string;
+    };
+    admobAds: { label: string; description: string; todoNote: string };
+    attTracking: { label: string; description: string; todoNote: string };
+    vertexAi: { label: string; description: string; todoNote: string };
+    imagePickerCrop: { label: string; description: string; todoNote: string };
+    e2eTesting: { label: string; description: string; todoNote: string };
   };
   languageOptions: {
     en: { label: string; description: string };
@@ -313,8 +327,7 @@ export const translations: Record<Locale, Translations> = {
       bundleIdExample: '例: com.company.myapp',
       bundleIdDesc:
         '重要: iOSアプリの一意な識別子。逆ドメイン形式（例: com.会社名.アプリ名）',
-      bundleIdWarning:
-        '⚠️ 一度公開すると変更できないため、慎重に決めてください',
+      bundleIdWarning: '⚠️ AppStoreに公開後は変更できません',
       packageNameLabel: 'パッケージ名（Android）',
       packageNameExample: '例: com.company.myapp',
       packageNameDesc:
@@ -548,6 +561,10 @@ export const translations: Record<Locale, Translations> = {
       auth: '認証機能',
       analytics: '分析・監視',
       uiUx: 'UI/UX機能',
+      monetization: '収益化',
+      ai: 'AI機能',
+      media: 'メディア',
+      testing: 'テスト',
     },
     advancedFeaturesList: {
       forcedUpdate: {
@@ -612,6 +629,42 @@ export const translations: Record<Locale, Translations> = {
         description: '初回起動時のチュートリアル画面',
         todoNote:
           'assets/images/にオンボーディング画像（onboarding1.png等）を追加してください',
+      },
+      revenuecatSubscription: {
+        label: 'RevenueCatサブスクリプション',
+        description: 'RevenueCatでアプリ内課金・サブスクリプションを管理',
+        todoNote:
+          'RevenueCat DashboardでAPIキーを取得し、Offering/Entitlementを設定してください',
+      },
+      admobAds: {
+        label: 'Google AdMob広告',
+        description: 'バナー・インタースティシャル・リワード広告を表示',
+        todoNote:
+          'AdMob Consoleで広告ユニットIDを取得し、AndroidManifest.xmlとInfo.plistにアプリIDを設定してください',
+      },
+      attTracking: {
+        label: 'App Tracking Transparency',
+        description: 'iOS 14.5以降必須のトラッキング許可ダイアログ',
+        todoNote:
+          'Info.plistにNSUserTrackingUsageDescriptionを追加してください',
+      },
+      vertexAi: {
+        label: 'Vertex AI / Gemini',
+        description: 'Firebase Vertex AIでテキスト生成・チャット機能を実装',
+        todoNote:
+          'Firebase ConsoleでVertex AIを有効化し、使用するモデルを設定してください',
+      },
+      imagePickerCrop: {
+        label: '画像ピッカー＆クロップ',
+        description: 'カメラ・ギャラリーから画像取得、トリミング、圧縮',
+        todoNote:
+          'Info.plistにカメラ・フォトライブラリ権限、AndroidManifest.xmlにカメラ権限を追加してください',
+      },
+      e2eTesting: {
+        label: 'Maestro E2Eテスト',
+        description: 'Maestroフレームワークを使ったE2Eテスト環境を構築',
+        todoNote:
+          'Maestro CLIをインストールしてください: curl -Ls "https://get.maestro.mobile.dev" | bash',
       },
     },
     languageOptions: {
@@ -930,6 +983,10 @@ export const translations: Record<Locale, Translations> = {
       auth: 'Authentication',
       analytics: 'Analytics & Monitoring',
       uiUx: 'UI/UX Features',
+      monetization: 'Monetization',
+      ai: 'AI Features',
+      media: 'Media',
+      testing: 'Testing',
     },
     advancedFeaturesList: {
       forcedUpdate: {
@@ -992,6 +1049,43 @@ export const translations: Record<Locale, Translations> = {
         description: 'Tutorial screen for first-time app launch',
         todoNote:
           'Add onboarding images (onboarding1.png, etc.) to assets/images/',
+      },
+      revenuecatSubscription: {
+        label: 'RevenueCat Subscription',
+        description:
+          'Manage in-app purchases and subscriptions with RevenueCat',
+        todoNote:
+          'Get API key from RevenueCat Dashboard and configure Offerings/Entitlements',
+      },
+      admobAds: {
+        label: 'Google AdMob Ads',
+        description: 'Display banner, interstitial, and rewarded ads',
+        todoNote:
+          'Get ad unit IDs from AdMob Console and set app ID in AndroidManifest.xml and Info.plist',
+      },
+      attTracking: {
+        label: 'App Tracking Transparency',
+        description: 'Required tracking permission dialog for iOS 14.5+',
+        todoNote: 'Add NSUserTrackingUsageDescription to Info.plist',
+      },
+      vertexAi: {
+        label: 'Vertex AI / Gemini',
+        description:
+          'Implement text generation and chat with Firebase Vertex AI',
+        todoNote:
+          'Enable Vertex AI in Firebase Console and configure the model',
+      },
+      imagePickerCrop: {
+        label: 'Image Picker & Crop',
+        description: 'Pick images from camera/gallery, crop, and compress',
+        todoNote:
+          'Add camera/photo library permissions to Info.plist and camera permission to AndroidManifest.xml',
+      },
+      e2eTesting: {
+        label: 'Maestro E2E Testing',
+        description: 'Set up E2E testing environment with Maestro framework',
+        todoNote:
+          'Install Maestro CLI: curl -Ls "https://get.maestro.mobile.dev" | bash',
       },
     },
     languageOptions: {

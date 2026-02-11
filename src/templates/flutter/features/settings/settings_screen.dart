@@ -10,7 +10,9 @@ import 'package:{{APP_NAME}}/core/providers/locale_provider.dart';
 {{#AUTH_SECTION_ENABLED}}
 import 'package:{{APP_NAME}}/features/auth/auth_provider.dart';
 import 'package:{{APP_NAME}}/features/auth/auth_screen.dart';
-{{/AUTH_SECTION_ENABLED}}
+{{/AUTH_SECTION_ENABLED}}{{#PUSH_NOTIFICATIONS_ENABLED}}
+import 'package:{{APP_NAME}}/features/settings/notification_settings_screen.dart';
+{{/PUSH_NOTIFICATIONS_ENABLED}}
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -38,9 +40,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final themeNotifier = ref.watch(themeProvider.notifier);
+    final themeNotifier = ref.read(themeProvider.notifier);
     final currentTheme = ref.watch(themeProvider);
-    final localeNotifier = ref.watch(localeProvider.notifier);
+    final localeNotifier = ref.read(localeProvider.notifier);
     final currentLocale = ref.watch(localeProvider);
 
     return Scaffold(
@@ -66,13 +68,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ListTile(
             leading: const Icon(Icons.notifications_outlined),
             title: Text(l10n.settingsNotificationSettingListTileTitle),
-            subtitle: Text('通知のオン/オフを設定'),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
-              // Push通知設定画面への遷移は実装してください
-              // 例: Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationSettingsScreen()));
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('通知設定画面の実装は開発者次第です'))
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const NotificationSettingsScreen(),
+                ),
               );
             },
           ),
@@ -483,30 +485,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 {{/AUTH_SECTION_ENABLED}}
 
-  Widget _buildFeatureSummaryTile({
-    required IconData icon,
-    required String title,
-    required String description,
-  }) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
-      subtitle: Text(
-        description,
-        style: const TextStyle(color: Colors.white70),
-      ),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('詳細設定は今後のバージョンで提供予定です'),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      },
-    );
-  }
-
   void _showThemeDialog(
     BuildContext context,
     AppLocalizations l10n,
@@ -626,16 +604,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   void _openTermsOfService(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     final languageCode = Localizations.localeOf(context).languageCode;
-    
+
     // TODO: 実際の利用規約URLに置き換えてください
     final termsUrl = 'https://example.com/terms_${languageCode}.html';
     _launchUrl(termsUrl);
   }
 
   void _openPrivacyPolicy(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     final languageCode = Localizations.localeOf(context).languageCode;
     
     // TODO: 実際のプライバシーポリシーURLに置き換えてください
@@ -665,7 +641,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       scheme: 'mailto',
       path: 'support@example.com', // TODO: サポートメールアドレスを設定
       queryParameters: {
-        'subject': l10n.settingsEmailSubjectContactUs,
+        'subject': l10n.settingsEmailSubjectContactUs(packageInfo.appName),
         'body': body,
       },
     );

@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 type CliStatus = {
   installed: boolean;
@@ -13,17 +13,20 @@ type CliStatus = {
 const CHECK_TARGETS = [
   {
     id: 'flutter',
-    command: 'flutter --version',
+    command: 'flutter',
+    args: ['--version'],
     label: 'Flutter CLI',
   },
   {
     id: 'dart',
-    command: 'dart --version',
+    command: 'dart',
+    args: ['--version'],
     label: 'Dart SDK',
   },
   {
     id: 'flutterfire',
-    command: 'flutterfire --version',
+    command: 'flutterfire',
+    args: ['--version'],
     label: 'flutterfire CLI',
   },
 ] as const;
@@ -42,9 +45,12 @@ const formatCliError = (error: unknown) => {
   return err.message ?? 'コマンドの実行に失敗しました';
 };
 
-const checkCli = async (command: string): Promise<CliStatus> => {
+const checkCli = async (
+  command: string,
+  args: readonly string[]
+): Promise<CliStatus> => {
   try {
-    const { stdout } = await execAsync(command);
+    const { stdout } = await execFileAsync(command, [...args]);
     const version = stdout.trim().split('\n')[0];
     return {
       installed: true,
@@ -65,7 +71,7 @@ export async function GET() {
     const results = await Promise.all(
       CHECK_TARGETS.map(async (target) => {
         console.log(`[check-firebase] Checking ${target.id}...`);
-        const status = await checkCli(target.command);
+        const status = await checkCli(target.command, target.args);
         console.log(`[check-firebase] ${target.id} status:`, status);
         return [target.id, status] as const;
       })
@@ -77,7 +83,7 @@ export async function GET() {
     >;
 
     console.log('[check-firebase] Checking Firebase CLI...');
-    const firebaseStatus = await checkCli('firebase --version');
+    const firebaseStatus = await checkCli('firebase', ['--version']);
     console.log('[check-firebase] Firebase CLI status:', firebaseStatus);
 
     let loggedIn = false;
@@ -85,7 +91,7 @@ export async function GET() {
     if (firebaseStatus.installed) {
       try {
         console.log('[check-firebase] Checking Firebase login status...');
-        await execAsync('firebase projects:list');
+        await execFileAsync('firebase', ['projects:list']);
         loggedIn = true;
         console.log('[check-firebase] Firebase login: OK');
       } catch (error) {
@@ -115,16 +121,11 @@ export async function GET() {
     return NextResponse.json(response);
   } catch (error) {
     console.error('[check-firebase] ERROR:', error);
-    console.error(
-      '[check-firebase] Stack:',
-      error instanceof Error ? error.stack : 'No stack'
-    );
     return NextResponse.json(
       {
         cliInstalled: false,
         loggedIn: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : undefined,
       },
       { status: 500 }
     );
