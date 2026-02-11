@@ -1,7 +1,7 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  poweredBy: false,
+  poweredByHeader: false,
   reactStrictMode: true,
   async headers() {
     return [
