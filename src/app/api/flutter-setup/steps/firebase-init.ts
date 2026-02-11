@@ -8,6 +8,25 @@ import { copyTemplateFile, getTemplatePath } from '../template-utils';
 
 const execFileAsync = promisify(execFile);
 
+/**
+ * 子プロセスに渡す環境変数を必要最小限に絞る
+ * process.env を丸ごと渡すと、将来追加されるシークレット等が漏洩するリスクがある
+ */
+function getChildProcessEnv(
+  extra: Record<string, string> = {}
+): NodeJS.ProcessEnv {
+  const safeKeys = ['PATH', 'HOME', 'USER', 'SHELL', 'LANG', 'LC_ALL', 'TERM'];
+  const env: NodeJS.ProcessEnv = {
+    NODE_ENV: process.env.NODE_ENV,
+  };
+  for (const key of safeKeys) {
+    if (process.env[key]) {
+      env[key] = process.env[key];
+    }
+  }
+  return { ...env, ...extra };
+}
+
 function buildErrorMessage(error: unknown, toolLabel: string, hint?: string) {
   if (!error || typeof error !== 'object') {
     return `${toolLabel} の実行に失敗しました。${hint ?? ''}`.trim();
@@ -153,11 +172,10 @@ export async function runFirebaseInit({
         {
           cwd: fullOutputPath,
           timeout: 60000,
-          env: {
-            ...process.env,
+          env: getChildProcessEnv({
             FLUTTERFIRE_NON_INTERACTIVE: 'true',
             FLUTTERFIRE_YES: 'true',
-          },
+          }),
         }
       );
 
@@ -204,11 +222,10 @@ export async function runFirebaseInit({
         {
           cwd: fullOutputPath,
           timeout: 60000,
-          env: {
-            ...process.env,
+          env: getChildProcessEnv({
             FLUTTERFIRE_NON_INTERACTIVE: 'true',
             FLUTTERFIRE_YES: 'true',
-          },
+          }),
         }
       );
 
@@ -268,11 +285,10 @@ export async function runFirebaseInit({
         {
           cwd: fullOutputPath,
           timeout: 60000,
-          env: {
-            ...process.env,
+          env: getChildProcessEnv({
             FLUTTERFIRE_NON_INTERACTIVE: 'true',
             FLUTTERFIRE_YES: 'true',
-          },
+          }),
         }
       );
       updateProgress(
