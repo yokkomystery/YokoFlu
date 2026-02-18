@@ -31,7 +31,10 @@ function addFlavorBuildConfigurations(projectPath: string): boolean {
   let content = fs.readFileSync(projectPbxprojPath, 'utf8');
 
   // すでにFlavor設定がある場合はスキップ
-  if (content.includes('Debug-staging') || content.includes('Debug-production')) {
+  if (
+    content.includes('Debug-staging') ||
+    content.includes('Debug-production')
+  ) {
     console.log('ℹ️ Flavor configurations already exist');
     return true;
   }
@@ -136,7 +139,12 @@ function addFlavorBuildConfigurations(projectPath: string): boolean {
     /(249021D4217E4FDB00AE95B9 \/\* Profile \*\/ = \{[\s\S]*?isa = XCBuildConfiguration;[\s\S]*?baseConfigurationReference[\s\S]*?buildSettings = \{[\s\S]*?\};[\s\S]*?name = Profile;[\s\S]*?\};)/
   );
 
-  if (!projectDebugMatch || !projectReleaseMatch || !runnerDebugMatch || !runnerReleaseMatch) {
+  if (
+    !projectDebugMatch ||
+    !projectReleaseMatch ||
+    !runnerDebugMatch ||
+    !runnerReleaseMatch
+  ) {
     console.log('⚠️ Could not find base configuration sections');
     return false;
   }
@@ -162,7 +170,10 @@ function addFlavorBuildConfigurations(projectPath: string): boolean {
 
       if (projectBase) {
         const projectConfig = projectBase
-          .replace(/[0-9A-F]{24} \/\* \w+ \*\//, `${ids.project} /* ${configName} */`)
+          .replace(
+            /[0-9A-F]{24} \/\* \w+ \*\//,
+            `${ids.project} /* ${configName} */`
+          )
           .replace(/name = \w+;/, `name = "${configName}";`);
         newConfigurations += '\t\t' + projectConfig + '\n';
       }
@@ -180,7 +191,10 @@ function addFlavorBuildConfigurations(projectPath: string): boolean {
       if (runnerBase) {
         // Update baseConfigurationReference to point to flavor-specific xcconfig
         const runnerConfig = runnerBase
-          .replace(/[0-9A-F]{24} \/\* \w+ \*\//, `${ids.runner} /* ${configName} */`)
+          .replace(
+            /[0-9A-F]{24} \/\* \w+ \*\//,
+            `${ids.runner} /* ${configName} */`
+          )
           .replace(/name = \w+;/, `name = "${configName}";`)
           .replace(
             /baseConfigurationReference = [0-9A-F]{24} \/\* \w+\.xcconfig \*\/;/,
@@ -384,7 +398,10 @@ function createFlavorSchemes(projectPath: string, _appName: string): string[] {
 }
 
 // Podfileの更新（iOSデプロイメントターゲットとFlavor設定）
-function updatePodfile(projectPath: string, separateEnvironments: boolean = false) {
+function updatePodfile(
+  projectPath: string,
+  separateEnvironments: boolean = false
+) {
   const podfilePath = path.join(projectPath, 'ios', 'Podfile');
 
   if (fs.existsSync(podfilePath)) {
@@ -590,9 +607,13 @@ function removeCodeSignIdentityFromXcodeProject(projectPath: string) {
 
     if (projectContent !== originalContent) {
       fs.writeFileSync(projectPbxprojPath, projectContent);
-      console.log('✅ Removed CODE_SIGN_IDENTITY overrides from project.pbxproj');
+      console.log(
+        '✅ Removed CODE_SIGN_IDENTITY overrides from project.pbxproj'
+      );
     } else {
-      console.log('ℹ️ No CODE_SIGN_IDENTITY overrides found in project.pbxproj');
+      console.log(
+        'ℹ️ No CODE_SIGN_IDENTITY overrides found in project.pbxproj'
+      );
     }
     return projectPbxprojPath;
   } else {
@@ -695,9 +716,7 @@ function addBuildScriptToXcodeProject(
   }
 
   const encodedScript =
-    commands
-      .map((cmd) => cmd.replace(/"/g, '\\"'))
-      .join('\\n') + '\\n';
+    commands.map((cmd) => cmd.replace(/"/g, '\\"')).join('\\n') + '\\n';
 
   projectContent = projectContent.replace(
     runScriptRegex,
@@ -806,36 +825,54 @@ ENABLE_BITCODE = NO
 #include "Generated.xcconfig"
 #include "../Staging.xcconfig"
 `;
-    writeAndTrackFile(path.join(flutterDir, 'Debug.xcconfig'), flutterDebugContent);
+    writeAndTrackFile(
+      path.join(flutterDir, 'Debug.xcconfig'),
+      flutterDebugContent
+    );
 
     // Release（デフォルトでStagingを使用）
     const flutterReleaseContent = `#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"
 #include "Generated.xcconfig"
 #include "../Staging.xcconfig"
 `;
-    writeAndTrackFile(path.join(flutterDir, 'Release.xcconfig'), flutterReleaseContent);
+    writeAndTrackFile(
+      path.join(flutterDir, 'Release.xcconfig'),
+      flutterReleaseContent
+    );
 
     // Profile
     const flutterProfileContent = `#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"
 #include "Generated.xcconfig"
 #include "../Staging.xcconfig"
 `;
-    writeAndTrackFile(path.join(flutterDir, 'Profile.xcconfig'), flutterProfileContent);
+    writeAndTrackFile(
+      path.join(flutterDir, 'Profile.xcconfig'),
+      flutterProfileContent
+    );
 
     // 5. Flavor別のxcconfigファイル（Build Configuration用）
     const flavors = ['staging', 'production'];
     const bases = ['Debug', 'Release', 'Profile'];
 
     for (const flavor of flavors) {
-      const flavorConfig = flavor === 'staging' ? 'Staging.xcconfig' : 'Production.xcconfig';
+      const flavorConfig =
+        flavor === 'staging' ? 'Staging.xcconfig' : 'Production.xcconfig';
       for (const base of bases) {
         const configName = `${base}-${flavor}`;
-        const podsConfig = base === 'Debug' ? 'debug' : base === 'Release' ? 'release' : 'profile';
-        const content = `#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.${podsConfig}.xcconfig"
+        const podsBase =
+          base === 'Debug'
+            ? 'debug'
+            : base === 'Release'
+              ? 'release'
+              : 'profile';
+        const content = `#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.${podsBase}-${flavor}.xcconfig"
 #include "Generated.xcconfig"
 #include "../${flavorConfig}"
 `;
-        writeAndTrackFile(path.join(flutterDir, `${configName}.xcconfig`), content);
+        writeAndTrackFile(
+          path.join(flutterDir, `${configName}.xcconfig`),
+          content
+        );
       }
     }
 
