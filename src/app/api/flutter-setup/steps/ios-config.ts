@@ -6,21 +6,51 @@ export async function runIOSConfig(
   appName: string,
   fullOutputPath: string,
   separateEnvironments: boolean,
-  useFirebase: boolean
+  useFirebase: boolean,
+  useAdMob: boolean = false,
+  useATT: boolean = false,
+  selectedLanguages: string[] = ['ja', 'en']
 ): Promise<string[]> {
-  updateProgress('ios-config', 'iOS設定ファイルの作成', 'iOS設定ファイルを作成中...');
+  updateProgress(
+    'ios-config',
+    'iOS設定ファイルの作成',
+    'iOS設定ファイルを作成中...'
+  );
   try {
-    const files = createIOSConfigs(bundleId, appName, fullOutputPath, separateEnvironments, useFirebase);
+    const files = createIOSConfigs(
+      bundleId,
+      appName,
+      fullOutputPath,
+      separateEnvironments,
+      useFirebase,
+      useAdMob,
+      useATT,
+      selectedLanguages
+    );
     files.forEach((f) => addCreatedFile(f));
-    updateProgress('ios-config', '✅ iOS設定ファイルを作成しました', 'iOS設定ファイルを作成しました');
-    recordStepResult('ios-config', 'success', 'iOS設定ファイルを作成しました', { files });
+    updateProgress(
+      'ios-config',
+      '✅ iOS設定ファイルを作成しました',
+      'iOS設定ファイルを作成しました'
+    );
+    recordStepResult('ios-config', 'success', 'iOS設定ファイルを作成しました', {
+      files,
+    });
     return files;
   } catch (error) {
-    updateProgress('ios-config', '❌ iOS設定ファイルの作成に失敗しました', 'iOS設定ファイルの作成に失敗しました');
-    recordStepResult('ios-config', 'error', 'iOS設定ファイルの作成に失敗しました', {
-      error: error instanceof Error ? error.message : String(error),
-    });
+    updateProgress(
+      'ios-config',
+      '❌ iOS設定ファイルの作成に失敗しました',
+      'iOS設定ファイルの作成に失敗しました'
+    );
+    recordStepResult(
+      'ios-config',
+      'error',
+      'iOS設定ファイルの作成に失敗しました',
+      {
+        error: error instanceof Error ? error.message : String(error),
+      }
+    );
     throw error;
   }
 }
-

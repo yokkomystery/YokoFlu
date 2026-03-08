@@ -75,7 +75,17 @@ export const DEFAULT_TEMPLATE_FEATURE_IDS = TEMPLATE_FEATURE_OPTIONS.filter(
   (option) => option.defaultEnabled
 ).map((option) => option.id);
 
-export type LocalizationLanguageId = 'en' | 'ja';
+export type LocalizationLanguageId =
+  | 'en'
+  | 'ja'
+  | 'ko'
+  | 'zh_CN'
+  | 'zh_TW'
+  | 'es'
+  | 'fr'
+  | 'de'
+  | 'pt_BR'
+  | 'it';
 
 export interface LocalizationLanguageOption {
   id: LocalizationLanguageId;
@@ -84,6 +94,7 @@ export interface LocalizationLanguageOption {
   templatePath: string;
   outputFileName: string;
   defaultEnabled: boolean;
+  iosLprojDir: string;
 }
 
 export const LOCALIZATION_LANGUAGE_OPTIONS: LocalizationLanguageOption[] = [
@@ -94,6 +105,7 @@ export const LOCALIZATION_LANGUAGE_OPTIONS: LocalizationLanguageOption[] = [
     templatePath: 'localization/app_en.arb',
     outputFileName: 'app_en.arb',
     defaultEnabled: true,
+    iosLprojDir: 'en',
   },
   {
     id: 'ja',
@@ -102,6 +114,79 @@ export const LOCALIZATION_LANGUAGE_OPTIONS: LocalizationLanguageOption[] = [
     templatePath: 'localization/app_ja.arb',
     outputFileName: 'app_ja.arb',
     defaultEnabled: true,
+    iosLprojDir: 'ja',
+  },
+  {
+    id: 'ko',
+    label: '韓国語 (ko)',
+    description: '韓国語 UI 文言のテンプレートを生成します。',
+    templatePath: 'localization/app_ko.arb',
+    outputFileName: 'app_ko.arb',
+    defaultEnabled: false,
+    iosLprojDir: 'ko',
+  },
+  {
+    id: 'zh_CN',
+    label: '簡体字中国語 (zh-Hans)',
+    description: '簡体字中国語 UI 文言のテンプレートを生成します。',
+    templatePath: 'localization/app_zh_CN.arb',
+    outputFileName: 'app_zh_CN.arb',
+    defaultEnabled: false,
+    iosLprojDir: 'zh-Hans',
+  },
+  {
+    id: 'zh_TW',
+    label: '繁体字中国語 (zh-Hant)',
+    description: '繁体字中国語 UI 文言のテンプレートを生成します。',
+    templatePath: 'localization/app_zh_TW.arb',
+    outputFileName: 'app_zh_TW.arb',
+    defaultEnabled: false,
+    iosLprojDir: 'zh-Hant',
+  },
+  {
+    id: 'es',
+    label: 'スペイン語 (es)',
+    description: 'スペイン語 UI 文言のテンプレートを生成します。',
+    templatePath: 'localization/app_es.arb',
+    outputFileName: 'app_es.arb',
+    defaultEnabled: false,
+    iosLprojDir: 'es',
+  },
+  {
+    id: 'fr',
+    label: 'フランス語 (fr)',
+    description: 'フランス語 UI 文言のテンプレートを生成します。',
+    templatePath: 'localization/app_fr.arb',
+    outputFileName: 'app_fr.arb',
+    defaultEnabled: false,
+    iosLprojDir: 'fr',
+  },
+  {
+    id: 'de',
+    label: 'ドイツ語 (de)',
+    description: 'ドイツ語 UI 文言のテンプレートを生成します。',
+    templatePath: 'localization/app_de.arb',
+    outputFileName: 'app_de.arb',
+    defaultEnabled: false,
+    iosLprojDir: 'de',
+  },
+  {
+    id: 'pt_BR',
+    label: 'ポルトガル語 (pt-BR)',
+    description: 'ブラジルポルトガル語 UI 文言のテンプレートを生成します。',
+    templatePath: 'localization/app_pt_BR.arb',
+    outputFileName: 'app_pt_BR.arb',
+    defaultEnabled: false,
+    iosLprojDir: 'pt-BR',
+  },
+  {
+    id: 'it',
+    label: 'イタリア語 (it)',
+    description: 'イタリア語 UI 文言のテンプレートを生成します。',
+    templatePath: 'localization/app_it.arb',
+    outputFileName: 'app_it.arb',
+    defaultEnabled: false,
+    iosLprojDir: 'it',
   },
 ];
 

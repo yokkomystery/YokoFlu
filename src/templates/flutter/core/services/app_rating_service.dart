@@ -25,10 +25,10 @@ class AppRatingService {
   static const int _laterIntervalDays = 14;
   static const int _completedIntervalDays = 120;
 
-  // TODO: 実際のアプリIDに置き換えてください
+  // リリース時に release-toolkit Phase 10 で自動差し替え
   static const String _iosAppStoreId = 'YOUR_IOS_APP_STORE_ID';
-  static const String _androidPackageName = 'com.example.yourapp';
-  static const String _androidListingId = 'YOUR_ANDROID_LISTING_ID';
+  static const String _androidPackageName = '__PACKAGE_NAME__';
+  static const String _androidListingId = '__PACKAGE_NAME__';
 
   final SharedPreferences _prefs;
   final InAppReview _inAppReview = InAppReview.instance;

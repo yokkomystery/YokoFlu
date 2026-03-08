@@ -732,13 +732,204 @@ function addBuildScriptToXcodeProject(
   return projectPbxprojPath;
 }
 
+// InfoPlist.strings のローカライズファイルを生成し、pbxproj を更新
+function addLocalizationToPbxproj(
+  projectPath: string,
+  selectedLanguages: string[]
+) {
+  const projectPbxprojPath = path.join(
+    projectPath,
+    'ios',
+    'Runner.xcodeproj',
+    'project.pbxproj'
+  );
+
+  if (!fs.existsSync(projectPbxprojPath)) {
+    console.log('⚠️ project.pbxproj not found, skipping localization setup');
+    return [];
+  }
+
+  // 言語IDとiOS lproj ディレクトリ名のマッピング
+  const langToLprojDir: Record<string, string> = {
+    en: 'en',
+    ja: 'ja',
+    ko: 'ko',
+    zh_CN: 'zh-Hans',
+    zh_TW: 'zh-Hant',
+    es: 'es',
+    fr: 'fr',
+    de: 'de',
+    pt_BR: 'pt-BR',
+    it: 'it',
+  };
+
+  // 言語IDとknownRegions用の値のマッピング
+  const langToKnownRegion: Record<string, string> = {
+    en: 'en',
+    ja: 'ja',
+    ko: 'ko',
+    zh_CN: 'zh-Hans',
+    zh_TW: 'zh-Hant',
+    es: 'es',
+    fr: 'fr',
+    de: 'de',
+    pt_BR: 'pt-BR',
+    it: 'it',
+  };
+
+  const createdFiles: string[] = [];
+  const runnerDir = path.join(projectPath, 'ios', 'Runner');
+
+  // 1. 各言語の .lproj/InfoPlist.strings をテンプレートからコピー
+  for (const lang of selectedLanguages) {
+    const lprojDir = langToLprojDir[lang];
+    if (!lprojDir) continue;
+
+    const lprojPath = path.join(runnerDir, `${lprojDir}.lproj`);
+    if (!fs.existsSync(lprojPath)) {
+      fs.mkdirSync(lprojPath, { recursive: true });
+    }
+
+    const infoPlistStringsPath = path.join(lprojPath, 'InfoPlist.strings');
+    const templatePath = getTemplatePath(`ios/lproj/${lprojDir}.strings`);
+
+    if (fs.existsSync(templatePath)) {
+      const content = fs.readFileSync(templatePath, 'utf8');
+      fs.writeFileSync(infoPlistStringsPath, content);
+      createdFiles.push(infoPlistStringsPath);
+      console.log(`✅ Created ${lprojDir}.lproj/InfoPlist.strings`);
+    } else {
+      console.log(`⚠️ Template not found: ${templatePath}`);
+    }
+  }
+
+  // 2. project.pbxproj を更新
+  let content = fs.readFileSync(projectPbxprojPath, 'utf8');
+
+  // すでにInfoPlist.strings関連のエントリがあるかチェック
+  if (content.includes('InfoPlist.strings')) {
+    console.log('ℹ️ InfoPlist.strings already configured in pbxproj');
+    return createdFiles;
+  }
+
+  // ID生成
+  const variantGroupId = generateXcodeId();
+  const buildFileId = generateXcodeId();
+  const fileRefIds: Record<string, string> = {};
+  for (const lang of selectedLanguages) {
+    const lprojDir = langToLprojDir[lang];
+    if (lprojDir) {
+      fileRefIds[lprojDir] = generateXcodeId();
+    }
+  }
+
+  // PBXBuildFile セクションに追加
+  const buildFileEntry = `\t\t${buildFileId} /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = ${variantGroupId} /* InfoPlist.strings */; };\n`;
+  content = content.replace(
+    '/* End PBXBuildFile section */',
+    buildFileEntry + '/* End PBXBuildFile section */'
+  );
+
+  // PBXFileReference セクションに追加
+  let fileRefEntries = '';
+  for (const lang of selectedLanguages) {
+    const lprojDir = langToLprojDir[lang];
+    if (!lprojDir || !fileRefIds[lprojDir]) continue;
+    fileRefEntries += `\t\t${fileRefIds[lprojDir]} /* ${lprojDir} */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ${lprojDir}; path = ${lprojDir}.lproj/InfoPlist.strings; sourceTree = "<group>"; };\n`;
+  }
+  content = content.replace(
+    '/* End PBXFileReference section */',
+    fileRefEntries + '/* End PBXFileReference section */'
+  );
+
+  // PBXVariantGroup セクションに追加
+  let variantGroupChildren = '';
+  for (const lang of selectedLanguages) {
+    const lprojDir = langToLprojDir[lang];
+    if (!lprojDir || !fileRefIds[lprojDir]) continue;
+    variantGroupChildren += `\t\t\t\t${fileRefIds[lprojDir]} /* ${lprojDir} */,\n`;
+  }
+  const variantGroupEntry = `\t\t${variantGroupId} /* InfoPlist.strings */ = {\n\t\t\tisa = PBXVariantGroup;\n\t\t\tchildren = (\n${variantGroupChildren}\t\t\t);\n\t\t\tname = InfoPlist.strings;\n\t\t\tsourceTree = "<group>";\n\t\t};\n`;
+
+  // PBXVariantGroupセクションが存在するかチェック
+  if (content.includes('/* End PBXVariantGroup section */')) {
+    content = content.replace(
+      '/* End PBXVariantGroup section */',
+      variantGroupEntry + '/* End PBXVariantGroup section */'
+    );
+  } else {
+    // PBXVariantGroupセクションがない場合は作成
+    content = content.replace(
+      '/* End PBXGroup section */',
+      '/* End PBXGroup section */\n\n/* Begin PBXVariantGroup section */\n' +
+        variantGroupEntry +
+        '/* End PBXVariantGroup section */'
+    );
+  }
+
+  // Runner グループの children に追加
+  const runnerGroupMatch = content.match(
+    /(97C146F01CF9000F007C117D \/\* Runner \*\/ = \{[\s\S]*?children = \()([\s\S]*?)(\);[\s\S]*?path = Runner;)/
+  );
+  if (runnerGroupMatch) {
+    content = content.replace(
+      runnerGroupMatch[0],
+      runnerGroupMatch[1] +
+        runnerGroupMatch[2] +
+        `\t\t\t\t${variantGroupId} /* InfoPlist.strings */,\n` +
+        runnerGroupMatch[3]
+    );
+  }
+
+  // Resources ビルドフェーズに追加
+  const resourcesPhaseMatch = content.match(
+    /(97C146F31CF9000F007C117D \/\* Resources \*\/ = \{[\s\S]*?files = \()([\s\S]*?)(\);)/
+  );
+  if (resourcesPhaseMatch) {
+    content = content.replace(
+      resourcesPhaseMatch[0],
+      resourcesPhaseMatch[1] +
+        resourcesPhaseMatch[2] +
+        `\t\t\t\t${buildFileId} /* InfoPlist.strings in Resources */,\n` +
+        resourcesPhaseMatch[3]
+    );
+  }
+
+  // knownRegions の更新
+  const knownRegionsMatch = content.match(/(knownRegions = \()([\s\S]*?)(\);)/);
+  if (knownRegionsMatch) {
+    const existingRegions = knownRegionsMatch[2];
+    let newRegions = existingRegions;
+    for (const lang of selectedLanguages) {
+      const region = langToKnownRegion[lang];
+      if (region && !existingRegions.includes(`"${region}"`)) {
+        newRegions += `\t\t\t\t"${region}",\n`;
+      }
+    }
+    if (newRegions !== existingRegions) {
+      content = content.replace(
+        knownRegionsMatch[0],
+        knownRegionsMatch[1] + newRegions + knownRegionsMatch[3]
+      );
+    }
+  }
+
+  fs.writeFileSync(projectPbxprojPath, content);
+  console.log('✅ Updated project.pbxproj with localization entries');
+
+  return createdFiles;
+}
+
 // iOS設定ファイルの作成
 function createIOSConfigs(
   bundleId: string,
   appName: string,
   projectPath: string,
   separateEnvironments: boolean = true,
-  useFirebase: boolean = false
+  useFirebase: boolean = false,
+  useAdMob: boolean = false,
+  useATT: boolean = false,
+  selectedLanguages: string[] = ['ja', 'en']
 ) {
   const createdFiles: string[] = [];
   const replacements = {
@@ -948,9 +1139,19 @@ ENABLE_BITCODE = NO
   const infoPlistPath = path.join(runnerDir, 'Info.plist');
   const infoPlistTemplatePath = getTemplatePath('ios/Info.plist');
   if (fs.existsSync(infoPlistTemplatePath)) {
-    copyTemplateFile(infoPlistTemplatePath, infoPlistPath, replacements);
+    copyTemplateFile(infoPlistTemplatePath, infoPlistPath, replacements, {
+      ADMOB_ENABLED: useAdMob,
+      ATT_ENABLED: useATT,
+    });
     recordCreatedFile(infoPlistPath);
   }
+
+  // InfoPlist.strings のローカライズ生成 + pbxproj更新
+  const localizationFiles = addLocalizationToPbxproj(
+    projectPath,
+    selectedLanguages
+  );
+  localizationFiles.forEach((f) => recordCreatedFile(f));
 
   console.log('✅ iOS configuration files created');
   return createdFiles;

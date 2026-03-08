@@ -257,6 +257,14 @@ export interface Translations {
   languageOptions: {
     en: { label: string; description: string };
     ja: { label: string; description: string };
+    ko: { label: string; description: string };
+    zh_CN: { label: string; description: string };
+    zh_TW: { label: string; description: string };
+    es: { label: string; description: string };
+    fr: { label: string; description: string };
+    de: { label: string; description: string };
+    pt_BR: { label: string; description: string };
+    it: { label: string; description: string };
   };
   templateFeatures: {
     settingsScreen: { label: string; description: string };
@@ -675,6 +683,38 @@ export const translations: Record<Locale, Translations> = {
       ja: {
         label: '日本語 (ja)',
         description: '日本語 UI 文言のテンプレートを生成します。',
+      },
+      ko: {
+        label: '韓国語 (ko)',
+        description: '韓国語 UI 文言のテンプレートを生成します。',
+      },
+      zh_CN: {
+        label: '簡体字中国語 (zh-Hans)',
+        description: '簡体字中国語 UI 文言のテンプレートを生成します。',
+      },
+      zh_TW: {
+        label: '繁体字中国語 (zh-Hant)',
+        description: '繁体字中国語 UI 文言のテンプレートを生成します。',
+      },
+      es: {
+        label: 'スペイン語 (es)',
+        description: 'スペイン語 UI 文言のテンプレートを生成します。',
+      },
+      fr: {
+        label: 'フランス語 (fr)',
+        description: 'フランス語 UI 文言のテンプレートを生成します。',
+      },
+      de: {
+        label: 'ドイツ語 (de)',
+        description: 'ドイツ語 UI 文言のテンプレートを生成します。',
+      },
+      pt_BR: {
+        label: 'ポルトガル語 (pt-BR)',
+        description: 'ブラジルポルトガル語 UI 文言のテンプレートを生成します。',
+      },
+      it: {
+        label: 'イタリア語 (it)',
+        description: 'イタリア語 UI 文言のテンプレートを生成します。',
       },
     },
     templateFeatures: {
@@ -1096,6 +1136,38 @@ export const translations: Record<Locale, Translations> = {
       ja: {
         label: 'Japanese (ja)',
         description: 'Generate Japanese UI text templates.',
+      },
+      ko: {
+        label: 'Korean (ko)',
+        description: 'Generate Korean UI text templates.',
+      },
+      zh_CN: {
+        label: 'Simplified Chinese (zh-Hans)',
+        description: 'Generate Simplified Chinese UI text templates.',
+      },
+      zh_TW: {
+        label: 'Traditional Chinese (zh-Hant)',
+        description: 'Generate Traditional Chinese UI text templates.',
+      },
+      es: {
+        label: 'Spanish (es)',
+        description: 'Generate Spanish UI text templates.',
+      },
+      fr: {
+        label: 'French (fr)',
+        description: 'Generate French UI text templates.',
+      },
+      de: {
+        label: 'German (de)',
+        description: 'Generate German UI text templates.',
+      },
+      pt_BR: {
+        label: 'Portuguese (pt-BR)',
+        description: 'Generate Brazilian Portuguese UI text templates.',
+      },
+      it: {
+        label: 'Italian (it)',
+        description: 'Generate Italian UI text templates.',
       },
     },
     templateFeatures: {

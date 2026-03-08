@@ -202,12 +202,17 @@ export async function POST(request: NextRequest) {
     );
 
     // Step 6: iOS設定ファイルの作成（分割）
+    const useAdMob = normalizedAdvancedFeatures.includes('admob-ads');
+    const useATT = normalizedAdvancedFeatures.includes('att-tracking');
     await runIOSConfig(
       bundleId,
       appName,
       fullOutputPath,
       separateEnvironments,
-      useFirebase
+      useFirebase,
+      useAdMob,
+      useATT,
+      normalizedLocalizationLanguages
     );
 
     // Step 7: Android設定ファイルの作成（分割）
@@ -215,7 +220,8 @@ export async function POST(request: NextRequest) {
       packageName,
       appName,
       fullOutputPath,
-      separateEnvironments
+      separateEnvironments,
+      useAdMob
     );
 
     // Step 8: 多言語対応の設定（分割）
