@@ -1,0 +1,358 @@
+{
+  "@@locale": "zh_TW",
+  "settingsScreenTitle": "設定",
+  "@settingsScreenTitle": {
+    "description": "Title for the settings screen"
+  },
+  "settingsGeneralSectionTitle": "一般",
+  "@settingsGeneralSectionTitle": {
+    "description": "Title for the general section in settings"
+  },
+  "settingsThemeSettingListTileTitle": "主題",
+  "@settingsThemeSettingListTileTitle": {
+    "description": "Title for theme setting in settings"
+  },
+  "settingsNotificationSettingListTileTitle": "通知",
+  "@settingsNotificationSettingListTileTitle": {
+    "description": "Title for notification setting in settings"
+  },
+  "settingsSelectThemeDialogTitle": "選擇主題",
+  "@settingsSelectThemeDialogTitle": {
+    "description": "Title for theme selection dialog"
+  },
+  "settingsThemeLightMode": "淺色模式",
+  "@settingsThemeLightMode": {
+    "description": "Light mode option"
+  },
+  "settingsThemeDarkMode": "深色模式",
+  "@settingsThemeDarkMode": {
+    "description": "Dark mode option"
+  },
+  "settingsThemeSystemMode": "系統預設",
+  "@settingsThemeSystemMode": {
+    "description": "System default theme option"
+  },
+  "settingsSupportSectionTitle": "支援",
+  "@settingsSupportSectionTitle": {
+    "description": "Title for support section"
+  },
+  "settingsTermsOfServiceListTileTitle": "服務條款",
+  "@settingsTermsOfServiceListTileTitle": {
+    "description": "Terms of service menu item"
+  },
+  "settingsPrivacyPolicyListTileTitle": "隱私權政策",
+  "@settingsPrivacyPolicyListTileTitle": {
+    "description": "Privacy policy menu item"
+  },
+  "settingsContactUsListTileTitle": "聯絡我們",
+  "@settingsContactUsListTileTitle": {
+    "description": "Contact us menu item"
+  },
+  "settingsAboutSectionTitle": "關於",
+  "@settingsAboutSectionTitle": {
+    "description": "Title for about section"
+  },
+  "settingsAboutAppListTileTitle": "關於此應用程式",
+  "@settingsAboutAppListTileTitle": {
+    "description": "About app menu item"
+  },
+  "settingsLicensesListTileTitle": "開放原始碼授權",
+  "@settingsLicensesListTileTitle": {
+    "description": "Licenses menu item"
+  },
+  "settingsButtonLabelCancel": "取消",
+  "@settingsButtonLabelCancel": {
+    "description": "Cancel button label"
+  },
+  "settingsEmailSubjectContactUs": "[{appName}] 聯絡我們",
+  "@settingsEmailSubjectContactUs": {
+    "description": "Email subject for contact us",
+    "placeholders": {
+      "appName": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsEmailBodyContactUsWithoutUserIdNew": "作業系統：{osVersion}\n應用程式版本：{appVersion}\n裝置：{deviceModel}\n語言：{locale}",
+  "@settingsEmailBodyContactUsWithoutUserIdNew": {
+    "description": "Email body for contact us without user ID",
+    "placeholders": {
+      "osVersion": {
+        "type": "String"
+      },
+      "appVersion": {
+        "type": "String"
+      },
+      "deviceModel": {
+        "type": "String"
+      },
+      "locale": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSnackbarCannotLaunchEmail": "無法開啟電子郵件應用程式。",
+  "@settingsSnackbarCannotLaunchEmail": {
+    "description": "Error message when email app cannot be launched"
+  },
+  "rateAppTitle": "為應用程式評分",
+  "@rateAppTitle": {
+    "description": "Rate app menu item"
+  },
+  "cannotOpenStoreErrorSnackbar": "無法開啟商店。",
+  "@cannotOpenStoreErrorSnackbar": {
+    "description": "Error message when store cannot be opened"
+  },
+  "updateRequiredTitle": "需要更新",
+  "@updateRequiredTitle": {
+    "description": "Title for forced update dialog"
+  },
+  "updateRequiredBody": "需要更新至最新版本才能繼續使用。請更新應用程式。",
+  "@updateRequiredBody": {
+    "description": "Message for forced update dialog"
+  },
+  "updateButton": "更新",
+  "@updateButton": {
+    "description": "Update button label"
+  },
+  "updateAvailableTitle": "有可用更新",
+  "@updateAvailableTitle": {
+    "description": "Title for recommended update dialog"
+  },
+  "updateAvailableBody": "有新版本可供使用。要立即更新嗎？",
+  "@updateAvailableBody": {
+    "description": "Message for recommended update dialog"
+  },
+  "laterButton": "稍後",
+  "@laterButton": {
+    "description": "Later button label for update dialog"
+  },
+  "maintenanceTitleDefault": "維護中",
+  "@maintenanceTitleDefault": {
+    "description": "Default title for maintenance dialog"
+  },
+  "maintenanceMessageDefault": "應用程式正在維護中，請稍後再試。",
+  "@maintenanceMessageDefault": {
+    "description": "Default message for maintenance dialog"
+  },
+  "homeTabLabel": "首頁",
+  "@homeTabLabel": {
+    "description": "Label for the Home tab"
+  },
+  "homePlaceholderTitle": "歡迎使用您的新 Flutter 應用程式",
+  "@homePlaceholderTitle": {
+    "description": "Title shown on the default home placeholder"
+  },
+  "homePlaceholderDescription": "利用此空間建構儀表板或時間軸。",
+  "@homePlaceholderDescription": {
+    "description": "Description shown on the default home placeholder"
+  },
+  "homePlaceholderActionLabel": "新增您的第一個小工具",
+  "@homePlaceholderActionLabel": {
+    "description": "Label for the call-to-action button on the home placeholder"
+  },
+  "homePlaceholderActionHint": "開啟 lib/main.dart，將 HomeTabPlaceholder 替換為您的實際內容。",
+  "@homePlaceholderActionHint": {
+    "description": "Snack bar hint shown when the placeholder action is tapped"
+  },
+  "settingsAuthSectionTitle": "帳號驗證",
+  "@settingsAuthSectionTitle": {
+    "description": "Title for authentication section in settings"
+  },
+  "authScreenTitle": "登入",
+  "@authScreenTitle": {
+    "description": "Title for authentication screen"
+  },
+  "authScreenSubtitle": "登入以使用所有功能",
+  "@authScreenSubtitle": {
+    "description": "Subtitle for authentication screen"
+  },
+  "signIn": "登入",
+  "@signIn": {
+    "description": "Sign in button label"
+  },
+  "signInSubtitle": "登入以同步您的資料",
+  "@signInSubtitle": {
+    "description": "Sign in subtitle in settings"
+  },
+  "signInWithGoogle": "使用 Google 登入",
+  "@signInWithGoogle": {
+    "description": "Google sign in button label"
+  },
+  "signInWithApple": "使用 Apple 登入",
+  "@signInWithApple": {
+    "description": "Apple sign in button label"
+  },
+  "signInAnonymously": "以訪客身分繼續",
+  "@signInAnonymously": {
+    "description": "Anonymous sign in button label"
+  },
+  "skipSignIn": "暫時略過",
+  "@skipSignIn": {
+    "description": "Skip sign in button label"
+  },
+  "signInSuccessful": "登入成功",
+  "@signInSuccessful": {
+    "description": "Success message after signing in"
+  },
+  "signInFailed": "登入失敗",
+  "@signInFailed": {
+    "description": "Error message when sign in fails"
+  },
+  "signOut": "登出",
+  "@signOut": {
+    "description": "Sign out button label"
+  },
+  "signOutConfirmTitle": "登出",
+  "@signOutConfirmTitle": {
+    "description": "Title for sign out confirmation dialog"
+  },
+  "signOutConfirmMessage": "確定要登出嗎？",
+  "@signOutConfirmMessage": {
+    "description": "Message for sign out confirmation dialog"
+  },
+  "signOutSuccessful": "已登出",
+  "@signOutSuccessful": {
+    "description": "Success message after signing out"
+  },
+  "signOutFailed": "登出失敗",
+  "@signOutFailed": {
+    "description": "Error message when sign out fails"
+  },
+  "deleteAccount": "刪除帳號",
+  "@deleteAccount": {
+    "description": "Delete account button label"
+  },
+  "deleteAccountConfirmTitle": "刪除帳號",
+  "@deleteAccountConfirmTitle": {
+    "description": "Title for delete account confirmation dialog"
+  },
+  "deleteAccountConfirmMessage": "確定要刪除您的帳號嗎？此操作無法復原。",
+  "@deleteAccountConfirmMessage": {
+    "description": "Message for delete account confirmation dialog"
+  },
+  "deleteAccountConfirmCheckbox": "我已了解上述內容",
+  "@deleteAccountConfirmCheckbox": {
+    "description": "Label for account deletion confirmation checkbox"
+  },
+  "deleteAccountWarningNonAnonymous": "警告：刪除帳號將永久移除所有資料。此操作無法復原。",
+  "@deleteAccountWarningNonAnonymous": {
+    "description": "Warning message for non-anonymous user account deletion"
+  },
+  "deleteAccountSuccessful": "帳號已成功刪除",
+  "@deleteAccountSuccessful": {
+    "description": "Success message after deleting account"
+  },
+  "deleteAccountFailed": "帳號刪除失敗",
+  "@deleteAccountFailed": {
+    "description": "Error message when account deletion fails"
+  },
+  "anonymousUser": "訪客使用者",
+  "@anonymousUser": {
+    "description": "Label for anonymous user"
+  },
+  "noEmail": "無電子郵件地址",
+  "@noEmail": {
+    "description": "Label when user has no email"
+  },
+  "upgradeAccount": "升級帳號",
+  "@upgradeAccount": {
+    "description": "Upgrade account button label"
+  },
+  "upgradeAccountSubtitle": "連結 Google 或 Apple 帳號",
+  "@upgradeAccountSubtitle": {
+    "description": "Subtitle for upgrade account option"
+  },
+  "cancel": "取消",
+  "@cancel": {
+    "description": "Cancel button label"
+  },
+  "networkError": "網路錯誤，請確認連線狀態後再試。",
+  "@networkError": {
+    "description": "Error message for network errors"
+  },
+  "accountDisabled": "此帳號已被停用",
+  "@accountDisabled": {
+    "description": "Error message when account is disabled"
+  },
+  "accountExistsWithDifferentCredential": "已存在使用其他登入方式註冊的帳號",
+  "@accountExistsWithDifferentCredential": {
+    "description": "Error message when account exists with different credential"
+  },
+  "notificationSettingsTitle": "通知設定",
+  "@notificationSettingsTitle": {
+    "description": "Title for notification settings screen"
+  },
+  "notificationSettingsAllTitle": "所有通知",
+  "@notificationSettingsAllTitle": {
+    "description": "Title for all notifications toggle"
+  },
+  "notificationSettingsAllSubtitle": "一次開啟或關閉所有通知",
+  "@notificationSettingsAllSubtitle": {
+    "description": "Subtitle for all notifications toggle"
+  },
+  "notificationSettingsTypeSectionTitle": "通知類型",
+  "@notificationSettingsTypeSectionTitle": {
+    "description": "Title for notification types section"
+  },
+  "notificationSettingsMessageTitle": "訊息",
+  "@notificationSettingsMessageTitle": {
+    "description": "Title for message notification setting"
+  },
+  "notificationSettingsMessageSubtitle": "收到新訊息時通知",
+  "@notificationSettingsMessageSubtitle": {
+    "description": "Subtitle for message notification setting"
+  },
+  "notificationSettingsLikeTitle": "按讚",
+  "@notificationSettingsLikeTitle": {
+    "description": "Title for like notification setting"
+  },
+  "notificationSettingsLikeSubtitle": "有人對您的貼文按讚時通知",
+  "@notificationSettingsLikeSubtitle": {
+    "description": "Subtitle for like notification setting"
+  },
+  "notificationSettingsCommentTitle": "留言",
+  "@notificationSettingsCommentTitle": {
+    "description": "Title for comment notification setting"
+  },
+  "notificationSettingsCommentSubtitle": "有人在您的貼文留言時通知",
+  "@notificationSettingsCommentSubtitle": {
+    "description": "Subtitle for comment notification setting"
+  },
+  "notificationSettingsFollowTitle": "追蹤者",
+  "@notificationSettingsFollowTitle": {
+    "description": "Title for follow notification setting"
+  },
+  "notificationSettingsFollowSubtitle": "有新追蹤者時通知",
+  "@notificationSettingsFollowSubtitle": {
+    "description": "Subtitle for follow notification setting"
+  },
+  "notificationSettingsSystemSectionTitle": "系統",
+  "@notificationSettingsSystemSectionTitle": {
+    "description": "Title for system notification section"
+  },
+  "notificationSettingsSystemTitle": "系統通知",
+  "@notificationSettingsSystemTitle": {
+    "description": "Title for system notification setting"
+  },
+  "notificationSettingsSystemSubtitle": "重要公告及更新通知",
+  "@notificationSettingsSystemSubtitle": {
+    "description": "Subtitle for system notification setting"
+  },
+  "notificationSettingsUpdateFailed": "設定更新失敗",
+  "@notificationSettingsUpdateFailed": {
+    "description": "Error message when notification settings update fails"
+  },
+  "notificationPermissionDeniedTitle": "通知已關閉",
+  "@notificationPermissionDeniedTitle": {
+    "description": "Title for notification permission denied dialog"
+  },
+  "notificationPermissionDeniedMessage": "若要接收通知，請在裝置設定中開啟通知。",
+  "@notificationPermissionDeniedMessage": {
+    "description": "Message for notification permission denied dialog"
+  },
+  "notificationOpenSettings": "開啟設定",
+  "@notificationOpenSettings": {
+    "description": "Button label for opening device settings"
+  }
+}

@@ -40,7 +40,7 @@ const LocalizationSelector: React.FC<Props> = ({
       <p className="text-xs text-yellow-400 mb-3">
         ⚠️ <strong>{t.common2.required}</strong>: {t.localization.requirement}
       </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
         {LOCALIZATION_LANGUAGE_OPTIONS.map((language) => {
           const isChecked = selected?.includes(language.id) ?? false;
           const isJaOrEn = language.id === 'ja' || language.id === 'en';

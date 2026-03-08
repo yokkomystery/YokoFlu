@@ -6,8 +6,14 @@ ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 project 'Runner', {
   'Debug' => :debug,
+  'Debug-staging' => :debug,
+  'Debug-production' => :debug,
   'Profile' => :release,
+  'Profile-staging' => :release,
+  'Profile-production' => :release,
   'Release' => :release,
+  'Release-staging' => :release,
+  'Release-production' => :release,
 }
 
 def flutter_root
@@ -37,9 +43,15 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
-    # iOS deployment targetを14.0以上に設定
     target.build_configurations.each do |config|
+      # iOS deployment targetを14.0以上に設定
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
+
+      # Speed up C++ heavy pods (gRPC, BoringSSL, abseil) in Debug builds
+      if config.name.start_with?('Debug')
+        config.build_settings['GCC_OPTIMIZATION_LEVEL'] ||= '0'
+        config.build_settings['SWIFT_OPTIMIZATION_LEVEL'] ||= '-Onone'
+      end
     end
   end
 end

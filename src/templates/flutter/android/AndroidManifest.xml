@@ -3,6 +3,11 @@
         android:label="@string/app_name"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+{{#ADMOB_ENABLED}}
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="YOUR_ADMOB_APP_ID" />
+{{/ADMOB_ENABLED}}
         <activity
             android:name=".MainActivity"
             android:exported="true"

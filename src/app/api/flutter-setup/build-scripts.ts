@@ -206,6 +206,11 @@ export function createProviderFiles(
     ko: "Locale('ko'), // 韓国語",
     zh_CN: "Locale('zh', 'CN'), // 簡体字中国語",
     zh_TW: "Locale('zh', 'TW'), // 繁体字中国語",
+    es: "Locale('es'), // スペイン語",
+    fr: "Locale('fr'), // フランス語",
+    de: "Locale('de'), // ドイツ語",
+    pt_BR: "Locale('pt', 'BR'), // ポルトガル語(BR)",
+    it: "Locale('it'), // イタリア語",
   };
 
   const supportedLocalesList = selectedLanguages
@@ -251,6 +256,11 @@ export function updateMainDart(
     ko: "Locale('ko'), // 韓国語",
     zh_CN: "Locale('zh', 'CN'), // 簡体字中国語",
     zh_TW: "Locale('zh', 'TW'), // 繁体字中国語",
+    es: "Locale('es'), // スペイン語",
+    fr: "Locale('fr'), // フランス語",
+    de: "Locale('de'), // ドイツ語",
+    pt_BR: "Locale('pt', 'BR'), // ポルトガル語(BR)",
+    it: "Locale('it'), // イタリア語",
   };
 
   const supportedLocalesList = selectedLanguages

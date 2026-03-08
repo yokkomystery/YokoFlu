@@ -7,7 +7,8 @@ function createAndroidConfigs(
   packageName: string,
   appName: string,
   projectPath: string,
-  separateEnvironments: boolean = true
+  separateEnvironments: boolean = true,
+  useAdMob: boolean = false
 ) {
   const buildGradlePath = path.join(
     projectPath,
@@ -251,9 +252,18 @@ function createAndroidConfigs(
     'main',
     'AndroidManifest.xml'
   );
-  const androidManifestTemplatePath = getTemplatePath('android/AndroidManifest.xml');
+  const androidManifestTemplatePath = getTemplatePath(
+    'android/AndroidManifest.xml'
+  );
   if (fs.existsSync(androidManifestTemplatePath)) {
-    copyTemplateFile(androidManifestTemplatePath, androidManifestPath, {});
+    copyTemplateFile(
+      androidManifestTemplatePath,
+      androidManifestPath,
+      {},
+      {
+        ADMOB_ENABLED: useAdMob,
+      }
+    );
     createdFiles.push(androidManifestPath);
   }
 
@@ -264,7 +274,8 @@ export async function runAndroidConfig(
   packageName: string,
   appName: string,
   fullOutputPath: string,
-  separateEnvironments: boolean
+  separateEnvironments: boolean,
+  useAdMob: boolean = false
 ): Promise<string[]> {
   updateProgress(
     'android-config',
@@ -276,7 +287,8 @@ export async function runAndroidConfig(
       packageName,
       appName,
       fullOutputPath,
-      separateEnvironments
+      separateEnvironments,
+      useAdMob
     );
     files.forEach((f) => addCreatedFile(f));
     updateProgress(

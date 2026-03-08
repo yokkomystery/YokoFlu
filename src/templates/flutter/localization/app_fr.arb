@@ -1,0 +1,358 @@
+{
+  "@@locale": "fr",
+  "settingsScreenTitle": "Paramètres",
+  "@settingsScreenTitle": {
+    "description": "Title for the settings screen"
+  },
+  "settingsGeneralSectionTitle": "Général",
+  "@settingsGeneralSectionTitle": {
+    "description": "Title for the general section in settings"
+  },
+  "settingsThemeSettingListTileTitle": "Thème",
+  "@settingsThemeSettingListTileTitle": {
+    "description": "Title for theme setting in settings"
+  },
+  "settingsNotificationSettingListTileTitle": "Notifications",
+  "@settingsNotificationSettingListTileTitle": {
+    "description": "Title for notification setting in settings"
+  },
+  "settingsSelectThemeDialogTitle": "Choisir un thème",
+  "@settingsSelectThemeDialogTitle": {
+    "description": "Title for theme selection dialog"
+  },
+  "settingsThemeLightMode": "Mode clair",
+  "@settingsThemeLightMode": {
+    "description": "Light mode option"
+  },
+  "settingsThemeDarkMode": "Mode sombre",
+  "@settingsThemeDarkMode": {
+    "description": "Dark mode option"
+  },
+  "settingsThemeSystemMode": "Par défaut du système",
+  "@settingsThemeSystemMode": {
+    "description": "System default theme option"
+  },
+  "settingsSupportSectionTitle": "Assistance",
+  "@settingsSupportSectionTitle": {
+    "description": "Title for support section"
+  },
+  "settingsTermsOfServiceListTileTitle": "Conditions d'utilisation",
+  "@settingsTermsOfServiceListTileTitle": {
+    "description": "Terms of service menu item"
+  },
+  "settingsPrivacyPolicyListTileTitle": "Politique de confidentialité",
+  "@settingsPrivacyPolicyListTileTitle": {
+    "description": "Privacy policy menu item"
+  },
+  "settingsContactUsListTileTitle": "Nous contacter",
+  "@settingsContactUsListTileTitle": {
+    "description": "Contact us menu item"
+  },
+  "settingsAboutSectionTitle": "À propos",
+  "@settingsAboutSectionTitle": {
+    "description": "Title for about section"
+  },
+  "settingsAboutAppListTileTitle": "À propos de cette app",
+  "@settingsAboutAppListTileTitle": {
+    "description": "About app menu item"
+  },
+  "settingsLicensesListTileTitle": "Licences open source",
+  "@settingsLicensesListTileTitle": {
+    "description": "Licenses menu item"
+  },
+  "settingsButtonLabelCancel": "Annuler",
+  "@settingsButtonLabelCancel": {
+    "description": "Cancel button label"
+  },
+  "settingsEmailSubjectContactUs": "[{appName}] Nous contacter",
+  "@settingsEmailSubjectContactUs": {
+    "description": "Email subject for contact us",
+    "placeholders": {
+      "appName": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsEmailBodyContactUsWithoutUserIdNew": "OS : {osVersion}\nVersion de l'app : {appVersion}\nAppareil : {deviceModel}\nLangue : {locale}",
+  "@settingsEmailBodyContactUsWithoutUserIdNew": {
+    "description": "Email body for contact us without user ID",
+    "placeholders": {
+      "osVersion": {
+        "type": "String"
+      },
+      "appVersion": {
+        "type": "String"
+      },
+      "deviceModel": {
+        "type": "String"
+      },
+      "locale": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSnackbarCannotLaunchEmail": "Impossible d'ouvrir l'application de messagerie.",
+  "@settingsSnackbarCannotLaunchEmail": {
+    "description": "Error message when email app cannot be launched"
+  },
+  "rateAppTitle": "Évaluer cette app",
+  "@rateAppTitle": {
+    "description": "Rate app menu item"
+  },
+  "cannotOpenStoreErrorSnackbar": "Impossible d'ouvrir le store.",
+  "@cannotOpenStoreErrorSnackbar": {
+    "description": "Error message when store cannot be opened"
+  },
+  "updateRequiredTitle": "Mise à jour requise",
+  "@updateRequiredTitle": {
+    "description": "Title for forced update dialog"
+  },
+  "updateRequiredBody": "Une nouvelle version de l'app est requise pour continuer. Veuillez mettre à jour l'app.",
+  "@updateRequiredBody": {
+    "description": "Message for forced update dialog"
+  },
+  "updateButton": "Mettre à jour",
+  "@updateButton": {
+    "description": "Update button label"
+  },
+  "updateAvailableTitle": "Mise à jour disponible",
+  "@updateAvailableTitle": {
+    "description": "Title for recommended update dialog"
+  },
+  "updateAvailableBody": "Une nouvelle version de l'app est disponible. Voulez-vous mettre à jour maintenant ?",
+  "@updateAvailableBody": {
+    "description": "Message for recommended update dialog"
+  },
+  "laterButton": "Plus tard",
+  "@laterButton": {
+    "description": "Later button label for update dialog"
+  },
+  "maintenanceTitleDefault": "Maintenance",
+  "@maintenanceTitleDefault": {
+    "description": "Default title for maintenance dialog"
+  },
+  "maintenanceMessageDefault": "L'app est actuellement en maintenance. Veuillez réessayer plus tard.",
+  "@maintenanceMessageDefault": {
+    "description": "Default message for maintenance dialog"
+  },
+  "homeTabLabel": "Accueil",
+  "@homeTabLabel": {
+    "description": "Label for the Home tab"
+  },
+  "homePlaceholderTitle": "Bienvenue dans votre nouvelle app Flutter",
+  "@homePlaceholderTitle": {
+    "description": "Title shown on the default home placeholder"
+  },
+  "homePlaceholderDescription": "Utilisez cet espace pour créer un tableau de bord ou un fil d'actualité pour vos utilisateurs.",
+  "@homePlaceholderDescription": {
+    "description": "Description shown on the default home placeholder"
+  },
+  "homePlaceholderActionLabel": "Ajoutez votre premier widget",
+  "@homePlaceholderActionLabel": {
+    "description": "Label for the call-to-action button on the home placeholder"
+  },
+  "homePlaceholderActionHint": "Ouvrez lib/main.dart et remplacez HomeTabPlaceholder par votre contenu réel.",
+  "@homePlaceholderActionHint": {
+    "description": "Snack bar hint shown when the placeholder action is tapped"
+  },
+  "settingsAuthSectionTitle": "Authentification",
+  "@settingsAuthSectionTitle": {
+    "description": "Title for authentication section in settings"
+  },
+  "authScreenTitle": "Connexion",
+  "@authScreenTitle": {
+    "description": "Title for authentication screen"
+  },
+  "authScreenSubtitle": "Connectez-vous pour accéder à toutes les fonctionnalités",
+  "@authScreenSubtitle": {
+    "description": "Subtitle for authentication screen"
+  },
+  "signIn": "Se connecter",
+  "@signIn": {
+    "description": "Sign in button label"
+  },
+  "signInSubtitle": "Connectez-vous pour synchroniser vos données",
+  "@signInSubtitle": {
+    "description": "Sign in subtitle in settings"
+  },
+  "signInWithGoogle": "Se connecter avec Google",
+  "@signInWithGoogle": {
+    "description": "Google sign in button label"
+  },
+  "signInWithApple": "Se connecter avec Apple",
+  "@signInWithApple": {
+    "description": "Apple sign in button label"
+  },
+  "signInAnonymously": "Continuer en tant qu'invité",
+  "@signInAnonymously": {
+    "description": "Anonymous sign in button label"
+  },
+  "skipSignIn": "Passer pour le moment",
+  "@skipSignIn": {
+    "description": "Skip sign in button label"
+  },
+  "signInSuccessful": "Connexion réussie",
+  "@signInSuccessful": {
+    "description": "Success message after signing in"
+  },
+  "signInFailed": "Échec de la connexion",
+  "@signInFailed": {
+    "description": "Error message when sign in fails"
+  },
+  "signOut": "Se déconnecter",
+  "@signOut": {
+    "description": "Sign out button label"
+  },
+  "signOutConfirmTitle": "Déconnexion",
+  "@signOutConfirmTitle": {
+    "description": "Title for sign out confirmation dialog"
+  },
+  "signOutConfirmMessage": "Êtes-vous sûr de vouloir vous déconnecter ?",
+  "@signOutConfirmMessage": {
+    "description": "Message for sign out confirmation dialog"
+  },
+  "signOutSuccessful": "Déconnexion réussie",
+  "@signOutSuccessful": {
+    "description": "Success message after signing out"
+  },
+  "signOutFailed": "Échec de la déconnexion",
+  "@signOutFailed": {
+    "description": "Error message when sign out fails"
+  },
+  "deleteAccount": "Supprimer le compte",
+  "@deleteAccount": {
+    "description": "Delete account button label"
+  },
+  "deleteAccountConfirmTitle": "Supprimer le compte",
+  "@deleteAccountConfirmTitle": {
+    "description": "Title for delete account confirmation dialog"
+  },
+  "deleteAccountConfirmMessage": "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.",
+  "@deleteAccountConfirmMessage": {
+    "description": "Message for delete account confirmation dialog"
+  },
+  "deleteAccountConfirmCheckbox": "Je comprends ce qui précède",
+  "@deleteAccountConfirmCheckbox": {
+    "description": "Label for account deletion confirmation checkbox"
+  },
+  "deleteAccountWarningNonAnonymous": "Avertissement : La suppression de votre compte supprimera définitivement toutes vos données. Cette action est irréversible.",
+  "@deleteAccountWarningNonAnonymous": {
+    "description": "Warning message for non-anonymous user account deletion"
+  },
+  "deleteAccountSuccessful": "Compte supprimé avec succès",
+  "@deleteAccountSuccessful": {
+    "description": "Success message after deleting account"
+  },
+  "deleteAccountFailed": "Échec de la suppression du compte",
+  "@deleteAccountFailed": {
+    "description": "Error message when account deletion fails"
+  },
+  "anonymousUser": "Utilisateur invité",
+  "@anonymousUser": {
+    "description": "Label for anonymous user"
+  },
+  "noEmail": "Pas d'adresse e-mail",
+  "@noEmail": {
+    "description": "Label when user has no email"
+  },
+  "upgradeAccount": "Mettre à niveau le compte",
+  "@upgradeAccount": {
+    "description": "Upgrade account button label"
+  },
+  "upgradeAccountSubtitle": "Associez votre compte à Google ou Apple",
+  "@upgradeAccountSubtitle": {
+    "description": "Subtitle for upgrade account option"
+  },
+  "cancel": "Annuler",
+  "@cancel": {
+    "description": "Cancel button label"
+  },
+  "networkError": "Erreur réseau. Vérifiez votre connexion et réessayez.",
+  "@networkError": {
+    "description": "Error message for network errors"
+  },
+  "accountDisabled": "Ce compte a été désactivé",
+  "@accountDisabled": {
+    "description": "Error message when account is disabled"
+  },
+  "accountExistsWithDifferentCredential": "Un compte existe déjà avec une méthode de connexion différente",
+  "@accountExistsWithDifferentCredential": {
+    "description": "Error message when account exists with different credential"
+  },
+  "notificationSettingsTitle": "Paramètres de notifications",
+  "@notificationSettingsTitle": {
+    "description": "Title for notification settings screen"
+  },
+  "notificationSettingsAllTitle": "Toutes les notifications",
+  "@notificationSettingsAllTitle": {
+    "description": "Title for all notifications toggle"
+  },
+  "notificationSettingsAllSubtitle": "Activer ou désactiver toutes les notifications en une fois",
+  "@notificationSettingsAllSubtitle": {
+    "description": "Subtitle for all notifications toggle"
+  },
+  "notificationSettingsTypeSectionTitle": "Types de notification",
+  "@notificationSettingsTypeSectionTitle": {
+    "description": "Title for notification types section"
+  },
+  "notificationSettingsMessageTitle": "Messages",
+  "@notificationSettingsMessageTitle": {
+    "description": "Title for message notification setting"
+  },
+  "notificationSettingsMessageSubtitle": "Notification à la réception de nouveaux messages",
+  "@notificationSettingsMessageSubtitle": {
+    "description": "Subtitle for message notification setting"
+  },
+  "notificationSettingsLikeTitle": "J'aime",
+  "@notificationSettingsLikeTitle": {
+    "description": "Title for like notification setting"
+  },
+  "notificationSettingsLikeSubtitle": "Notification quand quelqu'un aime votre publication",
+  "@notificationSettingsLikeSubtitle": {
+    "description": "Subtitle for like notification setting"
+  },
+  "notificationSettingsCommentTitle": "Commentaires",
+  "@notificationSettingsCommentTitle": {
+    "description": "Title for comment notification setting"
+  },
+  "notificationSettingsCommentSubtitle": "Notification quand quelqu'un commente votre publication",
+  "@notificationSettingsCommentSubtitle": {
+    "description": "Subtitle for comment notification setting"
+  },
+  "notificationSettingsFollowTitle": "Abonnés",
+  "@notificationSettingsFollowTitle": {
+    "description": "Title for follow notification setting"
+  },
+  "notificationSettingsFollowSubtitle": "Notification quand vous avez un nouvel abonné",
+  "@notificationSettingsFollowSubtitle": {
+    "description": "Subtitle for follow notification setting"
+  },
+  "notificationSettingsSystemSectionTitle": "Système",
+  "@notificationSettingsSystemSectionTitle": {
+    "description": "Title for system notification section"
+  },
+  "notificationSettingsSystemTitle": "Notifications système",
+  "@notificationSettingsSystemTitle": {
+    "description": "Title for system notification setting"
+  },
+  "notificationSettingsSystemSubtitle": "Annonces importantes et notifications de mises à jour",
+  "@notificationSettingsSystemSubtitle": {
+    "description": "Subtitle for system notification setting"
+  },
+  "notificationSettingsUpdateFailed": "Échec de la mise à jour des paramètres",
+  "@notificationSettingsUpdateFailed": {
+    "description": "Error message when notification settings update fails"
+  },
+  "notificationPermissionDeniedTitle": "Notifications désactivées",
+  "@notificationPermissionDeniedTitle": {
+    "description": "Title for notification permission denied dialog"
+  },
+  "notificationPermissionDeniedMessage": "Pour recevoir des notifications, activez-les dans les paramètres de votre appareil.",
+  "@notificationPermissionDeniedMessage": {
+    "description": "Message for notification permission denied dialog"
+  },
+  "notificationOpenSettings": "Ouvrir les paramètres",
+  "@notificationOpenSettings": {
+    "description": "Button label for opening device settings"
+  }
+}
