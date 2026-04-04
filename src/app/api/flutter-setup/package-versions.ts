@@ -91,7 +91,7 @@ const FLUTTER_3_UNIVERSAL: PackageVersionSet = {
   image_picker: '^1.1.2',
   image_cropper: '^9.0.0',
   flutter_image_compress: '^2.4.0',
-  go_router: '^14.8.1',
+  go_router: '^17.2.0',
   freezed_annotation: '^3.1.0',
   json_annotation: '^4.11.0',
   flutter_lints: '^6.0.0',
