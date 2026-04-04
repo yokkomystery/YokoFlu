@@ -46,8 +46,20 @@ export interface PackageVersionSet {
   image_cropper: string;
   flutter_image_compress: string;
 
+  // Routing
+  go_router: string;
+
+  // Models (immutable + JSON serialization)
+  freezed_annotation: string;
+  json_annotation: string;
+
   // dev dependencies
   flutter_lints: string;
+  build_runner: string;
+  freezed: string;
+  json_serializable: string;
+  riverpod_generator: string;
+  riverpod_annotation: string;
 }
 
 /**
@@ -81,7 +93,15 @@ const FLUTTER_3_UNIVERSAL: PackageVersionSet = {
   image_picker: '^1.1.2',
   image_cropper: '^9.0.0',
   flutter_image_compress: '^2.4.0',
+  go_router: '^14.8.1',
+  freezed_annotation: '^2.4.4',
+  json_annotation: '^4.9.0',
   flutter_lints: '^5.0.0',
+  build_runner: '^2.4.14',
+  freezed: '^2.5.8',
+  json_serializable: '^6.9.4',
+  riverpod_generator: '^2.6.5',
+  riverpod_annotation: '^2.6.5',
 };
 
 /**
@@ -204,7 +224,12 @@ export function formatDependencyVersions(
   flutter_localizations:
     sdk: flutter
   flutter_riverpod: ${versions.flutter_riverpod}
-  shared_preferences: ${versions.shared_preferences}`;
+  shared_preferences: ${versions.shared_preferences}
+  # Routing
+  go_router: ${versions.go_router}
+  # Models (immutable + JSON serialization)
+  freezed_annotation: ${versions.freezed_annotation}
+  json_annotation: ${versions.json_annotation}`;
   // intl は flutter_localizations が要求するバージョンを自動使用
 
   if (useFirebase) {
