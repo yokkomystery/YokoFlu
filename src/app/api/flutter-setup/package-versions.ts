@@ -76,7 +76,7 @@ const FLUTTER_3_UNIVERSAL: PackageVersionSet = {
   firebase_crashlytics: '^4.3.10',
   firebase_messaging: '^15.2.1',
   firebase_remote_config: '^5.4.3',
-  package_info_plus: '^8.1.2',
+  package_info_plus: '^9.0.1',
   device_info_plus: '^11.4.0',
   url_launcher: '^6.3.1',
   in_app_review: '^2.0.10',
@@ -92,12 +92,12 @@ const FLUTTER_3_UNIVERSAL: PackageVersionSet = {
   image_cropper: '^9.0.0',
   flutter_image_compress: '^2.4.0',
   go_router: '^14.8.1',
-  freezed_annotation: '^2.4.4',
-  json_annotation: '^4.9.0',
+  freezed_annotation: '^3.1.0',
+  json_annotation: '^4.11.0',
   flutter_lints: '^6.0.0',
-  build_runner: '^2.4.14',
-  freezed: '^2.5.8',
-  json_serializable: '^6.9.4',
+  build_runner: '^2.13.1',
+  freezed: '^3.2.5',
+  json_serializable: '^6.13.1',
 };
 
 /**
