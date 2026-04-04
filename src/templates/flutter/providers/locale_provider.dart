@@ -31,7 +31,7 @@ class LocaleNotifier extends StateNotifier<Locale> {
   }
 
   Future<void> _loadLocale() async {
-    final prefs = await _sharedPreferences.when(
+    final prefs = _sharedPreferences.when(
       data: (prefs) => prefs,
       loading: () => null,
       error: (_, __) => null,
@@ -53,7 +53,7 @@ class LocaleNotifier extends StateNotifier<Locale> {
   Future<void> setLocale(Locale locale) async {
     state = locale;
     
-    final prefs = await _sharedPreferences.when(
+    final prefs = _sharedPreferences.when(
       data: (prefs) => prefs,
       loading: () => null,
       error: (_, __) => null,

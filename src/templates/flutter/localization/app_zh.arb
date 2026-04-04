@@ -1,0 +1,15 @@
+{
+  "@@locale": "zh",
+  "settingsScreenTitle": "设置",
+  "@settingsScreenTitle": {
+    "description": "Title for the settings screen"
+  },
+  "settingsGeneralSectionTitle": "通用",
+  "@settingsGeneralSectionTitle": {
+    "description": "Title for the general section in settings"
+  },
+  "settingsThemeSettingListTileTitle": "主题",
+  "@settingsThemeSettingListTileTitle": {
+    "description": "Title for the theme setting"
+  }
+}

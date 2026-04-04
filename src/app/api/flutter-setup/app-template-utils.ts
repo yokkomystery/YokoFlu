@@ -198,6 +198,13 @@ export function updateMainDartWithTemplate(
   mainContent = removeClassDefinition(mainContent, 'class _MyHomePageState');
   mainContent = removeClassDefinition(mainContent, 'class HomeTabPlaceholder');
 
+  if (!mainContent.includes('SettingsScreen')) {
+    mainContent = mainContent.replace(
+      /import 'package:.*?\/features\/settings\/settings_screen\.dart';\n?/,
+      ''
+    );
+  }
+
   fs.writeFileSync(mainDartPath, mainContent);
   console.log(`✅ main.dartを${config.id}テンプレート用に更新しました`);
 

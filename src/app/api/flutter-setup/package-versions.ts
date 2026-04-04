@@ -58,8 +58,6 @@ export interface PackageVersionSet {
   build_runner: string;
   freezed: string;
   json_serializable: string;
-  riverpod_generator: string;
-  riverpod_annotation: string;
 }
 
 /**
@@ -96,12 +94,10 @@ const FLUTTER_3_UNIVERSAL: PackageVersionSet = {
   go_router: '^14.8.1',
   freezed_annotation: '^2.4.4',
   json_annotation: '^4.9.0',
-  flutter_lints: '^5.0.0',
+  flutter_lints: '^6.0.0',
   build_runner: '^2.4.14',
   freezed: '^2.5.8',
   json_serializable: '^6.9.4',
-  riverpod_generator: '^2.6.5',
-  riverpod_annotation: '^2.6.5',
 };
 
 /**

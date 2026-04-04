@@ -45,7 +45,7 @@ class _CounterHomePageState extends State<CounterHomePage> {
 {{#SETTINGS_ENABLED}}
           IconButton(
             icon: const Icon(Icons.settings),
-            tooltip: AppLocalizations.of(context)!.settingsScreenTitle,
+            tooltip: AppLocalizations.of(context).settingsScreenTitle,
             onPressed: () {
               Navigator.push(
                 context,
@@ -67,7 +67,7 @@ class _CounterHomePageState extends State<CounterHomePage> {
               Icon(
                 Icons.touch_app,
                 size: 80,
-                color: colorScheme.primary.withOpacity(0.3),
+                color: colorScheme.primary.withValues(alpha: 0.3),
               ),
               const SizedBox(height: 32),
               Text(
@@ -84,7 +84,7 @@ class _CounterHomePageState extends State<CounterHomePage> {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: colorScheme.primary.withOpacity(0.2),
+                      color: colorScheme.primary.withValues(alpha: 0.2),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),

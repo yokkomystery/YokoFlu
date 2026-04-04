@@ -1,5 +1,8 @@
 import { updateProgress, recordStepResult, addCreatedFile } from '../utils';
-import { createLocalizationFiles } from '../localization-utils';
+import {
+  createLocalizationFiles,
+  resolveLocalizationLanguageIds,
+} from '../localization-utils';
 import fs from 'fs';
 import path from 'path';
 import {
@@ -90,12 +93,18 @@ export async function ensureLocalizationFiles(
     expected.push(l10nYamlPath);
 
     const l10nDir = path.join(fullOutputPath, 'lib', 'l10n');
-    const ids = normalized;
+    const ids = resolveLocalizationLanguageIds(normalized);
     ids.forEach((id) => {
       const option =
         LOCALIZATION_LANGUAGE_MAP[id as keyof typeof LOCALIZATION_LANGUAGE_MAP];
       if (option) {
         expected.push(path.join(l10nDir, option.outputFileName));
+        return;
+      }
+      if (id === 'pt') {
+        expected.push(path.join(l10nDir, 'app_pt.arb'));
+      } else if (id === 'zh') {
+        expected.push(path.join(l10nDir, 'app_zh.arb'));
       }
     });
 
@@ -112,7 +121,7 @@ export async function ensureLocalizationFiles(
     const regenerated = createLocalizationFiles(
       appName,
       fullOutputPath,
-      ids.length > 0 ? ids : DEFAULT_LOCALIZATION_LANGUAGE_IDS
+      normalized.length > 0 ? normalized : DEFAULT_LOCALIZATION_LANGUAGE_IDS
     );
     regenerated.forEach((f) => generated.push(f));
     return generated;

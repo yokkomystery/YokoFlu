@@ -1,0 +1,15 @@
+{
+  "@@locale": "pt",
+  "settingsScreenTitle": "Configurações",
+  "@settingsScreenTitle": {
+    "description": "Title for the settings screen"
+  },
+  "settingsGeneralSectionTitle": "Geral",
+  "@settingsGeneralSectionTitle": {
+    "description": "Title for the general section in settings"
+  },
+  "settingsThemeSettingListTileTitle": "Tema",
+  "@settingsThemeSettingListTileTitle": {
+    "description": "Title for the theme setting"
+  }
+}

@@ -57,7 +57,6 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
           state = ThemeMode.dark;
           break;
         case 'system':
-        default:
           state = ThemeMode.system;
           break;
       }
@@ -78,7 +77,6 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
           themeString = 'dark';
           break;
         case ThemeMode.system:
-        default:
           themeString = 'system';
           break;
       }
