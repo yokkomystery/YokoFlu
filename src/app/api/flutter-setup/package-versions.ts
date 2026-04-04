@@ -65,7 +65,7 @@ export interface PackageVersionSet {
  */
 const FLUTTER_3_UNIVERSAL: PackageVersionSet = {
   sdkConstraint: '>=3.0.0 <4.0.0',
-  flutter_riverpod: '^2.6.1',
+  flutter_riverpod: '^3.3.1',
   shared_preferences: '^2.3.3',
   // intl: flutter_localizationsが要求するバージョンを自動使用
   firebase_core: '^3.15.2',
