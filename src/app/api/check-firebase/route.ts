@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { execFile } from 'child_process';
 import { promisify } from 'util';
 
+export const runtime = 'nodejs';
+
 const execFileAsync = promisify(execFile);
 
 type CliStatus = {
@@ -50,8 +52,12 @@ const checkCli = async (
   args: readonly string[]
 ): Promise<CliStatus> => {
   try {
-    const { stdout } = await execFileAsync(command, [...args]);
-    const version = stdout.trim().split('\n')[0];
+    const { stdout, stderr } = await execFileAsync(command, [...args], {
+      timeout: 15000,
+      maxBuffer: 1024 * 1024,
+    });
+    const output = `${stdout ?? ''}\n${stderr ?? ''}`.trim();
+    const version = output.split('\n').find((line) => line.trim().length > 0);
     return {
       installed: true,
       version,
@@ -91,7 +97,10 @@ export async function GET() {
     if (firebaseStatus.installed) {
       try {
         console.log('[check-firebase] Checking Firebase login status...');
-        await execFileAsync('firebase', ['projects:list']);
+        await execFileAsync('firebase', ['projects:list'], {
+          timeout: 30000,
+          maxBuffer: 1024 * 1024,
+        });
         loggedIn = true;
         console.log('[check-firebase] Firebase login: OK');
       } catch (error) {

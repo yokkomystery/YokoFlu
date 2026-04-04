@@ -39,9 +39,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final themeNotifier = ref.read(themeProvider.notifier);
-    final currentTheme = ref.watch(themeProvider);
     final localeNotifier = ref.read(localeProvider.notifier);
     final currentLocale = ref.watch(localeProvider);
 
@@ -498,37 +497,34 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            RadioListTile<ThemeMode>(
+            ListTile(
               title: Text(l10n.settingsThemeLightMode),
-              value: ThemeMode.light,
-              groupValue: currentTheme,
-              onChanged: (ThemeMode? value) {
-                if (value != null) {
-                  themeNotifier.setTheme(value);
-                  Navigator.of(context).pop();
-                }
+              trailing: currentTheme == ThemeMode.light
+                  ? const Icon(Icons.check)
+                  : null,
+              onTap: () {
+                themeNotifier.setTheme(ThemeMode.light);
+                Navigator.of(context).pop();
               },
             ),
-            RadioListTile<ThemeMode>(
+            ListTile(
               title: Text(l10n.settingsThemeDarkMode),
-              value: ThemeMode.dark,
-              groupValue: currentTheme,
-              onChanged: (ThemeMode? value) {
-                if (value != null) {
-                  themeNotifier.setTheme(value);
-                  Navigator.of(context).pop();
-                }
+              trailing: currentTheme == ThemeMode.dark
+                  ? const Icon(Icons.check)
+                  : null,
+              onTap: () {
+                themeNotifier.setTheme(ThemeMode.dark);
+                Navigator.of(context).pop();
               },
             ),
-            RadioListTile<ThemeMode>(
+            ListTile(
               title: Text(l10n.settingsThemeSystemMode),
-              value: ThemeMode.system,
-              groupValue: currentTheme,
-              onChanged: (ThemeMode? value) {
-                if (value != null) {
-                  themeNotifier.setTheme(value);
-                  Navigator.of(context).pop();
-                }
+              trailing: currentTheme == ThemeMode.system
+                  ? const Icon(Icons.check)
+                  : null,
+              onTap: () {
+                themeNotifier.setTheme(ThemeMode.system);
+                Navigator.of(context).pop();
               },
             ),
           ],
@@ -558,15 +554,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: LocaleNotifier.supportedLocales.map((locale) {
-            return RadioListTile<Locale>(
+            final isSelected =
+                locale.languageCode == currentLocale.languageCode &&
+                locale.countryCode == currentLocale.countryCode;
+
+            return ListTile(
               title: Text(_getLocaleName(locale)),
-              value: locale,
-              groupValue: currentLocale,
-              onChanged: (Locale? value) {
-                if (value != null) {
-                  localeNotifier.setLocale(value);
-                  Navigator.of(context).pop();
-                }
+              trailing: isSelected ? const Icon(Icons.check) : null,
+              onTap: () {
+                localeNotifier.setLocale(locale);
+                Navigator.of(context).pop();
               },
             );
           }).toList(),
@@ -607,7 +604,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final languageCode = Localizations.localeOf(context).languageCode;
 
     // TODO: 実際の利用規約URLに置き換えてください
-    final termsUrl = 'https://example.com/terms_${languageCode}.html';
+    final termsUrl = 'https://example.com/terms_$languageCode.html';
     _launchUrl(termsUrl);
   }
 
@@ -615,7 +612,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final languageCode = Localizations.localeOf(context).languageCode;
     
     // TODO: 実際のプライバシーポリシーURLに置き換えてください
-    final privacyUrl = 'https://example.com/privacy_${languageCode}.html';
+    final privacyUrl = 'https://example.com/privacy_$languageCode.html';
     _launchUrl(privacyUrl);
   }
 
@@ -624,10 +621,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     if (packageInfo == null) return;
 
     // デバイス情報とアプリ情報を取得
-    String appVersion = packageInfo.version;
-    String deviceModel = 'Unknown';
-    String osVersion = Platform.operatingSystemVersion;
-    String locale = Localizations.localeOf(context).toString();
+    final appVersion = packageInfo.version;
+    final deviceModel = 'Unknown';
+    final osVersion = Platform.operatingSystemVersion;
+    final locale = Localizations.localeOf(context).toString();
 
     final body = l10n.settingsEmailBodyContactUsWithoutUserIdNew(
       osVersion,
@@ -689,14 +686,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('URLを開けませんでした: $url'),
-            duration: const Duration(seconds: 2),
-          ),
-        );
-      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('URLを開けませんでした: $url'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
     }
   }
 } 

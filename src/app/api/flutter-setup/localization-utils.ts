@@ -6,6 +6,44 @@ import {
 } from '../../../config/templateOptions';
 import { copyTemplateFile, getTemplatePath } from './template-utils';
 
+const LOCALIZATION_FALLBACKS: Record<string, string[]> = {
+  pt_BR: ['pt'],
+  zh_CN: ['zh'],
+  zh_TW: ['zh'],
+};
+
+const LOCALIZATION_TEMPLATE_OVERRIDES: Record<
+  string,
+  { templatePath: string; outputFileName: string }
+> = {
+  pt: {
+    templatePath: 'localization/app_pt.arb',
+    outputFileName: 'app_pt.arb',
+  },
+  zh: {
+    templatePath: 'localization/app_zh.arb',
+    outputFileName: 'app_zh.arb',
+  },
+};
+
+export function resolveLocalizationLanguageIds(
+  languageIds: string[]
+): string[] {
+  const normalizedIds =
+    languageIds && languageIds.length > 0
+      ? languageIds
+      : DEFAULT_LOCALIZATION_LANGUAGE_IDS;
+
+  const resolved = new Set<string>(normalizedIds);
+
+  normalizedIds.forEach((languageId) => {
+    const fallbackIds = LOCALIZATION_FALLBACKS[languageId] ?? [];
+    fallbackIds.forEach((fallbackId) => resolved.add(fallbackId));
+  });
+
+  return [...resolved];
+}
+
 export function createLocalizationFiles(
   appName: string,
   projectPath: string,
@@ -32,15 +70,13 @@ export function createLocalizationFiles(
     console.warn('⚠️ l10n.yamlテンプレートが見つかりません');
   }
 
-  const fallbackIds = DEFAULT_LOCALIZATION_LANGUAGE_IDS;
-  const normalizedIds =
-    languageIds && languageIds.length > 0 ? languageIds : fallbackIds;
+  const normalizedIds = resolveLocalizationLanguageIds(languageIds);
 
   normalizedIds.forEach((languageId) => {
     const languageOption =
       LOCALIZATION_LANGUAGE_MAP[
         languageId as keyof typeof LOCALIZATION_LANGUAGE_MAP
-      ];
+      ] ?? LOCALIZATION_TEMPLATE_OVERRIDES[languageId];
 
     if (!languageOption) {
       console.warn(

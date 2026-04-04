@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -41,9 +42,13 @@ const String _prodAndroidRewardedId = 'YOUR_ANDROID_REWARDED_AD_UNIT_ID';
 
 /// AdMob 広告サービス
 class AdService {
+  static const _bannerRefreshInterval = Duration(seconds: 30);
+
   bool _isInitialized = false;
   BannerAd? _bannerAd;
   bool _isBannerLoaded = false;
+  Timer? _bannerRefreshTimer;
+  VoidCallback? _onBannerRefreshed;
   InterstitialAd? _interstitialAd;
   bool _isInterstitialLoading = false;
   RewardedAd? _rewardedAd;
@@ -132,6 +137,23 @@ class AdService {
       height: _bannerAd!.size.height.toDouble(),
       child: AdWidget(ad: _bannerAd!),
     );
+  }
+
+  /// 30秒ごとにバナー広告を自動リフレッシュ開始
+  void startBannerAutoRefresh({VoidCallback? onRefreshed}) {
+    _onBannerRefreshed = onRefreshed;
+    _bannerRefreshTimer?.cancel();
+    _bannerRefreshTimer = Timer.periodic(_bannerRefreshInterval, (_) {
+      disposeBannerAd();
+      loadBannerAd(onLoaded: _onBannerRefreshed);
+    });
+  }
+
+  /// バナー広告の自動リフレッシュ停止
+  void stopBannerAutoRefresh() {
+    _bannerRefreshTimer?.cancel();
+    _bannerRefreshTimer = null;
+    _onBannerRefreshed = null;
   }
 
   /// バナー広告を破棄
@@ -262,6 +284,7 @@ class AdService {
 
   /// すべての広告を破棄
   void dispose() {
+    stopBannerAutoRefresh();
     disposeBannerAd();
     _interstitialAd?.dispose();
     _interstitialAd = null;

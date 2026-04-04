@@ -7,12 +7,17 @@ describe('useCliStatus', () => {
     vi.resetAllMocks();
   });
 
-  it('初期状態では全てのCLIがインストールされていない状態', () => {
+  it('初期状態では全てのCLIがインストールされていない状態', async () => {
     vi.mocked(global.fetch).mockResolvedValue({
-      json: async () => ({}),
+      ok: true,
+      text: async () => '{}',
     } as Response);
 
     const { result } = renderHook(() => useCliStatus());
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
 
     expect(result.current.environmentStatus.flutter.installed).toBe(false);
     expect(result.current.environmentStatus.dart.installed).toBe(false);
@@ -29,7 +34,8 @@ describe('useCliStatus', () => {
     };
 
     vi.mocked(global.fetch).mockResolvedValue({
-      json: async () => mockResponse,
+      ok: true,
+      text: async () => JSON.stringify(mockResponse),
     } as Response);
 
     const { result } = renderHook(() => useCliStatus());
@@ -62,14 +68,18 @@ describe('useCliStatus', () => {
   it('fetchEnvironmentStatusで再取得できる', async () => {
     vi.mocked(global.fetch)
       .mockResolvedValueOnce({
-        json: async () => ({
-          flutter: { installed: false },
-        }),
+        ok: true,
+        text: async () =>
+          JSON.stringify({
+            flutter: { installed: false },
+          }),
       } as Response)
       .mockResolvedValueOnce({
-        json: async () => ({
-          flutter: { installed: true, version: '3.24.0' },
-        }),
+        ok: true,
+        text: async () =>
+          JSON.stringify({
+            flutter: { installed: true, version: '3.24.0' },
+          }),
       } as Response);
 
     const { result } = renderHook(() => useCliStatus());
@@ -99,7 +109,8 @@ describe('useCliStatus', () => {
     };
 
     vi.mocked(global.fetch).mockResolvedValue({
-      json: async () => mockResponse,
+      ok: true,
+      text: async () => JSON.stringify(mockResponse),
     } as Response);
 
     const { result } = renderHook(() => useCliStatus());
@@ -109,5 +120,21 @@ describe('useCliStatus', () => {
     });
 
     expect(result.current.environmentStatus.firebase.loggedIn).toBe(true);
+  });
+
+  it('APIのエラーメッセージを画面に反映する', async () => {
+    vi.mocked(global.fetch).mockResolvedValue({
+      ok: false,
+      status: 500,
+      text: async () => JSON.stringify({ error: 'firebase command timed out' }),
+    } as Response);
+
+    const { result } = renderHook(() => useCliStatus());
+
+    await waitFor(() => {
+      expect(result.current.environmentStatusError).toBe(
+        'firebase command timed out'
+      );
+    });
   });
 });

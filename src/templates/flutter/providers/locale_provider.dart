@@ -2,21 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui' as ui;
-import 'package:{{APP_NAME}}/core/providers/theme_provider.dart';
 
 // ロケールプロバイダー
-final localeProvider = StateNotifierProvider<LocaleNotifier, Locale>((ref) {
-  final sharedPreferences = ref.watch(sharedPreferencesProvider);
-  return LocaleNotifier(sharedPreferences);
-});
+final localeProvider = NotifierProvider<LocaleNotifier, Locale>(
+  LocaleNotifier.new,
+);
 
-class LocaleNotifier extends StateNotifier<Locale> {
-  LocaleNotifier(this._sharedPreferences) : super(_getDefaultLocale()) {
-    _loadLocale();
-  }
-
-  final AsyncValue<SharedPreferences> _sharedPreferences;
+class LocaleNotifier extends Notifier<Locale> {
   static const String _localeKey = 'selectedLocale';
+  bool _hasLoaded = false;
+
+  @override
+  Locale build() {
+    if (!_hasLoaded) {
+      Future.microtask(_loadLocale);
+    }
+    return _getDefaultLocale();
+  }
 
   // システムのロケールを基にデフォルト言語を決定（日本語または英語を優先）
   static Locale _getDefaultLocale() {
@@ -31,13 +33,12 @@ class LocaleNotifier extends StateNotifier<Locale> {
   }
 
   Future<void> _loadLocale() async {
-    final prefs = await _sharedPreferences.when(
-      data: (prefs) => prefs,
-      loading: () => null,
-      error: (_, __) => null,
-    );
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (_hasLoaded) {
+        return;
+      }
 
-    if (prefs != null) {
       final localeString = prefs.getString(_localeKey);
       if (localeString != null) {
         final parts = localeString.split('_');
@@ -47,19 +48,17 @@ class LocaleNotifier extends StateNotifier<Locale> {
           state = Locale(parts[0], parts[1]);
         }
       }
+      _hasLoaded = true;
+    } catch (e) {
+      debugPrint('[LocaleNotifier] ロケール読み込みエラー: $e');
     }
   }
 
   Future<void> setLocale(Locale locale) async {
     state = locale;
-    
-    final prefs = await _sharedPreferences.when(
-      data: (prefs) => prefs,
-      loading: () => null,
-      error: (_, __) => null,
-    );
 
-    if (prefs != null) {
+    try {
+      final prefs = await SharedPreferences.getInstance();
       String localeString;
       if (locale.countryCode != null) {
         localeString = '${locale.languageCode}_${locale.countryCode}';
@@ -67,6 +66,9 @@ class LocaleNotifier extends StateNotifier<Locale> {
         localeString = locale.languageCode;
       }
       await prefs.setString(_localeKey, localeString);
+      _hasLoaded = true;
+    } catch (e) {
+      debugPrint('[LocaleNotifier] ロケール保存エラー: $e');
     }
   }
 
@@ -96,4 +98,4 @@ class LocaleNotifier extends StateNotifier<Locale> {
         return locale.languageCode;
     }
   }
-} 
+}

@@ -157,6 +157,10 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ${packageVersions.flutter_lints}
+  # Code generation
+  build_runner: ${packageVersions.build_runner}
+  freezed: ${packageVersions.freezed}
+  json_serializable: ${packageVersions.json_serializable}
 
 flutter:
   uses-material-design: true

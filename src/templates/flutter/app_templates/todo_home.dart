@@ -43,18 +43,29 @@ class TodoItem {
 }
 
 // TODOリスト状態管理
-class TodoNotifier extends StateNotifier<List<TodoItem>> {
-  TodoNotifier() : super([]) {
-    _loadTodos();
+class TodoNotifier extends Notifier<List<TodoItem>> {
+  bool _hasLoaded = false;
+
+  @override
+  List<TodoItem> build() {
+    if (!_hasLoaded) {
+      Future.microtask(_loadTodos);
+    }
+    return [];
   }
 
   Future<void> _loadTodos() async {
     final prefs = await SharedPreferences.getInstance();
+    if (_hasLoaded) {
+      return;
+    }
+
     final todosJson = prefs.getString('todos');
     if (todosJson != null) {
       final List<dynamic> decoded = json.decode(todosJson);
       state = decoded.map((item) => TodoItem.fromJson(item)).toList();
     }
+    _hasLoaded = true;
   }
 
   Future<void> _saveTodos() async {
@@ -94,8 +105,8 @@ class TodoNotifier extends StateNotifier<List<TodoItem>> {
   }
 }
 
-final todoProvider = StateNotifierProvider<TodoNotifier, List<TodoItem>>(
-  (ref) => TodoNotifier(),
+final todoProvider = NotifierProvider<TodoNotifier, List<TodoItem>>(
+  TodoNotifier.new,
 );
 
 class TodoHomePage extends ConsumerStatefulWidget {
@@ -147,7 +158,7 @@ class _TodoHomePageState extends ConsumerState<TodoHomePage> {
 {{#SETTINGS_ENABLED}}
           IconButton(
             icon: const Icon(Icons.settings),
-            tooltip: AppLocalizations.of(context)!.settingsScreenTitle,
+            tooltip: AppLocalizations.of(context).settingsScreenTitle,
             onPressed: () {
               Navigator.push(
                 context,
@@ -168,9 +179,11 @@ class _TodoHomePageState extends ConsumerState<TodoHomePage> {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: colorScheme.primaryContainer.withOpacity(0.3),
+                color: colorScheme.primaryContainer.withValues(alpha: 0.3),
                 border: Border(
-                  bottom: BorderSide(color: colorScheme.outline.withOpacity(0.2)),
+                  bottom: BorderSide(
+                    color: colorScheme.outline.withValues(alpha: 0.2),
+                  ),
                 ),
               ),
               child: Row(
@@ -189,7 +202,7 @@ class _TodoHomePageState extends ConsumerState<TodoHomePage> {
               color: colorScheme.surface,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2),
                 ),
@@ -229,7 +242,7 @@ class _TodoHomePageState extends ConsumerState<TodoHomePage> {
                         Icon(
                           Icons.task_alt,
                           size: 100,
-                          color: colorScheme.primary.withOpacity(0.3),
+                          color: colorScheme.primary.withValues(alpha: 0.3),
                         ),
                         const SizedBox(height: 24),
                         const Text(

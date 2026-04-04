@@ -46,8 +46,18 @@ export interface PackageVersionSet {
   image_cropper: string;
   flutter_image_compress: string;
 
+  // Routing
+  go_router: string;
+
+  // Models (immutable + JSON serialization)
+  freezed_annotation: string;
+  json_annotation: string;
+
   // dev dependencies
   flutter_lints: string;
+  build_runner: string;
+  freezed: string;
+  json_serializable: string;
 }
 
 /**
@@ -55,7 +65,7 @@ export interface PackageVersionSet {
  */
 const FLUTTER_3_UNIVERSAL: PackageVersionSet = {
   sdkConstraint: '>=3.0.0 <4.0.0',
-  flutter_riverpod: '^2.6.1',
+  flutter_riverpod: '^3.3.1',
   shared_preferences: '^2.3.3',
   // intl: flutter_localizationsが要求するバージョンを自動使用
   firebase_core: '^3.15.2',
@@ -66,7 +76,7 @@ const FLUTTER_3_UNIVERSAL: PackageVersionSet = {
   firebase_crashlytics: '^4.3.10',
   firebase_messaging: '^15.2.1',
   firebase_remote_config: '^5.4.3',
-  package_info_plus: '^8.1.2',
+  package_info_plus: '^9.0.1',
   device_info_plus: '^11.4.0',
   url_launcher: '^6.3.1',
   in_app_review: '^2.0.10',
@@ -81,7 +91,13 @@ const FLUTTER_3_UNIVERSAL: PackageVersionSet = {
   image_picker: '^1.1.2',
   image_cropper: '^9.0.0',
   flutter_image_compress: '^2.4.0',
-  flutter_lints: '^5.0.0',
+  go_router: '^17.2.0',
+  freezed_annotation: '^3.1.0',
+  json_annotation: '^4.11.0',
+  flutter_lints: '^6.0.0',
+  build_runner: '^2.13.1',
+  freezed: '^3.2.5',
+  json_serializable: '^6.13.1',
 };
 
 /**
@@ -204,7 +220,12 @@ export function formatDependencyVersions(
   flutter_localizations:
     sdk: flutter
   flutter_riverpod: ${versions.flutter_riverpod}
-  shared_preferences: ${versions.shared_preferences}`;
+  shared_preferences: ${versions.shared_preferences}
+  # Routing
+  go_router: ${versions.go_router}
+  # Models (immutable + JSON serialization)
+  freezed_annotation: ${versions.freezed_annotation}
+  json_annotation: ${versions.json_annotation}`;
   // intl は flutter_localizations が要求するバージョンを自動使用
 
   if (useFirebase) {

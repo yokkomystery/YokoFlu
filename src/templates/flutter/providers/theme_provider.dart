@@ -2,65 +2,47 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// SharedPreferencesプロバイダー（共通で使用）
-final sharedPreferencesProvider = FutureProvider<SharedPreferences>((ref) async {
-  return await SharedPreferences.getInstance();
-});
+// テーマプロバイダー
+final themeProvider = NotifierProvider<ThemeNotifier, ThemeMode>(
+  ThemeNotifier.new,
+);
 
-// テーマプロバイダー（SharedPreferencesが準備できてから読み込む）
-final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeMode>((ref) {
-  return ThemeNotifier(ref);
-});
-
-class ThemeNotifier extends StateNotifier<ThemeMode> {
-  ThemeNotifier(this._ref) : super(ThemeMode.system) {
-    _init();
-  }
-
-  final Ref _ref;
+class ThemeNotifier extends Notifier<ThemeMode> {
   static const String _themeKey = 'selectedTheme';
-  bool _isInitialized = false;
+  bool _hasLoaded = false;
 
-  Future<void> _init() async {
-    // SharedPreferencesが準備できるのを待つ
-    final prefsAsync = _ref.read(sharedPreferencesProvider);
-
-    prefsAsync.whenData((prefs) {
-      if (!_isInitialized) {
-        _loadThemeFromPrefs(prefs);
-        _isInitialized = true;
-      }
-    });
-
-    // まだロードされていない場合は、準備ができたら再読み込み
-    if (!_isInitialized) {
-      try {
-        final prefs = await SharedPreferences.getInstance();
-        if (!_isInitialized) {
-          _loadThemeFromPrefs(prefs);
-          _isInitialized = true;
-        }
-      } catch (e) {
-        debugPrint('[ThemeNotifier] SharedPreferences初期化エラー: $e');
-      }
+  @override
+  ThemeMode build() {
+    if (!_hasLoaded) {
+      Future.microtask(_loadThemeFromPrefs);
     }
+    return ThemeMode.system;
   }
 
-  void _loadThemeFromPrefs(SharedPreferences prefs) {
-    final themeString = prefs.getString(_themeKey);
-    if (themeString != null) {
-      switch (themeString) {
-        case 'light':
-          state = ThemeMode.light;
-          break;
-        case 'dark':
-          state = ThemeMode.dark;
-          break;
-        case 'system':
-        default:
-          state = ThemeMode.system;
-          break;
+  Future<void> _loadThemeFromPrefs() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (_hasLoaded) {
+        return;
       }
+
+      final themeString = prefs.getString(_themeKey);
+      if (themeString != null) {
+        switch (themeString) {
+          case 'light':
+            state = ThemeMode.light;
+            break;
+          case 'dark':
+            state = ThemeMode.dark;
+            break;
+          case 'system':
+            state = ThemeMode.system;
+            break;
+        }
+      }
+      _hasLoaded = true;
+    } catch (e) {
+      debugPrint('[ThemeNotifier] SharedPreferences初期化エラー: $e');
     }
   }
 
@@ -78,7 +60,6 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
           themeString = 'dark';
           break;
         case ThemeMode.system:
-        default:
           themeString = 'system';
           break;
       }
