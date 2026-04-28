@@ -374,7 +374,7 @@ sudo gem install cocoapods
 
 **Satoshi Yokokawa（横川 智士）**
 
-- Email: contact@mysterylog.com
+- Email: contact@yokkolab.com
 - GitHub: [@yokkomystery](https://github.com/yokkomystery)
 
 ## ライセンス
@@ -395,7 +395,7 @@ Copyright (c) 2025 Satoshi Yokokawa（横川 智士）
 
 ## お問い合わせ
 
-- Email: contact@mysterylog.com
+- Email: contact@yokkolab.com
 - 問題報告: [GitHub Issues](https://github.com/yokkomystery/yokoflu/issues)
 
 ---

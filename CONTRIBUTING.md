@@ -11,14 +11,12 @@ Thank you for your interest in contributing to the Flutter Setup Tool!
 If you find a bug, please create an issue with the following information:
 
 1. **Environment Information**
-
    - OS (macOS, Windows, Linux)
    - Node.js version
    - Flutter SDK version
    - Firebase CLI version
 
 2. **Reproduction Steps**
-
    - Specific operation steps
    - Expected behavior
    - Actual behavior
@@ -52,7 +50,6 @@ We welcome new feature proposals! Please explain the following in an issue:
    ```
 
 3. **Development**
-
    - Edit code
    - Test functionality (`npm run dev`)
    - Add tests if necessary
@@ -101,7 +98,7 @@ When adding a new advanced feature:
 
 ## 📧 Questions or Consultation
 
-If you have any questions, please ask in an issue or feel free to contact us at contact@mysterylog.com.
+If you have any questions, please ask in an issue or feel free to contact us at contact@yokkolab.com.
 
 ---
 

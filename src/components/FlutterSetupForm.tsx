@@ -1007,7 +1007,7 @@ export default function FlutterSetupForm() {
                 </a>
                 {' • '}
                 <a
-                  href="mailto:contact@mysterylog.com"
+                  href="mailto:contact@yokkolab.com"
                   className="text-blue-400 hover:underline"
                 >
                   Contact

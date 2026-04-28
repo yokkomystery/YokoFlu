@@ -137,7 +137,6 @@ To host on the web, you would need:
 ## Usage
 
 1. **Fill in Basic Information**
-
    - App name (display name)
    - Project ID (for Firebase, lowercase letters/numbers/dashes)
    - Bundle ID (iOS, e.g., com.yourcompany.yourapp)
@@ -145,21 +144,17 @@ To host on the web, you would need:
    - Output directory
 
 2. **Select App Template**
-
    - Choose from 5 templates (Blank, Counter, TODO, Stopwatch, Chat)
 
 3. **Configure Firebase** (Optional)
-
    - Enable/disable Firebase
    - If enabled, select Staging/Production environment configuration
    - Select a Firebase project
 
 4. **Select Basic Features**
-
    - Settings screen template (theme switching, language selection, etc.)
 
 5. **Select Advanced Features** (Optional)
-
    - Select from 11 features (authentication, analytics, etc.)
 
 6. **Submit**
@@ -318,7 +313,7 @@ flutter build ipa --flavor production --dart-define=ENVIRONMENT=production --rel
 
 **Satoshi Yokokawa（横川 智士）**
 
-- Email: contact@mysterylog.com
+- Email: contact@yokkolab.com
 - GitHub: [@yokkomystery](https://github.com/yokkomystery)
 
 ## License
@@ -339,7 +334,7 @@ Please review the [Terms of Use](TERMS_OF_USE.md) before using this tool. Key po
 
 ## Contact
 
-- Email: contact@mysterylog.com
+- Email: contact@yokkolab.com
 - Issue Report: [GitHub Issues](https://github.com/yokkomystery/yokoflu/issues)
 
 ---
