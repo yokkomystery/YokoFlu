@@ -11,14 +11,12 @@ Flutter Setup Tool への貢献に興味を持っていただき、ありがと�
 バグを発見した場合は、以下の情報を含めて Issue を作成してください：
 
 1. **環境情報**
-
    - OS（macOS、Windows、Linux）
    - Node.js バージョン
    - Flutter SDK バージョン
    - Firebase CLI バージョン
 
 2. **再現手順**
-
    - 具体的な操作手順
    - 期待される動作
    - 実際の動作
@@ -52,7 +50,6 @@ Flutter Setup Tool への貢献に興味を持っていただき、ありがと�
    ```
 
 3. **開発**
-
    - コードを編集
    - 動作確認（`npm run dev`）
    - 必要に応じてテストを追加
@@ -101,7 +98,7 @@ Flutter Setup Tool への貢献に興味を持っていただき、ありがと�
 
 ## 📧 質問や相談
 
-不明点があれば、Issue で質問するか、contact@mysterylog.com までお気軽にご連絡ください。
+不明点があれば、Issue で質問するか、contact@yokkolab.com までお気軽にご連絡ください。
 
 ---
 

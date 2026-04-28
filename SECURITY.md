@@ -12,6 +12,6 @@ We release patches for security vulnerabilities. Which versions are eligible for
 
 ## Reporting a Vulnerability
 
-Please report (suspected) security vulnerabilities to **contact@mysterylog.com**. You will receive a response within 48 hours. If the issue is confirmed, we will release a patch as soon as possible depending on complexity but historically within a few days.
+Please report (suspected) security vulnerabilities to **contact@yokkolab.com**. You will receive a response within 48 hours. If the issue is confirmed, we will release a patch as soon as possible depending on complexity but historically within a few days.
 
 Do not open a public issue for security vulnerabilities.

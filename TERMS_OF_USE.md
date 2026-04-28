@@ -188,7 +188,7 @@ These Terms constitute the entire agreement between you and the Tool's authors r
 
 For questions about these Terms, please contact:
 
-- Email: contact@mysterylog.com
+- Email: contact@yokkolab.com
 - GitHub: [yokkomystery/yokoflu](https://github.com/yokkomystery/yokoflu)
 
 ---

@@ -38,7 +38,7 @@
 
 ## 執行
 
-虐待的、ハラスメント的、またはその他の受け入れられない行動の事例は、contact@mysterylog.com の執行責任者であるコミュニティリーダーに報告できます。すべての苦情は迅速かつ公正に審査および調査されます。
+虐待的、ハラスメント的、またはその他の受け入れられない行動の事例は、contact@yokkolab.com の執行責任者であるコミュニティリーダーに報告できます。すべての苦情は迅速かつ公正に審査および調査されます。
 
 すべてのコミュニティリーダーは、事件の報告者のプライバシーとセキュリティを尊重する義務があります。
 
@@ -78,4 +78,3 @@ https://www.contributor-covenant.org/version/2/1/code_of_conduct.html で入手�
 コミュニティ影響ガイドラインは、[Mozilla's code of conduct enforcement ladder](https://github.com/mozilla/diversity)にインスパイアされています。
 
 この行動規範に関するよくある質問への回答については、https://www.contributor-covenant.org/faq のFAQを参照してください。翻訳は https://www.contributor-covenant.org/translations で入手できます。
-

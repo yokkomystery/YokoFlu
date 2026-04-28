@@ -188,7 +188,7 @@ YOKOFLU を使用して構築したアプリケーションにおけるデータ
 
 本規約に関するご質問は、以下までお問い合わせください：
 
-- Email: contact@mysterylog.com
+- Email: contact@yokkolab.com
 - GitHub: [yokkomystery/yokoflu](https://github.com/yokkomystery/yokoflu)
 
 ---
